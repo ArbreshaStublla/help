@@ -1,5 +1,5 @@
 <template>
-  
+  <v-container>
   <div class="container" :class="{ 'right-panel-active': activeTab === 'signup' }">
     <div class="form-container sign-up-container">
       <h1>Create Account</h1>
@@ -33,7 +33,7 @@
       </div>
     </div>
   </div>
-
+</v-container>
 </template>
 
 <script>
@@ -115,20 +115,8 @@ export default {
 <style scoped>
 
  
-* {
-  box-sizing: border-box;
-}
- 
-body {
-  background: #f6f5f7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  font-family: "Montserrat", sans-serif;
-  height: 100vh;
-  margin: -20px 0 50px;
-}
+
+
  
 h1 {
   font-weight: bold;
