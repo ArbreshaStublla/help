@@ -3,17 +3,17 @@
     <div class="container" :class="{ 'right-panel-active': activeTab === 'signup' }">
       <div class="form-container sign-up-container">
         <h1>Krijo Llogari</h1>
-        <form @submit.prevent="registerUser">
+        <form class="forma" @submit.prevent="registerUser">
           <input type="text" placeholder="Përdoruesi" v-model="signupData.username" required />
           <input type="email" placeholder="Email" v-model="signupData.email" required />
           <input type="password" placeholder="Fjalëkalimi" v-model="signupData.password" required />
-          
-          <label>Select Role:</label>
+          <div class="roli">
+            <label>Selektoni Rolin:</label>
           <select v-model="signupData.roleId" required>
-            <option value="1">Admin</option>
-            <option value="2">User</option>
+            <option value="1">Administrator</option>
+            <option value="2">Përdorues</option>
           </select>
-
+          </div>
           <button class="butoni" type="submit">Regjistrohu</button>
         </form>
       </div>
@@ -58,7 +58,7 @@ export default {
         username: '',
         email: '',
         password: '',
-        roleId: '' // Role selection added here
+        roleId: '' 
       }
     };
   },
@@ -112,13 +112,11 @@ export default {
         const responseData = await response.json();
         alert(responseData.message);
 
-        // Clear form data after successful registration
         this.signupData.username = '';
         this.signupData.email = '';
         this.signupData.password = '';
         this.signupData.roleId = '';
 
-        // Optionally, redirect to login page or another route
       } catch (error) {
         console.error('Error registering user:', error);
         alert('Failed to register user. Please try again.');
@@ -131,10 +129,41 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
+.roli{
+ width: 285px;
+ height: 50px;
+ background-color: #eee;
+ margin-top: 7px;
+}
 
+select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  margin-left: 30px;
+  margin-top: 2px;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+select option {
+  font-size: 14px;
+  background-color: #fff;
+  color: #333;
+}
+
+.forma{
+  margin-top: 20px;
+}
+
+.roli label{
+  color: #757575;
+}
 .little-image{
   width: 250px;
   height: 250px;
@@ -152,7 +181,7 @@ export default {
 }
 
 .butoni{
-  margin-top: 70px;
+  margin-top: 30px;
 }
 
 .butoni1{
@@ -163,11 +192,11 @@ export default {
   font-size: 27px;
 }
 
-
 .image{
   height: 200px ;
 
 }
+
 h1 {
   font-weight: bold;
   margin: 0;
