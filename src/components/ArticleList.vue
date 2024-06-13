@@ -9,7 +9,7 @@
           <input type="email" placeholder="Email" v-model="signupData.email" required />
           <input type="password" placeholder="Fjalëkalimi" v-model="signupData.password" required />
           
-          <button type="submit">Regjistrohu</button>
+          <button class="butoni" type="submit">Regjistrohu</button>
        
         </form>
       </div>
@@ -18,7 +18,7 @@
         <form @submit.prevent="loginUser">
           <input type="email" placeholder="Email" v-model="loginData.email" required />
           <input type="password" placeholder="Fjalëkalimi" v-model="loginData.password" required />
-          <button type="submit">Kyçu</button>
+          <button class="butoni1" type="submit">Kyçu</button>
         </form>
       </div>
       <div class="overlay-container">
@@ -135,7 +135,13 @@ export default {
   font-size: 25px;
 }
 
+.butoni{
+  margin-top: 70px;
+}
 
+.butoni1{
+  margin-top: 110px;
+}
 .overlay-left h1 {
   margin-top: 90px;
   font-size: 27px;
