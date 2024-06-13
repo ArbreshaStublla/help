@@ -2,33 +2,36 @@
   <v-container class="custom-container">
     <div class="container" :class="{ 'right-panel-active': activeTab === 'signup' }">
       <div class="form-container sign-up-container">
-        <h1>Create Account</h1>
+        <h1>Krijo Llogari</h1>
         <form @submit.prevent="registerUser">
-          <input type="text" placeholder="Username" v-model="signupData.username" required />
+       
+          <input type="text" placeholder="Përdoruesi" v-model="signupData.username" required />
           <input type="email" placeholder="Email" v-model="signupData.email" required />
-          <input type="password" placeholder="Password" v-model="signupData.password" required />
-          <button type="submit">Sign Up</button>
+          <input type="password" placeholder="Fjalëkalimi" v-model="signupData.password" required />
+          
+          <button type="submit">Regjistrohu</button>
+       
         </form>
       </div>
       <div class="form-container sign-in-container">
-        <h1>Sign in</h1>
+        <h1>Kyçu</h1>
         <form @submit.prevent="loginUser">
           <input type="email" placeholder="Email" v-model="loginData.email" required />
-          <input type="password" placeholder="Password" v-model="loginData.password" required />
-          <button type="submit">Sign In</button>
+          <input type="password" placeholder="Fjalëkalimi" v-model="loginData.password" required />
+          <button type="submit">Kyçu</button>
         </form>
       </div>
       <div class="overlay-container">
         <div class="overlay">
           <div class="overlay-panel overlay-left">
             <div class="image"><v-img class="little-image" :src="require('@/assets/cmd.png')"></v-img></div>
-            <p>To keep connected with us please login with your personal info</p>
-            <button class="ghost" @click="toggleTab('login')">Sign In</button>
+            <p>Për të qëndruar të lidhur me ne, identifikohuni me të dhënat tuaja personale</p>
+            <button class="ghost" @click="toggleTab('login')">Kyçu</button>
           </div>
           <div class="overlay-panel overlay-right">
             <div class="image"><v-img class="little-image" :src="require('@/assets/cmd.png')"></v-img></div>
-            <p>Enter your personal details and start journey with us</p>
-            <button class="ghost" @click="toggleTab('signup')">Sign Up</button>
+            <p>Shkruani të dhënat tuaja personale dhe filloni udhëtimin me ne</p>
+            <button class="ghost" @click="toggleTab('signup')">Regjistrohu</button>
           </div>
         </div>
       </div>
