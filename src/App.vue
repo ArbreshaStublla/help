@@ -21,3 +21,8 @@ export default {
   }),
 }
 </script>
+<style scoped>
+* {
+  background-color: #F5F7F9 !important;
+}
+</style>

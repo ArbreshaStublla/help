@@ -356,9 +356,10 @@ input {
 }
 
 .custom-container {
-  max-width: 800px; 
-  margin: 30px auto; 
-  padding: 20px; 
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
 }
 </style>
 
