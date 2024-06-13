@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="custom-container">
     <div class="container" :class="{ 'right-panel-active': activeTab === 'signup' }">
       <div class="form-container sign-up-container">
         <h1>Create Account</h1>
@@ -21,12 +21,12 @@
       <div class="overlay-container">
         <div class="overlay">
           <div class="overlay-panel overlay-left">
-            <h1>Welcome Back!</h1>
+            <div class="image"><v-img class="little-image" :src="require('@/assets/cmd.png')"></v-img></div>
             <p>To keep connected with us please login with your personal info</p>
             <button class="ghost" @click="toggleTab('login')">Sign In</button>
           </div>
           <div class="overlay-panel overlay-right">
-            <h1>Hello, Explorer!</h1>
+            <div class="image"><v-img class="little-image" :src="require('@/assets/cmd.png')"></v-img></div>
             <p>Enter your personal details and start journey with us</p>
             <button class="ghost" @click="toggleTab('signup')">Sign Up</button>
           </div>
@@ -35,6 +35,7 @@
     </div>
   </v-container>
 </template>
+
 
 <script>
 import bcrypt from 'bcryptjs';
@@ -75,17 +76,17 @@ export default {
         if (user) {
           const isPasswordMatch = await bcrypt.compare(password, user.password);
           if (isPasswordMatch) {
-            alert('Login successful!'); // Show success message
-            // Redirect or perform actions after successful login
+            alert('Login successful!'); 
+            
           } else {
-            alert('Invalid password'); // Show error message
+            alert('Invalid password'); 
           }
         } else {
-          alert('User not found'); // Show error message
+          alert('User not found'); 
         }
       } catch (error) {
         console.error('Error logging in:', error);
-        alert('Failed to login. Please try again.'); // Show error message
+        alert('Failed to login. Please try again.'); 
       }
     },
     async registerUser() {
@@ -112,21 +113,36 @@ export default {
 };
 </script>
 
+
 <style scoped>
-.sign-up-container h1{
+
+.little-image{
+  width: 250px;
+  height: 250px;
+  margin-bottom: 100px;
+}
+
+.small-image {
+  width: 250px; 
+  height: 250px; 
+  margin-left: 67px;
+}
+
+.sign-up-container h1 {
   font-size: 25px;
 }
 
-.overlay-right h1{
-  margin-top: 90px;
-  font-size: 28px;
-}
 
-.overlay-left h1{
+.overlay-left h1 {
   margin-top: 90px;
   font-size: 27px;
 }
 
+
+.image{
+  height: 200px ;
+
+}
 h1 {
   font-weight: bold;
   margin: 0;
@@ -175,7 +191,7 @@ a {
 button {
   border-radius: 20px;
   border: 1px solid #fff;
-  background-image: linear-gradient(to right top, #add8e6, #8be1e7, #71e8d8, #72edba, #90ee90);
+  background-image: linear-gradient(to right top, #b6e5ee, #8fe9ed, #64ece2, #3aedcc, #25edad);
   color: #ffffff;
   font-size: 12px;
   font-weight: bold;
@@ -332,49 +348,17 @@ input {
 .overlay-right {
   right: 0;
   transform: translateX(0);
+
 }
 
 .container.right-panel-active .overlay-right {
   transform: translateX(20%);
 }
 
-.social-container {
-  margin: 20px 0;
-}
-
-.social-container a {
-  border: 1px solid #dddddd;
-  border-radius: 50%;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 5px;
-  height: 40px;
-  width: 40px;
-}
-
-footer {
-  background-color: #222;
-  color: #fff;
-  font-size: 14px;
-  bottom: 0;
-  position: fixed;
-  left: 0;
-  right: 0;
-  text-align: center;
-  z-index: 999;
-}
-
-footer p {
-  margin: 10px 0;
-}
-
-footer i {
-  color: red;
-}
-
-footer a {
-  color: #3c97bf;
-  text-decoration: none;
+.custom-container {
+  max-width: 800px; 
+  margin: 30px auto; 
+  padding: 20px; 
 }
 </style>
+
