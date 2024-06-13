@@ -4,13 +4,17 @@
       <div class="form-container sign-up-container">
         <h1>Krijo Llogari</h1>
         <form @submit.prevent="registerUser">
-       
           <input type="text" placeholder="Përdoruesi" v-model="signupData.username" required />
           <input type="email" placeholder="Email" v-model="signupData.email" required />
           <input type="password" placeholder="Fjalëkalimi" v-model="signupData.password" required />
           
+          <label>Select Role:</label>
+          <select v-model="signupData.roleId" required>
+            <option value="1">Admin</option>
+            <option value="2">User</option>
+          </select>
+
           <button class="butoni" type="submit">Regjistrohu</button>
-       
         </form>
       </div>
       <div class="form-container sign-in-container">
@@ -39,7 +43,6 @@
   </v-container>
 </template>
 
-
 <script>
 import bcrypt from 'bcryptjs';
 
@@ -54,7 +57,8 @@ export default {
       signupData: {
         username: '',
         email: '',
-        password: ''
+        password: '',
+        roleId: '' // Role selection added here
       }
     };
   },
@@ -79,17 +83,16 @@ export default {
         if (user) {
           const isPasswordMatch = await bcrypt.compare(password, user.password);
           if (isPasswordMatch) {
-            alert('Login successful!'); 
-            
+            alert('Login successful!');
           } else {
-            alert('Invalid password'); 
+            alert('Invalid password');
           }
         } else {
-          alert('User not found'); 
+          alert('User not found');
         }
       } catch (error) {
         console.error('Error logging in:', error);
-        alert('Failed to login. Please try again.'); 
+        alert('Failed to login. Please try again.');
       }
     },
     async registerUser() {
@@ -102,8 +105,20 @@ export default {
           body: JSON.stringify(this.signupData)
         });
 
+        if (!response.ok) {
+          throw new Error('Failed to register user');
+        }
+
         const responseData = await response.json();
-        alert(responseData.message); 
+        alert(responseData.message);
+
+        // Clear form data after successful registration
+        this.signupData.username = '';
+        this.signupData.email = '';
+        this.signupData.password = '';
+        this.signupData.roleId = '';
+
+        // Optionally, redirect to login page or another route
       } catch (error) {
         console.error('Error registering user:', error);
         alert('Failed to register user. Please try again.');
@@ -115,6 +130,7 @@ export default {
   }
 };
 </script>
+
 
 
 <style scoped>
