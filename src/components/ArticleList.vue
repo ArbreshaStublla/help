@@ -9,11 +9,19 @@
           <input type="password" placeholder="Fjalëkalimi" v-model="signupData.password" required />
           <div class="roli">
             <label>Selektoni Rolin:</label>
-          <select v-model="signupData.roleId" required>
-            <option value="1">Administrator</option>
-            <option value="2">Përdorues</option>
-          </select>
+            <select v-model="signupData.roleId" @change="checkRoleSelection" required>
+              <option value="1">Administrator</option>
+              <option value="2">Përdorues</option>
+            </select>
           </div>
+          <div v-if="showModal" class="modal">
+              <div class="modal-content">
+                <span class="close" @click="closeModal">&times;</span>
+                <p>Vendosni kodin e administratorit ose kyçuni si përdorues:</p>
+                <input type="password" v-model="adminCode" required />
+                <button @click="submitAdminCode">Submit</button>
+              </div>
+            </div>
           <button class="butoni" type="submit">Regjistrohu</button>
         </form>
       </div>
@@ -58,8 +66,10 @@ export default {
         username: '',
         email: '',
         password: '',
-        roleId: '' 
-      }
+        roleId: ''
+      },
+      adminCode: '', 
+      showModal: false 
     };
   },
   methods: {
@@ -97,6 +107,13 @@ export default {
     },
     async registerUser() {
       try {
+        if (this.signupData.roleId === '1') {
+          if (this.adminCode !== '12345') {
+            alert('Ju lutem vendosni kodin e saktë të administratorit.');
+            return;
+          }
+        }
+
         const response = await fetch('http://192.168.33.15:3000/api/auth/register', {
           method: 'POST',
           headers: {
@@ -121,6 +138,25 @@ export default {
         console.error('Error registering user:', error);
         alert('Failed to register user. Please try again.');
       }
+    },
+    checkRoleSelection() {
+      if (this.signupData.roleId === '1') {
+        this.showModal = true;
+      } else {
+        this.showModal = false;
+        this.adminCode = ''; 
+      }
+    },
+    submitAdminCode() {
+      if (this.adminCode !== '12345') {
+        alert('Ju lutem vendosni kodin e saktë të administratorit.');
+      } else {
+        alert('Kodi i administratorit është i saktë.');
+        this.showModal = false;
+      }
+    },
+    closeModal() {
+      this.showModal = false; 
     },
     toggleTab(tab) {
       this.activeTab = tab;
@@ -414,6 +450,43 @@ display: flex;
 justify-content: center;
 align-items: center;
 height: 100vh;
+}
+
+.modal {
+  display: block; 
+  position: fixed;
+  z-index: 101;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100% !important;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 </style>
 
