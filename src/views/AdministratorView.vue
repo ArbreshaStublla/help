@@ -11,7 +11,6 @@
               <label>Selektoni Rolin:</label>
               <select v-model="signupData.roleId" @change="checkRoleSelection" required>
                 <option value="1">Administrator</option>
-                <option value="2">Përdorues</option>
               </select>
             </div>
             <div v-if="showModal" class="modal">
