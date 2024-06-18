@@ -59,7 +59,7 @@ export default {
       try {
         const response = await axios.post('http://192.168.33.15:3000/videos/add', this.newVideo);
         console.log('Video added:', response.data);
-        this.videos.push(response.data); // Assuming backend returns the newly added video object
+        this.videos.push(response.data);
         this.resetForm();
       } catch (error) {
         console.error('Error adding video:', error);

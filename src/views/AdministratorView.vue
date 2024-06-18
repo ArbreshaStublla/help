@@ -1,78 +1,77 @@
 <template>
-    <v-container class="custom-container">
-      <div class="container" :class="{ 'right-panel-active': activeTab === 'signup' }">
-        <div class="form-container sign-up-container">
-          <h1>Krijo Llogari</h1>
-          <form class="forma" @submit.prevent="registerUser">
-            <input type="text" placeholder="Përdoruesi" v-model="signupData.username" required />
-            <input type="email" placeholder="Email" v-model="signupData.email" required />
-            <input type="password" placeholder="Fjalëkalimi" v-model="signupData.password" required />
-            <div class="roli">
-              <label>Selektoni Rolin:</label>
-              <select v-model="signupData.roleId" @change="checkRoleSelection" required>
-                <option value="1">Administrator</option>
-              </select>
-            </div>
-            <div v-if="showModal" class="modal">
-                <div class="modal-content">
-                  <span class="close" @click="closeModal">&times;</span>
-                  <p>Vendosni kodin e administratorit ose kyçuni si përdorues:</p>
-                  <input type="password" v-model="adminCode" required />
-                  <button @click="submitAdminCode">Submit</button>
-                </div>
-              </div>
-            <button class="butoni" type="submit">Regjistrohu</button>
-          </form>
-        </div>
-        <div class="form-container sign-in-container">
-          <h1>Kyçu</h1>
-          <form @submit.prevent="loginUser">
-            <input type="email" placeholder="Email" v-model="loginData.email" required />
-            <input type="password" placeholder="Fjalëkalimi" v-model="loginData.password" required />
-            <button class="butoni1" type="submit">Kyçu</button>
-          </form>
-        </div>
-        <div class="overlay-container">
-          <div class="overlay">
-            <div class="overlay-panel overlay-left">
-              <div class="image"><v-img class="little-image" :src="require('@/assets/cmd.png')"></v-img></div>
-              <p>Për të qëndruar të lidhur me ne, identifikohuni me të dhënat tuaja personale</p>
-              <button class="ghost" @click="toggleTab('login')">Kyçu</button>
-            </div>
-            <div class="overlay-panel overlay-right">
-              <div class="image"><v-img class="little-image" :src="require('@/assets/cmd.png')"></v-img></div>
-              <p>Shkruani të dhënat tuaja personale dhe filloni udhëtimin me ne</p>
-              <button class="ghost" @click="toggleTab('signup')">Regjistrohu</button>
-            </div>
+  <v-container class="custom-container">
+    <div class="container" :class="{ 'right-panel-active': activeTab === 'signup' }">
+      <div class="form-container sign-up-container">
+        <h1>Krijo Llogari</h1>
+        <form class="forma" @submit.prevent="registerUser">
+          <input type="text" placeholder="Përdoruesi" v-model="signupData.username" required />
+          <input type="email" placeholder="Email" v-model="signupData.email" required />
+          <input type="password" placeholder="Fjalëkalimi" v-model="signupData.password" required />
+          <div class="roli">
+            <label>Roli:</label>
+            <select v-model="signupData.roleId" @change="checkRoleSelection" required :disabled="signupData.roleId !== '1'">
+              <option value="1">Administrator</option>
+            </select>
+          </div>
+          <button class="butoni" type="submit">Regjistrohu</button>
+        </form>
+      </div>
+      <div class="form-container sign-in-container">
+        <h1>Kyçu</h1>
+        <form @submit.prevent="loginUser">
+          <input type="email" placeholder="Email" v-model="loginData.email" required />
+          <input type="password" placeholder="Fjalëkalimi" v-model="loginData.password" required />
+          <button class="butoni1" type="submit">Kyçu</button>
+        </form>
+      </div>
+      <div class="overlay-container">
+        <div class="overlay">
+          <div class="overlay-panel overlay-left">
+            <div class="image"><v-img class="little-image" :src="require('@/assets/cmd.png')"></v-img></div>
+            <p>Për të qëndruar të lidhur me ne, identifikohuni me të dhënat tuaja personale</p>
+            <button class="ghost" @click="toggleTab('login')">Kyçu</button>
+          </div>
+          <div class="overlay-panel overlay-right">
+            <div class="image"><v-img class="little-image" :src="require('@/assets/cmd.png')"></v-img></div>
+            <p>Shkruani të dhënat tuaja personale dhe filloni udhëtimin me ne</p>
+            <button class="ghost" @click="toggleTab('signup')">Regjistrohu</button>
           </div>
         </div>
       </div>
-    </v-container>
-  </template>
-  
-  <script>
+    </div>
+    <div v-if="showModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <p>Vendosni kodin e administratorit:</p>
+        <input type="password" v-model="adminCode" required />
+        <button @click="submitAdminCode">Submit</button>
+      </div>
+    </div>
+  </v-container>
+</template>
+
+<script>
   import bcrypt from 'bcryptjs';
-  
-  export default {
-    data() {
-      return {
-        activeTab: 'login',
-        loginData: {
-          email: '',
-          password: ''
-        },
-        signupData: {
-          username: '',
-          email: '',
-          password: '',
-          roleId: ''
-        },
-        adminCode: '', 
-        showModal: false 
-      };
-    },
-    methods: {
-      async loginUser() {
+export default {
+  data() {
+    return {
+      activeTab: 'login',
+      loginData: {
+        email: '',
+        password: ''
+      },
+      signupData: {
+        username: '',
+        email: '',
+        password: '',
+        roleId: '1'
+      },
+      adminCode: '',
+      showModal: false
+    };
+  },
+  methods: {
+    async loginUser() {
         try {
           const response = await fetch('http://192.168.33.15:3000/user', {
             method: 'GET',
@@ -80,15 +79,15 @@
               'Content-Type': 'application/json'
             }
           });
-  
+ 
           if (!response.ok) {
             throw new Error('Failed to fetch user data');
           }
-  
+ 
           const users = await response.json();
           const { email, password } = this.loginData;
           const user = users.find(user => user.email === email);
-  
+ 
           if (user) {
             const isPasswordMatch = await bcrypt.compare(password, user.password);
             if (isPasswordMatch) {
@@ -104,72 +103,88 @@
           alert('Failed to login. Please try again.');
         }
       },
-      async registerUser() {
-        try {
-          if (this.signupData.roleId === '1') {
-            if (this.adminCode !== '12345') {
-              alert('Ju lutem vendosni kodin e saktë të administratorit.');
-              return;
-            }
-          }
-  
-          const response = await fetch('http://192.168.33.15:3000/api/auth/register', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.signupData)
-          });
-  
-          if (!response.ok) {
-            throw new Error('Failed to register user');
-          }
-  
-          const responseData = await response.json();
-          alert(responseData.message);
-  
-          this.signupData.username = '';
-          this.signupData.email = '';
-          this.signupData.password = '';
-          this.signupData.roleId = '';
-  
-        } catch (error) {
-          console.error('Error registering user:', error);
-          alert('Failed to register user. Please try again.');
-        }
-      },
-      checkRoleSelection() {
+    async registerUser() {
+      try {
         if (this.signupData.roleId === '1') {
-          this.showModal = true;
+          this.showModal = true; 
         } else {
-          this.showModal = false;
-          this.adminCode = ''; 
+          await this.registerUserWithRole();
         }
-      },
-      submitAdminCode() {
-        if (this.adminCode !== '12345') {
-          alert('Ju lutem vendosni kodin e saktë të administratorit.');
-        } else {
-          alert('Kodi i administratorit është i saktë.');
-          this.showModal = false;
-        }
-      },
-      closeModal() {
-        this.showModal = false; 
-      },
-      toggleTab(tab) {
-        this.activeTab = tab;
+      } catch (error) {
+        console.error('Error registering user:', error);
+        alert('Failed to register user. Please try again.');
       }
+    },
+    async registerUserWithRole() {
+      try {
+        const response = await fetch('http://192.168.33.15:3000/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.signupData)
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to register user');
+        }
+
+        const responseData = await response.json();
+        alert(responseData.message);
+
+        this.signupData.username = '';
+        this.signupData.email = '';
+        this.signupData.password = '';
+        this.signupData.roleId = '1'; 
+
+      } catch (error) {
+        console.error('Error registering user:', error);
+        alert('Failed to register user. Please try again.');
+      }
+    },
+    checkRoleSelection() {
+     
+    },
+    toggleTab(tab) {
+      this.activeTab = tab;
+    },
+    async submitAdminCode() {
+  try {
+    const response = await fetch('http://192.168.33.15:3000/api/auth/validateAdminCode', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ adminCode: this.adminCode })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to validate admin code');
     }
-  };
-  </script>
-  
+
+    const responseData = await response.json();
+    alert(responseData.message);
+
+    // If admin code validation is successful, close the modal
+    this.showModal = false;
+
+    // Proceed with registration after validating admin code
+    await this.registerUserWithRole();
+  } catch (error) {
+    console.error('Error validating admin code:', error);
+    alert('Failed to validate admin code. Please try again.');
+  }
+},
+  }
+};
+</script>
   <style scoped>
   .roli{
    width: 285px;
    height: 50px;
    background-color: #eee;
    margin-top: 7px;
+
   }
   
   select {
@@ -198,6 +213,7 @@
   
   .roli label{
     color: #757575;
+    margin-left:-60px ;
   }
   .little-image{
     width: 250px;
