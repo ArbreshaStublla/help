@@ -45,7 +45,7 @@ export default {
     return {
       videos: [],
       loading: true,
-      showForm: false, // Added variable to control form visibility
+      showForm: false, 
       newVideo: {
         title: '',
         url: '',

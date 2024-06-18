@@ -91,7 +91,8 @@ export default {
           if (user) {
             const isPasswordMatch = await bcrypt.compare(password, user.password);
             if (isPasswordMatch) {
-              alert('Login successful!');
+             
+              this.$router.push({ path: '/' }); 
             } else {
               alert('Invalid password');
             }
@@ -165,10 +166,10 @@ export default {
     const responseData = await response.json();
     alert(responseData.message);
 
-    // If admin code validation is successful, close the modal
+
     this.showModal = false;
 
-    // Proceed with registration after validating admin code
+  
     await this.registerUserWithRole();
   } catch (error) {
     console.error('Error validating admin code:', error);
@@ -213,7 +214,7 @@ export default {
   
   .roli label{
     color: #757575;
-    margin-left:-60px ;
+    margin-left:-70px ;
   }
   .little-image{
     width: 250px;
