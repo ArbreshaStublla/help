@@ -1,17 +1,23 @@
 <template>
+  <div class="butoni">
+    <ButtonComponent v-if="!showForm" buttonText="Shto Video" @click="toggleForm" />
+  </div>
   <div>
-    <h1>Video List</h1>
-    <form @submit.prevent="addVideo">
-      <label>Title:</label>
-      <input v-model="newVideo.title" required>
-      <label>URL:</label>
-      <input v-model="newVideo.url" required>
-      <label>Description:</label>
-      <textarea v-model="newVideo.description" required></textarea>
-      <label>Category:</label>
-      <input v-model="newVideo.category" required>
-      <button type="submit">Add Video</button>
-    </form>
+    <div v-if="showForm">
+      <form @submit.prevent="addVideo">
+        <label>Titulli:</label>
+        <input v-model="newVideo.title" class="form-input" required>
+        <label>Linku:</label>
+        <input v-model="newVideo.url" class="form-input" required>
+        <label>Përshkrimi:</label>
+        <textarea v-model="newVideo.description" class="form-input" required></textarea>
+        <label>Kategoria:</label>
+        <input v-model="newVideo.category" class="form-input" required>
+        <div class="shto">
+          <ButtonComponent buttonText="Shto Video" @click="handleCustomButtonClick" />
+        </div>
+      </form>
+    </div>
     <div v-if="loading">Loading...</div>
     <div v-else>
       <div v-for="video in videos" :key="video.videoId" class="video-card">
@@ -26,13 +32,20 @@
 
 <script>
 import axios from 'axios';
+import ButtonComponent from '../components/ButtonComponent.vue';
 
 export default {
+  components: {
+
+    ButtonComponent
+    
+  },
   name: 'VideoPage',
   data() {
     return {
       videos: [],
       loading: true,
+      showForm: false, // Added variable to control form visibility
       newVideo: {
         title: '',
         url: '',
@@ -61,6 +74,7 @@ export default {
         console.log('Video added:', response.data);
         this.videos.push(response.data); // Assuming backend returns the newly added video object
         this.resetForm();
+        this.showForm = false; // Hide the form after adding video
       } catch (error) {
         console.error('Error adding video:', error);
       }
@@ -70,12 +84,21 @@ export default {
       this.newVideo.url = '';
       this.newVideo.description = '';
       this.newVideo.category = '';
+    },
+    toggleForm() {
+      this.showForm = !this.showForm; // Toggle form visibility
     }
   }
 };
 </script>
 
 <style scoped>
+.shto{
+  margin-bottom: 70px;
+}
+.butoni{
+  margin-bottom: 70px;
+}
 .video-card {
   border: 1px solid #ddd;
   padding: 16px;
@@ -98,13 +121,21 @@ form input, form textarea {
   margin-bottom: 10px;
 }
 form button {
-  background-color: #007BFF;
-  color: white;
-  border: none;
+  color: #000;
+  border: 2px solid #1B4D3E;
   padding: 10px 20px;
   cursor: pointer;
 }
-form button:hover {
-  background-color: #0056b3;
+
+/* Add Video button style */
+button.add-video-button {
+  border: 2px solid #1B4D3E; /* Same border as form buttons */
+  padding: 10px 20px;
+  cursor: pointer;
 }
+
+.form-input{
+border: 1px solid #d1d1d6;
+}
+
 </style>
