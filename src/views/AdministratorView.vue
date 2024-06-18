@@ -252,6 +252,7 @@
   
   .sign-in-container h1 {
     display: block;
+    font-size: 25px;
   }
   
   .right-panel-active .sign-in-container h1 {

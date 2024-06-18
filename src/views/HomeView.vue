@@ -5,10 +5,10 @@
         <h1 class="title">Si mund të ju ndihmojmë?</h1>
         <SearchComponent />
         <ButtonComponent buttonText="Administrator" @click="handleCustomButtonClick" />
-       
       </div>
       <div class="hero">
-        <div class="slider">
+        <v-container>
+          <div class="slider">
           <button
             v-for="(item, index) in items"
             :key="index"
@@ -19,6 +19,7 @@
           </button>
         </div>
         <component :is="currentComponent" />
+        </v-container>
       </div>
     </v-main>
   </v-app>
@@ -45,9 +46,9 @@ export default {
     return {
       currentIndex: 0,
       items: [
-        { label: 'Articles' },
-        { label: 'Questions' },
-        { label: 'Videos' }
+        { label: 'Artikujt' },
+        { label: 'Pyetjet' },
+        { label: 'Videot' }
       ],
       currentComponent: 'ArticlesPage'
     };
@@ -87,18 +88,22 @@ export default {
 .slider {
   display: flex;
   justify-content: center;
+  width: 100%;
   margin-top: 20px;
 }
 
 button {
+  flex-grow: 1;
   background: none;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
-
+  font-size: 18px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s;
 }
 
 button.active {
-  border-bottom: 2px solid #ffffff;
+  border-bottom: 2px solid #1B4D3E;
 }
 </style>
