@@ -5,7 +5,10 @@
         <h1 class="title">Si mund të ju ndihmojmë?</h1>
         <SearchComponent />
         <ButtonComponent buttonText="Administrator" @click="handleCustomButtonClick" />
-      
+    
+      </div>
+      <div class="hero">
+        <AdminPage/>
       </div>
     </v-main>
   </v-app>
@@ -14,12 +17,14 @@
 <script>
 import SearchComponent from '../components/SearchComponent.vue';
 import ButtonComponent from '../components/ButtonComponent.vue';
+import AdminPage from '../views/AdminPage.vue';
 
 
 export default {
   components: {
     SearchComponent,
     ButtonComponent,
+    AdminPage
  
   },
   data() {
