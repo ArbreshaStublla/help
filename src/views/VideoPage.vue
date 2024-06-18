@@ -21,10 +21,14 @@
     <div v-if="loading">Loading...</div>
     <div v-else>
       <div v-for="video in videos" :key="video.videoId" class="video-card">
-        <h2>{{ video.title }}</h2>
-        <img :src="video.thumbnail" alt="Video Thumbnail" />
-        <p>{{ video.description }}</p>
-        <a :href="video.url" target="_blank">Watch Video</a>
+        <h4 class="video-title">{{ video.title }}</h4>
+        <div class="video-content">
+          <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail">
+          <div class="video-description">
+            <p>{{ video.description }}</p>
+            <a :href="video.url" target="_blank">Watch Video</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -36,16 +40,14 @@ import ButtonComponent from '../components/ButtonComponent.vue';
 
 export default {
   components: {
-
     ButtonComponent
-    
   },
   name: 'VideoPage',
   data() {
     return {
       videos: [],
       loading: true,
-      showForm: false, 
+      showForm: false,
       newVideo: {
         title: '',
         url: '',
@@ -74,7 +76,7 @@ export default {
         console.log('Video added:', response.data);
         this.videos.push(response.data);
         this.resetForm();
-        this.showForm = false; // Hide the form after adding video
+        this.showForm = false;
       } catch (error) {
         console.error('Error adding video:', error);
       }
@@ -86,17 +88,17 @@ export default {
       this.newVideo.category = '';
     },
     toggleForm() {
-      this.showForm = !this.showForm; // Toggle form visibility
+      this.showForm = !this.showForm;
     }
   }
 };
 </script>
 
 <style scoped>
-.shto{
+.shto {
   margin-bottom: 70px;
 }
-.butoni{
+.butoni {
   margin-bottom: 70px;
 }
 .video-card {
@@ -107,6 +109,23 @@ export default {
 .video-card img {
   max-width: 100%;
   height: auto;
+}
+.video-content {
+  display: flex;
+  align-items: flex-start;
+}
+.video-thumbnail {
+  width: 250px; 
+  height: 250px; 
+  margin-right: 16px;
+}
+.video-description p {
+  padding: 8px;
+  margin-top: 50px;
+  flex: 1;
+}
+.form-input {
+  border: 1px solid #d1d1d6;
 }
 form {
   margin-bottom: 20px;
@@ -126,16 +145,4 @@ form button {
   padding: 10px 20px;
   cursor: pointer;
 }
-
-/* Add Video button style */
-button.add-video-button {
-  border: 2px solid #1B4D3E; /* Same border as form buttons */
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-.form-input{
-border: 1px solid #d1d1d6;
-}
-
 </style>
