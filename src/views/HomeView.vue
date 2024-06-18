@@ -74,9 +74,13 @@ export default {
   align-items: center;
   height: 70vh;
   padding: 50px;
-  background-color: #1B4D3E;
+  background-image: url(../assets/18.png); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
   color: #ffffff;
 }
+
 
 .title {
   font-size: 24px;

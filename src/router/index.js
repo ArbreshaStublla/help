@@ -3,12 +3,18 @@ import HomeView from '@/views/HomeView.vue'
 import AdministratorView from "@/views/AdministratorView.vue"
 import AdminView from "@/views/AdminPage.vue"
 import NotFound from "../components/ErrorPage.vue"  
+import HomeViewAdmin from "@/views/HomeViewAdmin"
 
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/homeadmin',
+    name: 'homeadmin',
+    component: HomeViewAdmin
   },
   {
     path: '/administrator',

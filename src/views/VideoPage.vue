@@ -1,23 +1,7 @@
 <template>
-  <div class="butoni">
-    <ButtonComponent v-if="!showForm" buttonText="Shto Video" @click="toggleForm" />
-  </div>
+
   <div>
-    <div v-if="showForm">
-      <form @submit.prevent="addVideo">
-        <label>Titulli:</label>
-        <input v-model="newVideo.title" class="form-input" required>
-        <label>Linku:</label>
-        <input v-model="newVideo.url" class="form-input" required>
-        <label>Përshkrimi:</label>
-        <textarea v-model="newVideo.description" class="form-input" required></textarea>
-        <label>Kategoria:</label>
-        <input v-model="newVideo.category" class="form-input" required>
-        <div class="shto">
-          <ButtonComponent buttonText="Shto Video" @click="handleCustomButtonClick" />
-        </div>
-      </form>
-    </div>
+ 
     <div v-if="loading">Loading...</div>
     <div v-else>
       <div v-for="video in videos" :key="video.videoId" class="video-card">
@@ -36,12 +20,10 @@
 
 <script>
 import axios from 'axios';
-import ButtonComponent from '../components/ButtonComponent.vue';
+
 
 export default {
-  components: {
-    ButtonComponent
-  },
+
   name: 'VideoPage',
   data() {
     return {
@@ -70,26 +52,9 @@ export default {
         this.loading = false;
       }
     },
-    async addVideo() {
-      try {
-        const response = await axios.post('http://192.168.33.15:3000/videos/add', this.newVideo);
-        console.log('Video added:', response.data);
-        this.videos.push(response.data);
-        this.resetForm();
-        this.showForm = false;
-      } catch (error) {
-        console.error('Error adding video:', error);
-      }
-    },
-    resetForm() {
-      this.newVideo.title = '';
-      this.newVideo.url = '';
-      this.newVideo.description = '';
-      this.newVideo.category = '';
-    },
-    toggleForm() {
-      this.showForm = !this.showForm;
-    }
+ 
+ 
+  
   }
 };
 </script>

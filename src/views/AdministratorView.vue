@@ -92,7 +92,7 @@ export default {
             const isPasswordMatch = await bcrypt.compare(password, user.password);
             if (isPasswordMatch) {
              
-              this.$router.push({ path: '/' }); 
+              this.$router.push({ path: '/homeadmin' }); 
             } else {
               alert('Invalid password');
             }
