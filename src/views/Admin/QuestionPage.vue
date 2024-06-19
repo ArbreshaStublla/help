@@ -1,55 +1,73 @@
 <template>
-  <div class="question-answer">
- 
-    <div v-if="questions.length === 0" class="no-questions">No questions available.</div>
-    <div v-else>
-      <div v-for="question in questions" :key="question.questionId" class="question">
-        <h2 class="question-text">{{ question.questionText }}</h2>
+  <v-container>
+    <div class="kthehu">
+      <ButtonComponent :buttonText="showUnanswered ? 'Kthehu' : 'Përgjigju pyetjeve'" @click="toggleUnansweredQuestions" />
+    </div>
+    <div class="question-answer">
+      <!-- Display questions -->
+      <div v-if="questions.length === 0" class="no-questions">No questions available.</div>
+      <div v-else>
+        <!-- Button to show unanswered questions -->
         
-      
-        <div v-if="question.answerText" class="answers">
-          <div class="question-header">
-            <div class="toggle-text" @click="toggleAnswer(question)">
-              <!-- Remove the text "Show Answer" and "Hide Answer" -->
-            </div>
-            <span class="toggle-icon" @click="toggleAnswer(question)">
-              {{ question.showAnswer ? '-' : '+' }}
-            </span>
+        <!-- Display filtered questions -->
+        <div v-if="showUnanswered">
+          <div v-for="question in unansweredQuestions" :key="question.questionId" class="question">
+            <h2 class="question-text">{{ question.questionText }}</h2>
+            <!-- Form to submit an answer -->
+            <form>
+              <div class="form-group">
+                <label for="answerText" class="label">Your Answer:</label>
+                <textarea v-model="question.newAnswerText" required rows="3" class="input"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="userId" class="label">Your User ID:</label>
+                <input type="text" v-model="question.userId" required class="input" />
+              </div>
+              <!-- Move the Submit Answer button under the input fields -->
+              <div class="form-group">
+                <ButtonComponent buttonText="Submit Answer" @click="submitAnswer(question)" />
+              </div>
+            </form>
+            <!-- Error and success messages for each question -->
+            <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
+            <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
           </div>
-          <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
         </div>
         
-        <!-- Form to submit an answer (only visible if there's no existing answer) -->
+        <!-- Display existing answers -->
         <div v-else>
-          <form @submit.prevent="submitAnswer(question)">
-            <div class="form-group">
-              <label for="answerText" class="label">Your Answer:</label>
-              <textarea v-model="question.newAnswerText" required rows="3" class="input"></textarea>
+          <div v-for="question in answeredQuestions" :key="question.questionId" class="question">
+            <h2 class="question-text">{{ question.questionText }}</h2>
+            <div class="answers">
+              <div class="question-header">
+                <div class="toggle-text" @click="toggleAnswer(question)"></div>
+                <span class="toggle-icon" @click="toggleAnswer(question)">
+                  {{ question.showAnswer ? '-' : '+' }}
+                </span>
+              </div>
+              <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
             </div>
-            <div class="form-group">
-              <label for="userId" class="label">Your User ID:</label>
-              <input type="text" v-model="question.userId" required class="input" />
-            </div>
-            <button type="submit" class="button">Submit Answer</button>
-          </form>
+          </div>
         </div>
-        
-        <!-- Error and success messages for each question -->
-        <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
-        <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
-        
       </div>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script>
 import axios from 'axios';
+import ButtonComponent from '../../components/ButtonComponent.vue';
 
 export default {
+  components: {
+    ButtonComponent
+  },
   data() {
     return {
-      questions: []
+      questions: [],
+      unansweredQuestions: [], // Array to store unanswered questions
+      answeredQuestions: [],   // Array to store answered questions
+      showUnanswered: false    // Flag to toggle display of unanswered questions
     };
   },
   created() {
@@ -67,6 +85,11 @@ export default {
           successMessage: '',
           showAnswer: false // Initially hide the answer
         }));
+        
+        // Separate questions into answered and unanswered
+        this.unansweredQuestions = this.questions.filter(question => !question.answerText);
+        this.answeredQuestions = this.questions.filter(question => question.answerText);
+
       } catch (error) {
         console.error('Error fetching questions:', error);
       }
@@ -93,18 +116,27 @@ export default {
     },
     toggleAnswer(question) {
       question.showAnswer = !question.showAnswer;
+    },
+    toggleUnansweredQuestions() {
+      this.showUnanswered = !this.showUnanswered;
     }
   }
 };
 </script>
 
 <style scoped>
+form{
+  margin-bottom: 70px;
+}
+.kthehu button {
+  margin-top: -10px;
+}
 .question-answer {
-  margin-top: 20px;
+  margin-top: 60px;
 }
 
 .question {
- 
+  background-color: #f9f9f9;
   border: 1px solid #ccc;
   padding: 15px;
   margin-bottom: 20px;
@@ -119,13 +151,14 @@ export default {
 .question-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   cursor: pointer;
 }
 
 .toggle-icon {
   font-size: 24px;
   color: #666;
+  margin-bottom: 15px; 
 }
 
 .toggle-text {
@@ -148,6 +181,10 @@ export default {
 
 .form-group {
   margin-bottom: 15px;
+}
+
+.form-group button{
+  margin-right:930px;
 }
 
 .label {
