@@ -106,7 +106,7 @@ export default {
 }
 
 .question {
-  background-color: #f9f9f9;
+
   border: 1px solid #ccc;
   padding: 15px;
   margin-bottom: 20px;
