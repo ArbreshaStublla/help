@@ -1,18 +1,18 @@
 <template>
   <div class="question-answer">
-    <!-- Display questions -->
+ 
     <div v-if="questions.length === 0" class="no-questions">No questions available.</div>
     <div v-else>
       <div v-for="question in questions" :key="question.questionId" class="question">
         <h2 class="question-text">{{ question.questionText }}</h2>
         
-        <!-- Display existing answers -->
+      
         <div v-if="question.answerText" class="answers">
           <h3 class="answer-title">Answer:</h3>
           <p class="answer">{{ question.answerText }}</p>
         </div>
         
-        <!-- Form to submit an answer -->
+    
         <div v-else>
           <h3 class="answer-title">Add Answer:</h3>
           <form @submit.prevent="submitAnswer(question)">
@@ -94,7 +94,7 @@ export default {
 }
 
 .question {
-  background-color: #f9f9f9;
+ 
   border: 1px solid #ccc;
   padding: 15px;
   margin-bottom: 20px;

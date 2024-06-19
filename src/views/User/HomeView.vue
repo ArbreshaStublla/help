@@ -81,7 +81,6 @@ export default {
   color: #ffffff;
 }
 
-
 .title {
   font-size: 24px;
   font-weight: bold;
@@ -104,10 +103,10 @@ button {
   cursor: pointer;
   font-size: 18px;
   border-bottom: 2px solid transparent;
-  transition: border-color 0.3s;
+  transition: border-bottom 0.8s cubic-bezier(0.23, 1, 0.32, 1); 
 }
 
 button.active {
-  border-bottom: 2px solid #00008B;
+  border-bottom: 2px solid #00008B; 
 }
 </style>

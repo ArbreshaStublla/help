@@ -65,7 +65,7 @@
   </script>
   
   <style scoped>
- .container {
+.container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -79,33 +79,32 @@
   color: #ffffff;
 }
 
-  .title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    margin-left: 5px;
-  }
-  
-  .slider {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-top: 20px;
-  }
-  
-  button {
-    flex-grow: 1;
-    background: none;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 18px;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.3s;
-  }
-  
-  button.active {
-    border-bottom: 2px solid #00008B;
-  }
-  </style>
-  
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  margin-left: 5px;
+}
+
+.slider {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+button {
+  flex-grow: 1;
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 18px;
+  border-bottom: 2px solid transparent;
+  transition: border-bottom 0.8s cubic-bezier(0.23, 1, 0.32, 1); 
+}
+
+button.active {
+  border-bottom: 2px solid #00008B; 
+}
+</style>
