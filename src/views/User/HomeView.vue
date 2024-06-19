@@ -1,11 +1,10 @@
-<!-- HomeView.vue -->
-
 <template>
   <v-app>
     <v-main>
       <div class="container">
         <h1 class="title">Si mund të ju ndihmojmë?</h1>
-        <SearchComponent />
+       
+        <SearchComponent @search="handleSearch" />
         <ButtonComponent buttonText="Administrator" @click="handleCustomButtonClick" />
       </div>
       <div class="hero">
@@ -20,6 +19,7 @@
               {{ item.label }}
             </button>
           </div>
+          <!-- Dynamic component rendering -->
           <component :is="currentComponent" :searchQuery="searchQuery" />
         </v-container>
       </div>
@@ -33,7 +33,7 @@ import SearchComponent from '../../components/SearchComponent.vue';
 import ButtonComponent from '../../components/ButtonComponent.vue';
 
 // Import dynamic components
-import ArticlesPage from '../Admin/ArticlePage.vue';
+import ArticlesPage from '../User/ArticlePage.vue';
 import QuestionsPage from './QuestionPage.vue';
 import VideosPage from './VideoPage.vue';
 
@@ -67,10 +67,15 @@ export default {
       this.currentIndex = index;
       const components = ['ArticlesPage', 'QuestionsPage', 'VideosPage'];
       this.currentComponent = components[index];
+    },
+    handleSearch(query) {
+      // Handle search logic here if needed
+      // This method is called when SearchComponent emits a search event
     }
   }
 };
 </script>
+
 
 
 

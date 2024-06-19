@@ -1,7 +1,7 @@
 <template>
-<v-container>
-   <!-- Form to submit a new question -->
-   <div class="add-question">
+  <v-container>
+    <!-- Form to submit a new question -->
+    <div class="add-question">
       <h3 class="answer-title">Shto Pyetje:</h3>
       <form @submit.prevent="submitQuestion">
         <div class="form-group">
@@ -15,38 +15,39 @@
         <button type="submit" class="button">Dorëzo Pyetjen</button>
       </form>
     </div>
-  <div class="question-answer">
-    <!-- Display questions -->
-    <div v-if="questions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
-    <div v-else>
-      <div v-for="question in questions" :key="question.questionId" class="question">
-        <div class="question-header" @click="toggleAnswer(question)">
-          <h2 class="question-text">{{ question.questionText }}</h2>
-          <span class="accordion-icon" :class="{ 'open': question.showAnswer }">+</span>
-        </div>
-        
-        <!-- Accordion content -->
-        <div v-if="question.showAnswer" class="answers">
-          <p class="answer" v-if="question.answerText">{{ question.answerText }}</p>
-          <div v-else class="no-answers">
-            <p>Ende pa përgjigje.</p>
+  
+    <div class="question-answer">
+      <!-- Display questions -->
+      <div v-if="filteredQuestions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
+      <div v-else>
+        <div v-for="question in filteredQuestions" :key="question.questionId" class="question">
+          <div class="question-header" @click="toggleAnswer(question)">
+            <h2 class="question-text">{{ question.questionText }}</h2>
+            <span class="accordion-icon" :class="{ 'open': question.showAnswer }">+</span>
+          </div>
+          
+          <!-- Accordion content -->
+          <div v-if="question.showAnswer" class="answers">
+            <p class="answer" v-if="question.answerText">{{ question.answerText }}</p>
+            <div v-else class="no-answers">
+              <p>Ende pa përgjigje.</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Error and success messages -->
-    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-    <p v-if="successMessage" class="success">{{ successMessage }}</p>
-  </div>
-</v-container>
   
+      <!-- Error and success messages -->
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      <p v-if="successMessage" class="success">{{ successMessage }}</p>
+    </div>
+  </v-container>
 </template>
 
 <script>
 import axios from 'axios';
 
 export default {
+  props: ['searchQuery'], // Receive searchQuery as a prop from parent component
   data() {
     return {
       questions: [],
@@ -58,6 +59,18 @@ export default {
   },
   created() {
     this.fetchQuestions();
+  },
+  computed: {
+    filteredQuestions() {
+      if (!this.searchQuery) {
+        return this.questions;
+      } else {
+        const query = this.searchQuery.toLowerCase();
+        return this.questions.filter(question =>
+          question.questionText.toLowerCase().includes(query)
+        );
+      }
+    }
   },
   methods: {
     async fetchQuestions() {
@@ -79,12 +92,12 @@ export default {
       try {
         await axios.post('http://192.168.33.15:3000/questions/add', {
           questionText: this.questionText,
-          userId: 1, // Replace with actual userId if applicable
-          userEmail: this.userEmail // Include userEmail in the request body
+          userId: 1, 
+          userEmail: this.userEmail 
         });
         this.successMessage = 'Question added successfully!';
         this.questionText = '';
-        this.userEmail = ''; // Clear userEmail after submission
+        this.userEmail = ''; 
 
         this.fetchQuestions();
       } catch (error) {
@@ -105,7 +118,6 @@ export default {
 }
 
 .question {
-
   border: 1px solid #ccc;
   padding: 15px;
   margin-bottom: 20px;

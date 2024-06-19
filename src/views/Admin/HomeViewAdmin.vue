@@ -1,14 +1,16 @@
 <template>
-    <v-app>
-      <v-main>
-        <div class="container">
-          <h1 class="title">Si mund të ju ndihmojmë?</h1>
-          <SearchComponent />
+  <v-app>
+    <v-main>
+      <div class="container">
+        <h1 class="title">Si mund të ju ndihmojmë?</h1>
+      
+        <SearchComponent @search="handleSearch" />
        
-        </div>
-        <div class="hero">
-          <v-container>
-            <div class="slider">
+      </div>
+      <div class="hero">
+        <v-container>
+          <div class="slider">
+           
             <button
               v-for="(item, index) in items"
               :key="index"
@@ -18,53 +20,60 @@
               {{ item.label }}
             </button>
           </div>
-          <component :is="currentComponent" />
-          </v-container>
-        </div>
-      </v-main>
-    </v-app>
-  </template>
-  
-  <script>
-  import SearchComponent from '../../components/SearchComponent.vue';
-  import ButtonComponent from '../../components/ButtonComponent.vue';
-  import ArticlesPage from './ArticlePage.vue';
-  import QuestionsPage from './QuestionPage.vue';
-  import VideoAdmin from './VideoAdmin.vue';
-  import AdminPage from './AdminPage.vue';
-  
-  export default {
-    components: {
-      SearchComponent,
-      ButtonComponent,
-      ArticlesPage,
-      QuestionsPage,
-      VideoAdmin,
-      AdminPage,
+         
+          <component :is="currentComponent" :searchQuery="searchQuery" />
+        </v-container>
+      </div>
+    </v-main>
+  </v-app>
+</template>
+
+<script>
+import { mapState } from 'vuex';
+import SearchComponent from '../../components/SearchComponent.vue';
+import ButtonComponent from '../../components/ButtonComponent.vue';
+
+
+import ArticlesPage from './ArticlePage.vue';
+import QuestionsPage from '../Admin/QuestionPage.vue';
+import VideosPage from '../Admin/VideoAdmin.vue';
+
+export default {
+  components: {
+    SearchComponent,
+    ButtonComponent,
+    ArticlesPage,
+    QuestionsPage,
+    VideosPage
+  },
+  computed: mapState(['searchQuery']),
+  data() {
+    return {
+      currentIndex: 0,
+      items: [
+        { label: 'Artikujt' },
+        { label: 'Pyetjet' },
+        { label: 'Videot' }
+      ],
+      currentComponent: 'ArticlesPage' 
+    };
+  },
+  methods: {
+   
+    handleSliderClick(index) {
+      this.currentIndex = index;
+      const components = ['ArticlesPage', 'QuestionsPage', 'VideosPage'];
+      this.currentComponent = components[index];
     },
-    data() {
-      return {
-        currentIndex: 0,
-        items: [
-          { label: 'Artikujt' },
-          { label: 'Pyetjet' },
-          { label: 'Videot' }
-        ],
-        currentComponent: 'ArticlesPage'
-      };
-    },
-    methods: {
+    // 
+    handleSearch(query) {
      
-      handleSliderClick(index) {
-        this.currentIndex = index;
-        const components = ['ArticlesPage', 'QuestionsPage', 'VideoAdmin'];
-        this.currentComponent = components[index];
-      }
     }
-  };
-  </script>
-  
-  <style scoped>
+  }
+};
+</script>
+
+<style scoped>
 .container {
   display: flex;
   flex-direction: column;
@@ -72,10 +81,10 @@
   align-items: center;
   height: 70vh;
   padding: 50px;
-  background-image: url(../../assets/18.png); 
-  background-size: cover; 
-  background-position: center; 
-  background-repeat: no-repeat; 
+  background-image: url(../../assets/18.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #ffffff;
 }
 
@@ -101,10 +110,10 @@ button {
   cursor: pointer;
   font-size: 18px;
   border-bottom: 2px solid transparent;
-  transition: border-bottom 0.8s cubic-bezier(0.23, 1, 0.32, 1); 
+  transition: border-bottom 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 button.active {
-  border-bottom: 2px solid #00008B; 
+  border-bottom: 2px solid #00008B;
 }
 </style>

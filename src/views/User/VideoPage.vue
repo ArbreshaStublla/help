@@ -2,17 +2,22 @@
   <div>
     <div v-if="loading">Loading...</div>
     <div v-else>
-      <div v-for="video in videos" :key="video.videoId" class="video-card">
-        <h4 class="video-title">{{ video.title }}</h4>
-        <div class="video-content">
-          <div class="video-thumbnail-container">
-            <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail">
-            <div class="play-icon" @click="goToVideo(video.url)">
-              ▶️
+      <div v-if="filteredVideos.length === 0">
+        <p>No videos found.</p>
+      </div>
+      <div v-else>
+        <div v-for="video in filteredVideos" :key="video.videoId" class="video-card">
+          <h4 class="video-title">{{ video.title }}</h4>
+          <div class="video-content">
+            <div class="video-thumbnail-container">
+              <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail">
+              <div class="play-icon" @click="goToVideo(video.url)">
+                ▶️
+              </div>
             </div>
-          </div>
-          <div class="video-description">
-            <p>{{ video.description }}</p>
+            <div class="video-description">
+              <p>{{ video.description }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -23,19 +28,29 @@
 <script>
 import axios from 'axios';
 
-
 export default {
-
   name: 'VideoPage',
+  props: ['searchQuery'], // Receive searchQuery as a prop from parent component
   data() {
     return {
       videos: [],
       loading: true,
-      showForm: false,
     };
   },
   created() {
     this.fetchVideos();
+  },
+  computed: {
+    filteredVideos() {
+      if (!this.searchQuery) {
+        return this.videos;
+      } else {
+        const query = this.searchQuery.toLowerCase();
+        return this.videos.filter(video =>
+          video.title.toLowerCase().includes(query)
+        );
+      }
+    }
   },
   methods: {
     async fetchVideos() {
