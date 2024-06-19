@@ -10,22 +10,22 @@
         </div>
         <div class="form-group">
           <label for="userEmail" class="label">Email-i juaj:</label>
-          <input v-model="userEmail" type="email" required class="input" >
+          <input v-model="userEmail" type="email" required class="input">
         </div>
-        <button type="submit" class="button">Dorëzo Pyetjen</button>
+        <ButtonComponent buttonText="Dorëzo Pyetjen" @click="submitQuestion(answer)" class="dorezo"/>
       </form>
     </div>
-  
+
     <div class="question-answer">
       <!-- Display questions -->
       <div v-if="filteredQuestions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
-        <div v-for="question in filteredQuestions" :key="question.questionId" class="question">
+        <div v-for="question in paginatedQuestions" :key="question.questionId" class="question">
           <div class="question-header" @click="toggleAnswer(question)">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <span class="accordion-icon" :class="{ 'open': question.showAnswer }">+</span>
           </div>
-          
+
           <!-- Accordion content -->
           <div v-if="question.showAnswer" class="answers">
             <p class="answer" v-if="question.answerText">{{ question.answerText }}</p>
@@ -35,7 +35,14 @@
           </div>
         </div>
       </div>
-  
+
+      <!-- Pagination Component -->
+      <PaginationComponent
+        :items="filteredQuestions"
+        :pageSize="pageSize"
+        @pageChanged="handlePageChange"
+      />
+
       <!-- Error and success messages -->
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <p v-if="successMessage" class="success">{{ successMessage }}</p>
@@ -45,16 +52,24 @@
 
 <script>
 import axios from 'axios';
+import ButtonComponent from '../../components/ButtonComponent.vue';
+import PaginationComponent from '../../components/PaginationComponent.vue';
 
 export default {
-  props: ['searchQuery'], // Receive searchQuery as a prop from parent component
+  components: {
+    ButtonComponent,
+    PaginationComponent
+  },
+  props: ['searchQuery'],
   data() {
     return {
       questions: [],
       questionText: '',
       userEmail: '',
       errorMessage: '',
-      successMessage: ''
+      successMessage: '',
+      currentPage: 1,
+      pageSize: 5 
     };
   },
   created() {
@@ -70,6 +85,10 @@ export default {
           question.questionText.toLowerCase().includes(query)
         );
       }
+    },
+    paginatedQuestions() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      return this.filteredQuestions.slice(startIndex, startIndex + this.pageSize);
     }
   },
   methods: {
@@ -78,7 +97,7 @@ export default {
         const response = await axios.get('http://192.168.33.15:3000/questions/');
         this.questions = response.data.map(question => ({
           ...question,
-          showAnswer: false // Initialize showAnswer property for accordion
+          showAnswer: false
         }));
       } catch (error) {
         console.error('Error fetching questions:', error);
@@ -92,12 +111,12 @@ export default {
       try {
         await axios.post('http://192.168.33.15:3000/questions/add', {
           questionText: this.questionText,
-          userId: 1, 
-          userEmail: this.userEmail 
+          userId: 1,
+          userEmail: this.userEmail
         });
         this.successMessage = 'Question added successfully!';
         this.questionText = '';
-        this.userEmail = ''; 
+        this.userEmail = '';
 
         this.fetchQuestions();
       } catch (error) {
@@ -107,12 +126,24 @@ export default {
     },
     toggleAnswer(question) {
       question.showAnswer = !question.showAnswer;
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
     }
   }
 };
 </script>
 
 <style scoped>
+form {
+  margin-bottom: 45px;
+}
+
+.dorezo {
+  margin-top: 215px;
+  margin-right: 935px;
+}
+
 .question-answer {
   margin-bottom: 20px;
 }
@@ -147,16 +178,14 @@ export default {
 
 .no-answers,
 .no-questions {
-  display: none; /* Hide by default */
   color: #888;
 }
 
 .no-answers p {
-  margin: 0; /* Remove default margin */
+  margin: 0;
 }
 
 .add-question {
-  background-color: #f9f9f9;
   padding: 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
