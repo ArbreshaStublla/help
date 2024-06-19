@@ -1,12 +1,12 @@
 <template>
   <div class="question-answer">
-    <!-- Display questions -->
+ 
     <div v-if="questions.length === 0" class="no-questions">No questions available.</div>
     <div v-else>
       <div v-for="question in questions" :key="question.questionId" class="question">
         <h2 class="question-text">{{ question.questionText }}</h2>
         
-        <!-- Display existing answers -->
+      
         <div v-if="question.answerText" class="answers">
           <div class="question-header">
             <div class="toggle-text" @click="toggleAnswer(question)">
@@ -104,7 +104,7 @@ export default {
 }
 
 .question {
-  background-color: #f9f9f9;
+ 
   border: 1px solid #ccc;
   padding: 15px;
   margin-bottom: 20px;
