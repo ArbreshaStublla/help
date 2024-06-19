@@ -52,8 +52,8 @@ export default {
   methods: {
     async fetchQuestions() {
       try {
-        const response = await axios.get('http://192.168.33.15:3000/questions/');
-        this.questions = response.data.map(question => ({
+        const data = await axios.get('http://192.168.33.15:3000/questions/');
+        this.questions = data.data.map(question => ({
           ...question,
           newAnswerText: '',
           userId: '',
@@ -69,7 +69,7 @@ export default {
       question.successMessage = '';
 
       try {
-        const response = await axios.post(`http://192.168.33.15:3000/questions/${question.questionId}/answers`, {
+        await axios.post(`http://192.168.33.15:3000/questions/${question.questionId}/answers`, {
           answerText: question.newAnswerText,
           userId: parseInt(question.userId)
         });
