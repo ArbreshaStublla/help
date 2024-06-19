@@ -1,14 +1,20 @@
-import { createStore } from 'vuex'
+// store/index.js
+
+import { createStore } from 'vuex';
 
 export default createStore({
   state: {
-  },
-  getters: {
+    searchQuery: ''
   },
   mutations: {
+    setSearchQuery(state, query) {
+      state.searchQuery = query.toLowerCase();
+    }
   },
   actions: {
+    // Optional actions
   },
   modules: {
+    // Optional modules
   }
-})
+});

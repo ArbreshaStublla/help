@@ -1,3 +1,5 @@
+<!-- HomeView.vue -->
+
 <template>
   <v-app>
     <v-main>
@@ -9,16 +11,16 @@
       <div class="hero">
         <v-container>
           <div class="slider">
-          <button
-            v-for="(item, index) in items"
-            :key="index"
-            :class="{ active: currentIndex === index }"
-            @click="handleSliderClick(index)"
-          >
-            {{ item.label }}
-          </button>
-        </div>
-        <component :is="currentComponent" />
+            <button
+              v-for="(item, index) in items"
+              :key="index"
+              :class="{ active: currentIndex === index }"
+              @click="handleSliderClick(index)"
+            >
+              {{ item.label }}
+            </button>
+          </div>
+          <component :is="currentComponent" :searchQuery="searchQuery" />
         </v-container>
       </div>
     </v-main>
@@ -26,12 +28,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import SearchComponent from '../../components/SearchComponent.vue';
 import ButtonComponent from '../../components/ButtonComponent.vue';
+
+// Import dynamic components
 import ArticlesPage from '../Admin/ArticlePage.vue';
-import QuestionsPage from '../User/QuestionPage.vue';
+import QuestionsPage from './QuestionPage.vue';
 import VideosPage from './VideoPage.vue';
-import AdminPage from '../Admin/AdminPage.vue';
 
 export default {
   components: {
@@ -39,8 +43,10 @@ export default {
     ButtonComponent,
     ArticlesPage,
     QuestionsPage,
-    VideosPage,
-    AdminPage,
+    VideosPage
+  },
+  computed: {
+    ...mapState(['searchQuery'])
   },
   data() {
     return {
@@ -65,6 +71,8 @@ export default {
   }
 };
 </script>
+
+
 
 <style scoped>
 .container {
