@@ -74,7 +74,7 @@ export default {
   align-items: center;
   height: 70vh;
   padding: 50px;
-  background-image: url(../assets/18.png); 
+  background-image: url(../../assets/18.png); 
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat; 
