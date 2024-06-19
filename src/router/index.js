@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import AdministratorView from "@/views/AdministratorView.vue"
-import AdminView from "@/views/AdminPage.vue"
+import HomeView from '@/views/User/HomeView.vue'
+import AdministratorView from "@/views/Admin/AdministratorView.vue"
+import AdminView from "@/views/Admin/AdminPage.vue"
 import NotFound from "../components/ErrorPage.vue"  
 import HomeViewAdmin from "@/views/HomeViewAdmin"
 

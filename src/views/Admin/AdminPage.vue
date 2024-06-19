@@ -5,9 +5,9 @@
 </template>
 
 <script>
-import ArticlePageVue from '../views/ArticlePage.vue'
-import VideoPage from "../views/VideoPage.vue"
-import QuestionPage from "../views/QuestionPage.vue"
+import ArticlePageVue from './ArticlePage.vue'
+import VideoPage from "../User/VideoPage.vue"
+import QuestionPage from "./QuestionPage.vue"
 
 export default {
 components:{

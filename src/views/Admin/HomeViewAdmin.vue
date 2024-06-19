@@ -26,12 +26,12 @@
   </template>
   
   <script>
-  import SearchComponent from '../components/SearchComponent.vue';
-  import ButtonComponent from '../components/ButtonComponent.vue';
-  import ArticlesPage from '../views/ArticlePage.vue';
-  import QuestionsPage from '../views/QuestionPage.vue';
-  import VideoAdmin from '../views/VideoAdmin.vue';
-  import AdminPage from '../views/AdminPage.vue';
+  import SearchComponent from '../../components/SearchComponent.vue';
+  import ButtonComponent from '../../components/ButtonComponent.vue';
+  import ArticlesPage from './ArticlePage.vue';
+  import QuestionsPage from './QuestionPage.vue';
+  import VideoAdmin from './VideoAdmin.vue';
+  import AdminPage from './AdminPage.vue';
   
   export default {
     components: {
