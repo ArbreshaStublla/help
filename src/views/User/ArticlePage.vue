@@ -1,22 +1,17 @@
 <template>
     <div>
-      <h1>Articles</h1>
-      <ul v-if="articles.length > 0">
-        <li v-for="article in articles" :key="article.articleId">
-          <h2>{{ article.title }}</h2>
-          <p>{{ article.content }}</p>
+      <h2>Articles</h2>
+      <!-- Display list of articles with their photos -->
+      <div class="article-list">
+        <div v-for="article in articles" :key="article.articleId" class="article-item">
+          <h3>{{ article.title }}</h3>
           <p><strong>Category:</strong> {{ article.category }}</p>
-          <div v-if="article.photos && article.photos.length > 0">
-            <h3>Photos:</h3>
-            <ul class="photo-list">
-              <li v-for="photo in article.photos" :key="photo.photoId">
-                <img :src="photo.photoUrl" alt="Article Photo">
-              </li>
-            </ul>
-          </div>
-        </li>
-      </ul>
-      <p v-else>No articles found.</p>
+          <p>{{ article.content }}</p>
+          <!-- Display photo if photo_path is available -->
+          <img v-if="article.photo_path" :src="`http://192.168.33.15:3000/${article.photo_path}`"
+               :alt="article.title + ' Photo'" class="article-image">
+        </div>
+      </div>
     </div>
   </template>
   
@@ -29,31 +24,50 @@
         articles: []
       };
     },
-    mounted() {
-      this.fetchArticles();
-    },
     methods: {
       async fetchArticles() {
         try {
+          // Fetch all articles including their photo paths
           const response = await axios.get('http://192.168.33.15:3000/article');
           this.articles = response.data;
         } catch (error) {
           console.error('Error fetching articles:', error);
-          // Handle error gracefully, e.g., show a message to the user
+          // Handle error, show error message, etc.
         }
       }
+    },
+    created() {
+      // Fetch articles when the component is created
+      this.fetchArticles();
     }
   };
   </script>
   
   <style scoped>
-  .photo-list {
-    list-style-type: none;
+  .article-list {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    list-style: none;
     padding: 0;
   }
-  .photo-list li {
-    display: inline-block;
-    margin-right: 10px;
+  
+  .article-item {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+  }
+  
+  .article-item h3 {
+    margin-top: 0;
+  }
+  
+  .article-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
   }
   </style>
   
