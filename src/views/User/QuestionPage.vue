@@ -1,7 +1,23 @@
 <template>
+<v-container>
+   <!-- Form to submit a new question -->
+   <div class="add-question">
+      <h3 class="answer-title">Shto Pyetje:</h3>
+      <form @submit.prevent="submitQuestion">
+        <div class="form-group">
+          <label for="questionText" class="label">Pyetja juaj:</label>
+          <textarea v-model="questionText" required rows="3" class="input"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="userEmail" class="label">Email-i juaj:</label>
+          <input v-model="userEmail" type="email" required class="input" >
+        </div>
+        <button type="submit" class="button">Dorëzo Pyetjen</button>
+      </form>
+    </div>
   <div class="question-answer">
     <!-- Display questions -->
-    <div v-if="questions.length === 0" class="no-questions">No questions available.</div>
+    <div v-if="questions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
     <div v-else>
       <div v-for="question in questions" :key="question.questionId" class="question">
         <div class="question-header" @click="toggleAnswer(question)">
@@ -11,37 +27,20 @@
         
         <!-- Accordion content -->
         <div v-if="question.showAnswer" class="answers">
-          <h3 class="answer-title">Answer:</h3>
-          <p class="answer">{{ question.answerText }}</p>
-        </div>
-        
-        <!-- Display message if no answer is available and accordion is closed -->
-        <div v-else-if="!question.showAnswer" class="no-answers">
-          <p>No answer yet.</p>
+          <p class="answer" v-if="question.answerText">{{ question.answerText }}</p>
+          <div v-else class="no-answers">
+            <p>Ende pa përgjigje.</p>
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Form to submit a new question -->
-    <div class="add-question">
-      <h3 class="answer-title">Add Question:</h3>
-      <form @submit.prevent="submitQuestion">
-        <div class="form-group">
-          <label for="questionText" class="label">Your Question:</label>
-          <textarea v-model="questionText" required rows="3" class="input"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="userEmail" class="label">Your Email:</label>
-          <input v-model="userEmail" type="email" required class="input" placeholder="example@example.com">
-        </div>
-        <button type="submit" class="button">Submit Question</button>
-      </form>
     </div>
 
     <!-- Error and success messages -->
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     <p v-if="successMessage" class="success">{{ successMessage }}</p>
   </div>
+</v-container>
+  
 </template>
 
 <script>
@@ -127,12 +126,6 @@ export default {
 
 .answers {
   margin-top: 10px;
-}
-
-.answer-title {
-  font-size: 16px;
-  margin-bottom: 5px;
-  color: #666;
 }
 
 .answer {

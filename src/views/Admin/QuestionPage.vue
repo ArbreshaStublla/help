@@ -8,13 +8,19 @@
         
         <!-- Display existing answers -->
         <div v-if="question.answerText" class="answers">
-          <h3 class="answer-title">Answer:</h3>
-          <p class="answer">{{ question.answerText }}</p>
+          <div class="question-header">
+            <div class="toggle-text" @click="toggleAnswer(question)">
+              <!-- Remove the text "Show Answer" and "Hide Answer" -->
+            </div>
+            <span class="toggle-icon" @click="toggleAnswer(question)">
+              {{ question.showAnswer ? '-' : '+' }}
+            </span>
+          </div>
+          <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
         </div>
         
-        <!-- Form to submit an answer -->
+        <!-- Form to submit an answer (only visible if there's no existing answer) -->
         <div v-else>
-          <h3 class="answer-title">Add Answer:</h3>
           <form @submit.prevent="submitAnswer(question)">
             <div class="form-group">
               <label for="answerText" class="label">Your Answer:</label>
@@ -58,7 +64,8 @@ export default {
           newAnswerText: '',
           userId: '',
           errorMessage: '',
-          successMessage: ''
+          successMessage: '',
+          showAnswer: false // Initially hide the answer
         }));
       } catch (error) {
         console.error('Error fetching questions:', error);
@@ -83,6 +90,9 @@ export default {
         console.error('Error adding answer:', error);
         question.errorMessage = 'Error adding answer';
       }
+    },
+    toggleAnswer(question) {
+      question.showAnswer = !question.showAnswer;
     }
   }
 };
@@ -106,14 +116,29 @@ export default {
   margin-bottom: 10px;
 }
 
-.answers {
-  margin-top: 10px;
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
 }
 
-.answer-title {
-  font-size: 16px;
-  margin-bottom: 5px;
+.toggle-icon {
+  font-size: 24px;
   color: #666;
+}
+
+.toggle-text {
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  /* Ensure no text content takes up space */
+  width: 0;
+  overflow: hidden;
+}
+
+.answers {
+  margin-top: 10px;
 }
 
 .answer {
