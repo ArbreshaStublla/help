@@ -29,7 +29,7 @@
 import SearchComponent from '../../components/SearchComponent.vue';
 import ButtonComponent from '../../components/ButtonComponent.vue';
 import ArticlesPage from '../Admin/ArticlePage.vue';
-import QuestionsPage from '../Admin/QuestionPage.vue';
+import QuestionsPage from '../User/QuestionPage.vue';
 import VideosPage from './VideoPage.vue';
 import AdminPage from '../Admin/AdminPage.vue';
 
