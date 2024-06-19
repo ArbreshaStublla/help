@@ -72,7 +72,7 @@
   align-items: center;
   height: 70vh;
   padding: 50px;
-  background-image: url(../../assets//18.png); 
+  background-image: url(../../assets/18.png); 
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat; 
@@ -105,7 +105,7 @@
   }
   
   button.active {
-    border-bottom: 2px solid #1B4D3E;
+    border-bottom: 2px solid #00008B;
   }
   </style>
   

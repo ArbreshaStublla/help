@@ -108,6 +108,6 @@ button {
 }
 
 button.active {
-  border-bottom: 2px solid #1B4D3E;
+  border-bottom: 2px solid #00008B;
 }
 </style>

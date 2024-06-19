@@ -1,16 +1,18 @@
 <template>
-
   <div>
- 
     <div v-if="loading">Loading...</div>
     <div v-else>
       <div v-for="video in videos" :key="video.videoId" class="video-card">
         <h4 class="video-title">{{ video.title }}</h4>
         <div class="video-content">
-          <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail">
+          <div class="video-thumbnail-container">
+            <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail">
+            <div class="play-icon" @click="goToVideo(video.url)">
+              ▶️
+            </div>
+          </div>
           <div class="video-description">
             <p>{{ video.description }}</p>
-            <a :href="video.url" target="_blank">Watch Video</a>
           </div>
         </div>
       </div>
@@ -30,12 +32,6 @@ export default {
       videos: [],
       loading: true,
       showForm: false,
-      newVideo: {
-        title: '',
-        url: '',
-        description: '',
-        category: ''
-      }
     };
   },
   created() {
@@ -52,9 +48,9 @@ export default {
         this.loading = false;
       }
     },
- 
- 
-  
+    goToVideo(url) {
+      window.open(url, '_blank');
+    }
   }
 };
 </script>
@@ -71,18 +67,31 @@ export default {
   padding: 16px;
   margin: 16px 0;
 }
-.video-card img {
-  max-width: 100%;
-  height: auto;
-}
 .video-content {
   display: flex;
   align-items: flex-start;
 }
+.video-thumbnail-container {
+  position: relative;
+}
 .video-thumbnail {
-  width: 250px; 
-  height: 250px; 
+  width: 300px; 
+  height: 200px; 
   margin-right: 16px;
+}
+
+.video-title{
+  padding-bottom: 10px;
+}
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: white;
+  cursor: pointer;
+  pointer-events: all;
 }
 .video-description p {
   padding: 8px;

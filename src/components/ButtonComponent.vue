@@ -44,7 +44,7 @@
   <style scoped>
   .button-23 {
     background-color: #FFFFFF;
-    border: 1px solid #1B4D3E;
+    border: 1px solid #00008B;
     border-radius: 8px;
     box-sizing: border-box;
     color: #222222;
@@ -73,12 +73,12 @@
   
   .button-23:active {
     background-color: #F7F7F7;
-    border-color: #1B4D3E;
+    border-color: #00008B;
     transform: scale(.96);
   }
   
   .button-disabled {
-    border-color: #1B4D3E;
+    border-color: #00008B;
     color: #DDDDDD;
     cursor: not-allowed;
     opacity: 1;
