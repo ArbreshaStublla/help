@@ -5,38 +5,44 @@
     </div>
     <div class="question-answer">
       <!-- Display questions -->
-      <div v-if="questions.length === 0" class="no-questions">No questions available.</div>
+      <div v-if="filteredQuestions.length === 0" class="no-questions">No questions available.</div>
       <div v-else>
         <!-- Button to show unanswered questions -->
         
         <!-- Display filtered questions -->
         <div v-if="showUnanswered">
-          <div v-for="question in unansweredQuestions" :key="question.questionId" class="question">
+          <div v-for="question in paginatedUnansweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <!-- Form to submit an answer -->
             <form>
               <div class="form-group">
-                <label for="answerText" class="label">Your Answer:</label>
+                <label for="answerText" class="label">Përgjigja juaj:</label>
                 <textarea v-model="question.newAnswerText" required rows="3" class="input"></textarea>
               </div>
               <div class="form-group">
-                <label for="userId" class="label">Your User ID:</label>
+                <label for="userId" class="label">ID-ja juaj:</label>
                 <input type="text" v-model="question.userId" required class="input" />
               </div>
               <!-- Move the Submit Answer button under the input fields -->
               <div class="form-group">
-                <ButtonComponent buttonText="Submit Answer" @click="submitAnswer(question)" />
+                <ButtonComponent buttonText="Dorëzo Përgjigjen" @click="submitAnswer(question)" />
               </div>
             </form>
             <!-- Error and success messages for each question -->
             <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
             <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
           </div>
+          <!-- Pagination Component for Unanswered Questions -->
+          <PaginationComponent
+            :items="unansweredQuestions"
+            :pageSize="pageSize"
+            @pageChanged="handleUnansweredPageChange"
+          />
         </div>
         
         <!-- Display existing answers -->
         <div v-else>
-          <div v-for="question in answeredQuestions" :key="question.questionId" class="question">
+          <div v-for="question in paginatedAnsweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <div class="answers">
               <div class="question-header">
@@ -48,6 +54,12 @@
               <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
             </div>
           </div>
+          <!-- Pagination Component for Answered Questions -->
+          <PaginationComponent
+            :items="answeredQuestions"
+            :pageSize="pageSize"
+            @pageChanged="handleAnsweredPageChange"
+          />
         </div>
       </div>
     </div>
@@ -57,21 +69,39 @@
 <script>
 import axios from 'axios';
 import ButtonComponent from '../../components/ButtonComponent.vue';
+import PaginationComponent from '../../components/PaginationComponent.vue';
 
 export default {
   components: {
-    ButtonComponent
+    ButtonComponent,
+    PaginationComponent
   },
   data() {
     return {
       questions: [],
       unansweredQuestions: [], // Array to store unanswered questions
       answeredQuestions: [],   // Array to store answered questions
-      showUnanswered: false    // Flag to toggle display of unanswered questions
+      showUnanswered: false,   // Flag to toggle display of unanswered questions
+      currentPageUnanswered: 1,
+      currentPageAnswered: 1,
+      pageSize: 5 // Number of questions per page
     };
   },
   created() {
     this.fetchQuestions();
+  },
+  computed: {
+    filteredQuestions() {
+      return this.showUnanswered ? this.unansweredQuestions : this.answeredQuestions;
+    },
+    paginatedUnansweredQuestions() {
+      const startIndex = (this.currentPageUnanswered - 1) * this.pageSize;
+      return this.unansweredQuestions.slice(startIndex, startIndex + this.pageSize);
+    },
+    paginatedAnsweredQuestions() {
+      const startIndex = (this.currentPageAnswered - 1) * this.pageSize;
+      return this.answeredQuestions.slice(startIndex, startIndex + this.pageSize);
+    }
   },
   methods: {
     async fetchQuestions() {
@@ -119,6 +149,12 @@ export default {
     },
     toggleUnansweredQuestions() {
       this.showUnanswered = !this.showUnanswered;
+    },
+    handleUnansweredPageChange(page) {
+      this.currentPageUnanswered = page;
+    },
+    handleAnsweredPageChange(page) {
+      this.currentPageAnswered = page;
     }
   }
 };
@@ -136,7 +172,6 @@ form{
 }
 
 .question {
-  background-color: #f9f9f9;
   border: 1px solid #ccc;
   padding: 15px;
   margin-bottom: 20px;
@@ -184,7 +219,7 @@ form{
 }
 
 .form-group button{
-  margin-right:930px;
+  margin-right:910px;
 }
 
 .label {
@@ -231,5 +266,4 @@ form{
   margin-top: 20px;
   font-size: 18px;
 }
-
 </style>

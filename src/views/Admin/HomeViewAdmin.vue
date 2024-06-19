@@ -31,9 +31,6 @@
 <script>
 import { mapState } from 'vuex';
 import SearchComponent from '../../components/SearchComponent.vue';
-import ButtonComponent from '../../components/ButtonComponent.vue';
-
-
 import ArticlesPage from './ArticlePage.vue';
 import QuestionsPage from '../Admin/QuestionPage.vue';
 import VideosPage from '../Admin/VideoAdmin.vue';
@@ -41,7 +38,6 @@ import VideosPage from '../Admin/VideoAdmin.vue';
 export default {
   components: {
     SearchComponent,
-    ButtonComponent,
     ArticlesPage,
     QuestionsPage,
     VideosPage
@@ -59,15 +55,16 @@ export default {
     };
   },
   methods: {
-   
     handleSliderClick(index) {
       this.currentIndex = index;
       const components = ['ArticlesPage', 'QuestionsPage', 'VideosPage'];
       this.currentComponent = components[index];
     },
-    // 
     handleSearch(query) {
-     
+      // Here you can implement logic to handle the search query
+      console.log('Search query:', query);
+      // For example, update Vuex state with the search query
+      this.$store.commit('updateSearchQuery', query);
     }
   }
 };
