@@ -16,6 +16,8 @@
     "jsonwebtoken": "^9.0.2",
     "node-modules": "^1.0.1",
     "roboto-fontface": "*",
+    "sweetalert": "^2.1.2",
+    "sweetalert2": "^11.12.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuejs-paginate": "^2.1.0",

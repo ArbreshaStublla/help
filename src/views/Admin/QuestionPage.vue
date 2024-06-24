@@ -50,6 +50,8 @@
                 <span class="toggle-icon" @click="toggleAnswer(question)">
                   {{ question.showAnswer ? '-' : '+' }}
                 </span>
+                <!-- Delete button for questions with answers -->
+                <ButtonComponent buttonText="Delete" @click="confirmDelete(question.questionId)" />
               </div>
               <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
             </div>
@@ -68,6 +70,7 @@
 
 <script>
 import axios from 'axios';
+import swal from 'sweetalert'; 
 import ButtonComponent from '../../components/ButtonComponent.vue';
 import PaginationComponent from '../../components/PaginationComponent.vue';
 
@@ -79,12 +82,12 @@ export default {
   data() {
     return {
       questions: [],
-      unansweredQuestions: [], // Array to store unanswered questions
-      answeredQuestions: [],   // Array to store answered questions
-      showUnanswered: false,   // Flag to toggle display of unanswered questions
+      unansweredQuestions: [], 
+      answeredQuestions: [],   
+      showUnanswered: false,  
       currentPageUnanswered: 1,
       currentPageAnswered: 1,
-      pageSize: 5 // Number of questions per page
+      pageSize: 5 
     };
   },
   created() {
@@ -106,7 +109,7 @@ export default {
   methods: {
     async fetchQuestions() {
       try {
-        const data = await axios.get(`${process.env.VUE_APP_API_URL}questions/`)
+        const data = await axios.get(`${process.env.VUE_APP_API_URL}questions/`);
        
         this.questions = data.data.map(question => ({
           ...question,
@@ -117,7 +120,6 @@ export default {
           showAnswer: false 
         }));
         
-       
         this.unansweredQuestions = this.questions.filter(question => !question.answerText);
         this.answeredQuestions = this.questions.filter(question => question.answerText);
 
@@ -138,7 +140,7 @@ export default {
         question.newAnswerText = '';
         question.userId = '';
 
-      
+        
         this.fetchQuestions();
       } catch (error) {
         console.error('Error adding answer:', error);
@@ -156,7 +158,44 @@ export default {
     },
     handleAnsweredPageChange(page) {
       this.currentPageAnswered = page;
-    }
+    },
+    confirmDelete(questionId) {
+      swal({
+        title: 'Are you sure?',
+        text: 'Once deleted, you will not be able to recover this question!',
+        icon: 'warning',
+        buttons: ['Cancel', 'Yes, delete it!'],
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          axios.delete(`${process.env.VUE_APP_API_URL}questions/${questionId}`)
+            .then(response => {
+              if (response.status === 200) {
+                swal('Poof! Your question has been deleted!', {
+                  icon: 'success',
+                });
+                
+                this.fetchQuestions(); 
+              } else {
+                swal('Oops! Something went wrong.', {
+                  icon: 'error',
+                });
+              }
+            })
+            .catch(error => {
+              console.error('Error deleting question:', error);
+              swal('Oops! Something went wrong.', {
+                icon: 'error',
+              });
+            });
+        } else {
+          swal('Your question is safe!', {
+            icon: 'info',
+          });
+        }
+      });
+    },
   }
 };
 </script>

@@ -52,47 +52,47 @@
 
 <script>
   import bcrypt from 'bcryptjs';
-export default {
-  data() {
-    return {
-      activeTab: 'login',
-      loginData: {
-        email: '',
-        password: ''
-      },
-      signupData: {
-        username: '',
-        email: '',
-        password: '',
-        roleId: '1'
-      },
-      adminCode: '',
-      showModal: false
-    };
-  },
-  methods: {
-    async loginUser() {
+
+  export default {
+    data() {
+      return {
+        activeTab: 'login',
+        loginData: {
+          email: '',
+          password: ''
+        },
+        signupData: {
+          username: '',
+          email: '',
+          password: '',
+          roleId: '1'
+        },
+        adminCode: '',
+        showModal: false
+      };
+    },
+    methods: {
+      async loginUser() {
         try {
-          const response = await fetch('http://192.168.33.15:3000/user', {
+          const response = await fetch(`${process.env.VUE_APP_API_URL}user/`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json'
             }
           });
- 
+
           if (!response.ok) {
             throw new Error('Failed to fetch user data');
           }
- 
+
           const users = await response.json();
           const { email, password } = this.loginData;
           const user = users.find(user => user.email === email);
- 
+
           if (user) {
             const isPasswordMatch = await bcrypt.compare(password, user.password);
             if (isPasswordMatch) {
-             
-              this.$router.push({ path: '/homeadmin' }); 
+              this.$router.push({ path: '/homeadmin' });
             } else {
               alert('Invalid password');
             }
@@ -104,81 +104,111 @@ export default {
           alert('Failed to login. Please try again.');
         }
       },
-    async registerUser() {
-      try {
-        if (this.signupData.roleId === '1') {
-          this.showModal = true; 
-        } else {
-          await this.registerUserWithRole();
+      async registerUser() {
+        try {
+          const emailExists = await this.checkEmailExists(this.signupData.email);
+
+          if (emailExists) {
+            alert('This email is already registered. Please use a different email.');
+            return; 
+          }
+
+          if (this.signupData.roleId === '1') {
+            this.showModal = true;
+          } else {
+            await this.registerUserWithRole(); 
+          }
+        } catch (error) {
+          console.error('Error registering user:', error);
+          alert('Failed to register user. Please try again.');
         }
-      } catch (error) {
-        console.error('Error registering user:', error);
-        alert('Failed to register user. Please try again.');
-      }
-    },
-    async registerUserWithRole() {
-      try {
-        const response = await fetch(`${process.env.VUE_APP_API_URL}api/auth/register`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(this.signupData)
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to register user');
-        }
-
-        const responseData = await response.json();
-        alert(responseData.message);
-
-        this.signupData.username = '';
-        this.signupData.email = '';
-        this.signupData.password = '';
-        this.signupData.roleId = '1'; 
-
-      } catch (error) {
-        console.error('Error registering user:', error);
-        alert('Failed to register user. Please try again.');
-      }
-    },
-    checkRoleSelection() {
-     
-    },
-    toggleTab(tab) {
-      this.activeTab = tab;
-    },
-    async submitAdminCode() {
-  try {
-    const response = await fetch('http://192.168.33.31:3000/api/auth/validateAdminCode', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ adminCode: this.adminCode })
-    });
+      async registerUserWithRole() {
+        try {
+          const response = await fetch(`${process.env.VUE_APP_API_URL}api/auth/register`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.signupData)
+          });
 
-    if (!response.ok) {
-      throw new Error('Failed to validate admin code');
+          if (!response.ok) {
+            throw new Error('Failed to register user');
+          }
+
+          const responseData = await response.json();
+          alert(responseData.message);
+
+          this.signupData.username = '';
+          this.signupData.email = '';
+          this.signupData.password = '';
+          this.signupData.roleId = '1';
+
+        } catch (error) {
+          console.error('Error registering user:', error);
+          alert('Failed to register user. Please try again.');
+        }
+      },
+      async checkEmailExists(email) {
+        try {
+          const response = await fetch(`${process.env.VUE_APP_API_URL}user/`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+          }
+
+          const users = await response.json();
+          return users.some(user => user.email === email);
+        } catch (error) {
+          console.error('Ky email eg:', error);
+          return false;
+        }
+      },
+      checkRoleSelection() {
+       
+      },
+      toggleTab(tab) {
+        this.activeTab = tab;
+      },
+      async submitAdminCode() {
+        try {
+          const response = await fetch(`${process.env.VUE_APP_API_URL}api/auth/validateAdminCode`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ adminCode: this.adminCode })
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to validate admin code');
+          }
+
+          const responseData = await response.json();
+          alert(responseData.message);
+
+          this.showModal = false;
+
+          await this.registerUserWithRole();
+        } catch (error) {
+          console.error('Error validating admin code:', error);
+          alert('Failed to validate admin code. Please try again.');
+        }
+      },
+      closeModal() {
+        this.showModal = false;
+      }
     }
-
-    const responseData = await response.json();
-    alert(responseData.message);
-
-
-    this.showModal = false;
-
-  
-    await this.registerUserWithRole();
-  } catch (error) {
-    console.error('Error validating admin code:', error);
-    alert('Failed to validate admin code. Please try again.');
-  }
-},
-  }
-};
+  };
 </script>
+
+
   <style scoped>
   .roli{
    width: 285px;

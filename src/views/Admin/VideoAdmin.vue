@@ -1,25 +1,16 @@
 <template>
-   <div class="butoni">
+  <div>
+    <div class="butoni">
       <ButtonComponent v-if="!showForm" buttonText="Shto Video" @click="toggleForm" />
     </div>
-  <div>
-   
+
     <div>
       <div v-if="showForm">
         <form @submit.prevent="addVideo">
-          <label>Titulli:</label>
-          <input v-model="newVideo.title" class="form-input" required>
-          <label>Linku:</label>
-          <input v-model="newVideo.url" class="form-input" required>
-          <label>Përshkrimi:</label>
-          <textarea v-model="newVideo.description" class="form-input" required></textarea>
-          <label>Kategoria:</label>
-          <input v-model="newVideo.category" class="form-input" required>
-          <div class="shto">
-            <ButtonComponent buttonText="Shto Video" @click="handleCustomButtonClick" />
-          </div>
+          
         </form>
       </div>
+      
       <div v-if="loading">Loading...</div>
       <div v-else>
         <div v-if="filteredVideos.length === 0">
@@ -39,6 +30,7 @@
                 <p>{{ video.description }}</p>
               </div>
             </div>
+            <button @click="showDeleteConfirmation(video.videoId)">Delete</button>
           </div>
         </div>
       </div>
@@ -49,13 +41,14 @@
 <script>
 import axios from 'axios';
 import ButtonComponent from '../../components/ButtonComponent.vue';
+import Swal from 'sweetalert2'; 
 
 export default {
   components: {
     ButtonComponent
   },
   name: 'VideoPage',
-  props: ['searchQuery'], // Receive searchQuery as a prop from parent component
+  props: ['searchQuery'], 
   data() {
     return {
       videos: [],
@@ -88,7 +81,6 @@ export default {
     async fetchVideos() {
       try {
         const response = await axios.get(`${process.env.VUE_APP_API_URL}videos/`);
-       
         this.videos = response.data;
       } catch (error) {
         console.error('Error fetching videos:', error);
@@ -118,15 +110,38 @@ export default {
     },
     goToVideo(url) {
       window.open(url, '_blank');
+    },
+    async deleteVideo(videoId) {
+      try {
+        const response = await axios.delete(`${process.env.VUE_APP_API_URL}videos/${videoId}`);
+        console.log('Video deleted:', response.data.message);
+        
+       
+        this.videos = this.videos.filter(video => video.videoId !== videoId);
+      } catch (error) {
+        console.error('Error deleting video:', error);
+      }
+    },
+    showDeleteConfirmation(videoId) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this video!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.deleteVideo(videoId);
+        }
+      });
     }
   }
 };
 </script>
 
 <style scoped>
-.shto {
-  margin-bottom: 70px;
-}
 .butoni {
   margin-bottom: 70px;
 }
@@ -158,7 +173,6 @@ export default {
   font-size: 48px;
   color: white;
   cursor: pointer;
-  pointer-events: all;
 }
 .video-description p {
   padding: 8px;
