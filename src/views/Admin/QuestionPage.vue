@@ -46,12 +46,14 @@
             <h2 class="question-text">{{ question.questionText }}</h2>
             <div class="answers">
               <div class="question-header">
+                <!-- Delete button for questions with answers -->
+                <button class="delete-button" @click="confirmDelete(question.questionId)">
+                  <i class="fas fa-trash"></i>
+                </button>
                 <div class="toggle-text" @click="toggleAnswer(question)"></div>
                 <span class="toggle-icon" @click="toggleAnswer(question)">
                   {{ question.showAnswer ? '-' : '+' }}
                 </span>
-                <!-- Delete button for questions with answers -->
-                <ButtonComponent buttonText="Delete" @click="confirmDelete(question.questionId)" />
               </div>
               <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
             </div>
@@ -201,7 +203,9 @@ export default {
 </script>
 
 <style scoped>
-form{
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+form {
   margin-bottom: 70px;
 }
 .kthehu button {
@@ -216,6 +220,7 @@ form{
   padding: 15px;
   margin-bottom: 20px;
   border-radius: 5px;
+  position: relative; /* Needed for absolute positioning of delete button */
 }
 
 .question-text {
@@ -257,8 +262,8 @@ form{
   margin-bottom: 15px;
 }
 
-.form-group button{
-  margin-right:910px;
+.form-group button {
+  margin-right: 910px;
 }
 
 .label {
@@ -304,5 +309,21 @@ form{
   color: #888;
   margin-top: 20px;
   font-size: 18px;
+}
+
+/* Delete button styles */
+.delete-button {
+  background: none;
+  border: none;
+  color: #ff0000;
+  cursor: pointer;
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.delete-button:hover {
+  color: #cc0000;
 }
 </style>
