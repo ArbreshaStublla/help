@@ -30,7 +30,7 @@ import axios from 'axios';
 
 export default {
   name: 'VideoPage',
-  props: ['searchQuery'], // Receive searchQuery as a prop from parent component
+  props: ['searchQuery'], 
   data() {
     return {
       videos: [],
@@ -55,7 +55,7 @@ export default {
   methods: {
     async fetchVideos() {
       try {
-        const response = await axios.get('http://192.168.33.15:3000/videos/');
+        const response = await axios.get('http://192.168.33.31:3000/videos/');
         this.videos = response.data;
       } catch (error) {
         console.error('Error fetching videos:', error);

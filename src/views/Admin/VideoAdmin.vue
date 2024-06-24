@@ -87,7 +87,7 @@ export default {
   methods: {
     async fetchVideos() {
       try {
-        const response = await axios.get('http://192.168.33.15:3000/videos/');
+        const response = await axios.get('http://192.168.33.31:3000/videos/');
         this.videos = response.data;
       } catch (error) {
         console.error('Error fetching videos:', error);
@@ -97,7 +97,7 @@ export default {
     },
     async addVideo() {
       try {
-        const response = await axios.post('http://192.168.33.15:3000/videos/add', this.newVideo);
+        const response = await axios.post('http://192.168.33.31:3000/videos/add', this.newVideo);
         console.log('Video added:', response.data);
         this.videos.push(response.data);
         this.resetForm();

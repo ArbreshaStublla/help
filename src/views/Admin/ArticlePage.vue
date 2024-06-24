@@ -32,7 +32,7 @@
         <p><strong>Category:</strong> {{ article.category }}</p>
         <p>{{ article.content }}</p>
         <!-- Display photo if photo_path is available -->
-        <img v-if="article.photo_path" :src="`http://192.168.33.15:3000/${article.photo_path}`"
+        <img v-if="article.photo_path" :src="`http://192.168.33.31:3000/${article.photo_path}`"
              :alt="article.title + ' Photo'" class="article-image">
       </div>
     </div>
@@ -68,7 +68,7 @@ export default {
         formData.append('photo', this.formData.photo);
 
         // Send POST request to create a new article with photo
-        const response = await axios.post('http://192.168.33.15:3000/article', formData, {
+        const response = await axios.post('http://192.168.33.31:3000/article', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -85,7 +85,7 @@ export default {
     async fetchArticles() {
       try {
         // Fetch all articles including their photo paths
-        const response = await axios.get('http://192.168.33.15:3000/article');
+        const response = await axios.get('http://192.168.33.31:3000/article');
         this.articles = response.data;
       } catch (error) {
         console.error('Error fetching articles:', error);

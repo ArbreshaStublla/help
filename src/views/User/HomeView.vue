@@ -68,16 +68,12 @@ export default {
       const components = ['ArticlesPage', 'QuestionsPage', 'VideosPage'];
       this.currentComponent = components[index];
     },
-    handleSearch(query) {
+    handleSearch() {
       // Handle search logic here if needed
-      // This method is called when SearchComponent emits a search event
     }
   }
 };
 </script>
-
-
-
 
 <style scoped>
 .container {

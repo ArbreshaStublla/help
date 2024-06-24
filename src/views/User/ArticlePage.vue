@@ -8,7 +8,7 @@
           <p><strong>Category:</strong> {{ article.category }}</p>
           <p>{{ article.content }}</p>
           <!-- Display photo if photo_path is available -->
-          <img v-if="article.photo_path" :src="`http://192.168.33.15:3000/${article.photo_path}`"
+          <img v-if="article.photo_path" :src="`http://192.168.33.31:3000/${article.photo_path}`"
                :alt="article.title + ' Photo'" class="article-image">
         </div>
       </div>
@@ -28,7 +28,7 @@
       async fetchArticles() {
         try {
           // Fetch all articles including their photo paths
-          const response = await axios.get('http://192.168.33.15:3000/article');
+          const response = await axios.get('http://192.168.33.31:3000/article');
           this.articles = response.data;
         } catch (error) {
           console.error('Error fetching articles:', error);
