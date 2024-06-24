@@ -7,7 +7,19 @@
     <div>
       <div v-if="showForm">
         <form @submit.prevent="addVideo">
-          
+          <label>Title:</label>
+          <input v-model="newVideo.title" class="form-input" required>
+
+          <label>URL:</label>
+          <input v-model="newVideo.url" class="form-input" required>
+
+          <label>Description:</label>
+          <textarea v-model="newVideo.description" class="form-input" rows="4"></textarea>
+
+          <label>Category:</label>
+          <input v-model="newVideo.category" class="form-input">
+
+          <button type="submit">Add Video</button>
         </form>
       </div>
       
@@ -41,7 +53,7 @@
 <script>
 import axios from 'axios';
 import ButtonComponent from '../../components/ButtonComponent.vue';
-import Swal from 'sweetalert2'; 
+import swal from 'sweetalert'; // Importing sweetalert
 
 export default {
   components: {
@@ -116,23 +128,32 @@ export default {
         const response = await axios.delete(`${process.env.VUE_APP_API_URL}videos/${videoId}`);
         console.log('Video deleted:', response.data.message);
         
-       
         this.videos = this.videos.filter(video => video.videoId !== videoId);
       } catch (error) {
         console.error('Error deleting video:', error);
       }
     },
     showDeleteConfirmation(videoId) {
-      Swal.fire({
+      swal({
         title: 'Are you sure?',
         text: 'You will not be able to recover this video!',
         icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-      }).then((result) => {
-        if (result.isConfirmed) {
+        buttons: {
+          cancel: {
+            text: 'Cancel',
+            visible: true,
+            value: null,
+            closeModal: true,
+          },
+          confirm: {
+            text: 'Yes, delete it!',
+            value: true,
+            visible: true,
+            closeModal: true
+          }
+        },
+      }).then((value) => {
+        if (value) {
           this.deleteVideo(videoId);
         }
       });
