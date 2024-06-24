@@ -28,7 +28,7 @@
       async fetchArticles() {
         try {
           // Fetch all articles including their photo paths
-          const response = await axios.get('http://192.168.33.31:3000/article');
+          const response = await axios.get(`${process.env.VUE_APP_API_URL}article/`);
           this.articles = response.data;
         } catch (error) {
           console.error('Error fetching articles:', error);

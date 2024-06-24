@@ -61,9 +61,9 @@ export default {
       this.currentComponent = components[index];
     },
     handleSearch(query) {
-      // Here you can implement logic to handle the search query
+      
       console.log('Search query:', query);
-      // For example, update Vuex state with the search query
+   
       this.$store.commit('updateSearchQuery', query);
     }
   }

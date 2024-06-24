@@ -118,7 +118,7 @@ export default {
     },
     async registerUserWithRole() {
       try {
-        const response = await fetch('http://192.168.33.31:3000/api/auth/register', {
+        const response = await fetch(`${process.env.VUE_APP_API_URL}api/auth/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

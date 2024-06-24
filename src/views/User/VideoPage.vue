@@ -55,10 +55,11 @@ export default {
   methods: {
     async fetchVideos() {
       try {
-        const response = await axios.get('http://192.168.33.31:3000/videos/');
+        const response = await axios.get(`${process.env.VUE_APP_API_URL}videos/`);
         this.videos = response.data;
       } catch (error) {
-        console.error('Error fetching videos:', error);
+        console.error('Error fetching videos:', error.message);
+        console.error('Full error details:', error);
       } finally {
         this.loading = false;
       }
@@ -94,8 +95,7 @@ export default {
   height: 200px; 
   margin-right: 16px;
 }
-
-.video-title{
+.video-title {
   padding-bottom: 10px;
 }
 .play-icon {

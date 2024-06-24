@@ -19,7 +19,7 @@
               {{ item.label }}
             </button>
           </div>
-          <!-- Dynamic component rendering -->
+         
           <component :is="currentComponent" :searchQuery="searchQuery" />
         </v-container>
       </div>
@@ -32,7 +32,7 @@ import { mapState } from 'vuex';
 import SearchComponent from '../../components/SearchComponent.vue';
 import ButtonComponent from '../../components/ButtonComponent.vue';
 
-// Import dynamic components
+
 import ArticlesPage from '../User/ArticlePage.vue';
 import QuestionsPage from './QuestionPage.vue';
 import VideosPage from './VideoPage.vue';
@@ -69,7 +69,7 @@ export default {
       this.currentComponent = components[index];
     },
     handleSearch() {
-      // Handle search logic here if needed
+  
     }
   }
 };

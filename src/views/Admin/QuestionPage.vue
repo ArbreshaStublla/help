@@ -106,17 +106,18 @@ export default {
   methods: {
     async fetchQuestions() {
       try {
-        const data = await axios.get('http://192.168.33.31:3000/questions/');
+        const data = await axios.get(`${process.env.VUE_APP_API_URL}questions/`)
+       
         this.questions = data.data.map(question => ({
           ...question,
           newAnswerText: '',
           userId: '',
           errorMessage: '',
           successMessage: '',
-          showAnswer: false // Initially hide the answer
+          showAnswer: false 
         }));
         
-        // Separate questions into answered and unanswered
+       
         this.unansweredQuestions = this.questions.filter(question => !question.answerText);
         this.answeredQuestions = this.questions.filter(question => question.answerText);
 
@@ -129,7 +130,7 @@ export default {
       question.successMessage = '';
 
       try {
-        await axios.post(`http://192.168.33.31:3000/questions/${question.questionId}/answers`, {
+        await axios.post(`${process.env.VUE_APP_API_URL}questions/${question.questionId}/answers`, {
           answerText: question.newAnswerText,
           userId: parseInt(question.userId)
         });
@@ -137,7 +138,7 @@ export default {
         question.newAnswerText = '';
         question.userId = '';
 
-        // Refresh questions after successful submission
+      
         this.fetchQuestions();
       } catch (error) {
         console.error('Error adding answer:', error);
@@ -200,7 +201,6 @@ form{
   font-size: 16px;
   color: #333;
   cursor: pointer;
-  /* Ensure no text content takes up space */
   width: 0;
   overflow: hidden;
 }
