@@ -23,7 +23,7 @@
          
           <component :is="currentComponent" :searchQuery="searchQuery" />
         </v-container>
-        <ContactComponent/>
+      
       </div>
     </v-main>
   </v-app>
@@ -35,7 +35,7 @@ import SearchComponent from '../../components/SearchComponent.vue';
 import ArticlesPage from './ArticlePage.vue';
 import QuestionsPage from '../Admin/QuestionPage.vue';
 import VideosPage from '../Admin/VideoAdmin.vue';
-import ContactComponent from '@/components/ContactComponent.vue';
+
 
 export default {
   components: {
@@ -43,7 +43,7 @@ export default {
     ArticlesPage,
     QuestionsPage,
     VideosPage,
-    ContactComponent
+   
   },
   computed: mapState(['searchQuery']),
   data() {
