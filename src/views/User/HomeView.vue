@@ -22,6 +22,7 @@
          
           <component :is="currentComponent" :searchQuery="searchQuery" />
         </v-container>
+        <ContactComponent/>
       </div>
     </v-main>
   </v-app>
@@ -36,6 +37,7 @@ import ButtonComponent from '../../components/ButtonComponent.vue';
 import ArticlesPage from '../User/ArticlePage.vue';
 import QuestionsPage from './QuestionPage.vue';
 import VideosPage from './VideoPage.vue';
+import ContactComponent from '@/components/ContactComponent.vue';
 
 export default {
   components: {
@@ -43,7 +45,8 @@ export default {
     ButtonComponent,
     ArticlesPage,
     QuestionsPage,
-    VideosPage
+    VideosPage, 
+    ContactComponent
   },
   computed: {
     ...mapState(['searchQuery'])
