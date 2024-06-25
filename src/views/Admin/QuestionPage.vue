@@ -4,16 +4,13 @@
       <ButtonComponent :buttonText="showUnanswered ? 'Kthehu' : 'Përgjigju pyetjeve'" @click="toggleUnansweredQuestions" />
     </div>
     <div class="question-answer">
-      <!-- Display questions -->
-      <div v-if="filteredQuestions.length === 0" class="no-questions">No questions available.</div>
+      <div v-if="filteredQuestions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
-        <!-- Button to show unanswered questions -->
         
-        <!-- Display filtered questions -->
         <div v-if="showUnanswered">
           <div v-for="question in paginatedUnansweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
-            <!-- Form to submit an answer -->
+         
             <form>
               <div class="form-group">
                 <label for="answerText" class="label">Përgjigja juaj:</label>
@@ -23,30 +20,29 @@
                 <label for="userId" class="label">ID-ja juaj:</label>
                 <input type="text" v-model="question.userId" required class="input" />
               </div>
-              <!-- Move the Submit Answer button under the input fields -->
+             
               <div class="form-group">
                 <ButtonComponent buttonText="Dorëzo Përgjigjen" @click="submitAnswer(question)" />
               </div>
             </form>
-            <!-- Error and success messages for each question -->
+            
             <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
             <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
           </div>
-          <!-- Pagination Component for Unanswered Questions -->
+         
           <PaginationComponent
             :items="unansweredQuestions"
             :pageSize="pageSize"
             @pageChanged="handleUnansweredPageChange"
           />
         </div>
-        
-        <!-- Display existing answers -->
+   
         <div v-else>
           <div v-for="question in paginatedAnsweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <div class="answers">
               <div class="question-header">
-                <!-- Delete button for questions with answers -->
+            
                 <button class="delete-button" @click="confirmDelete(question.questionId)">
                   <i class="fas fa-trash"></i>
                 </button>
@@ -58,7 +54,7 @@
               <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
             </div>
           </div>
-          <!-- Pagination Component for Answered Questions -->
+          
           <PaginationComponent
             :items="answeredQuestions"
             :pageSize="pageSize"
@@ -126,7 +122,7 @@ export default {
         this.answeredQuestions = this.questions.filter(question => question.answerText);
 
       } catch (error) {
-        console.error('Error fetching questions:', error);
+        console.error('Ka ndodhur një gabim gjatë nxjerrjes së pyetjeve:', error);
       }
     },
     async submitAnswer(question) {
@@ -138,15 +134,15 @@ export default {
           answerText: question.newAnswerText,
           userId: parseInt(question.userId)
         });
-        question.successMessage = 'Answer added successfully!';
+        question.successMessage = 'Përgjigja u shtua me sukses!';
         question.newAnswerText = '';
         question.userId = '';
 
         
         this.fetchQuestions();
       } catch (error) {
-        console.error('Error adding answer:', error);
-        question.errorMessage = 'Error adding answer';
+        console.error('Ka ndodhur një problem gjatë shtimit të përgjigjes:', error);
+        question.errorMessage = 'Ka ndodhur një problem gjatë shtimit të përgjigjes';
       }
     },
     toggleAnswer(question) {
@@ -163,10 +159,10 @@ export default {
     },
     confirmDelete(questionId) {
       swal({
-        title: 'Are you sure?',
-        text: 'Once deleted, you will not be able to recover this question!',
+        title: 'A jeni i sigurt?',
+        text: 'Pasi ta fshini, nuk do të mund ta riktheni këtë pyetje!',
         icon: 'warning',
-        buttons: ['Cancel', 'Yes, delete it!'],
+        buttons: ['Anulo', 'Po, fshije!'],
         dangerMode: true,
       })
       .then((willDelete) => {
@@ -174,25 +170,25 @@ export default {
           axios.delete(`${process.env.VUE_APP_API_URL}questions/${questionId}`)
             .then(response => {
               if (response.status === 200) {
-                swal('Poof! Your question has been deleted!', {
+                swal('Pyetja juaj është fshirë me sukses!', {
                   icon: 'success',
                 });
                 
                 this.fetchQuestions(); 
               } else {
-                swal('Oops! Something went wrong.', {
+                swal('Oops! Ndodhi një gabim.', {
                   icon: 'error',
                 });
               }
             })
             .catch(error => {
-              console.error('Error deleting question:', error);
-              swal('Oops! Something went wrong.', {
+              console.error('Ka ndodhur një gabim gjatë fshirjes së pyetjes:', error);
+              swal('Oops! Ndodhi një gabim.', {
                 icon: 'error',
               });
             });
         } else {
-          swal('Your question is safe!', {
+          swal('Pyetja juaj është e sigurtë!', {
             icon: 'info',
           });
         }
@@ -220,7 +216,7 @@ form {
   padding: 15px;
   margin-bottom: 20px;
   border-radius: 5px;
-  position: relative; /* Needed for absolute positioning of delete button */
+  position: relative; 
 }
 
 .question-text {
@@ -311,7 +307,7 @@ form {
   font-size: 18px;
 }
 
-/* Delete button styles */
+
 .delete-button {
   background: none;
   border: none;

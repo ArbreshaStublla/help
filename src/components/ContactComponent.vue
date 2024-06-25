@@ -43,8 +43,8 @@ export default {
 .contact-section {
   background-image: linear-gradient(to right top, #0047ab, #104197, #183c84, #1d3671, #1f305e);
   background-repeat: no-repeat;
-  background-position: right center; /* Position the blob image to the right */
-  background-size: auto 100%; /* Adjust size as needed */
+  background-position: right center; 
+  background-size: auto 100%; 
   height: 70vh;
   color: #fff;
   text-align: center;
@@ -54,14 +54,14 @@ export default {
 .content {
   padding: 5%;
   display: flex;
-  justify-content: space-between; /* Space elements apart */
-  align-items: flex-start; /* Center vertically */
-  max-width: 900px; /* Adjust max width as needed */
-  margin: 20px auto; /* Center content horizontally */
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 900px; 
+  margin: 20px auto; 
 }
 
 .contact-header {
-  text-align: left; /* Align text to the left */
+  text-align: left;
 }
 
 .contact-header h1 {
@@ -76,21 +76,21 @@ export default {
 }
 
 .img1 {
-  width: 80%; /* Adjust width of image container */
-  text-align: right; /* Align image to the right within its container */
+  width: 80%;
+  text-align: right; 
 }
 
 .img1 img {
   margin-top: -80px !important;
-  width: 100%; /* Make the image fill its container */
-  height: auto; /* Maintain aspect ratio */
+  width: 100%; 
+  height: auto; 
 }
 
 .contact-options {
   display: flex;
   justify-content: center;
   gap: 20px;
-  margin-top: -100px; /* Add spacing from the content above */
+  margin-top: -100px; 
 }
 
 .contact-card {
@@ -99,8 +99,8 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #183c84;
   padding: 20px;
-  max-width: 350px; /* Increased max-width */
-  width: 100%; /* Ensures the card takes the full width up to the max-width */
+  max-width: 350px;
+  width: 100%; 
   text-align: left;
   color: #333;
 }
@@ -108,14 +108,14 @@ export default {
 .contact-card .icon {
   display: flex;
   justify-content: center;
-  align-items: center; /* Center vertically */
+  align-items: center;
   font-size: 2em;
   color: #333;
   margin-bottom: 20px;
 }
 
 .contact-card .reversed-icon {
-  transform: rotate(100deg); /* Rotate the icon 180 degrees */
+  transform: rotate(100deg);
 }
 
 .contact-card h2 {
@@ -139,26 +139,26 @@ export default {
 
 .social-icons {
   margin-top: 10px;
-  text-align: center; /* Center the social icons horizontally */
+  text-align: center;
 }
 
 .social-icons a {
   display: inline-block;
   margin-right: 10px;
-  color: #666; /* Default color */
-  font-size: 1.5em; /* Adjust size */
-  transition: color 0.3s ease; /* Smooth transition for color change */
+  color: #666; 
+  font-size: 1.5em; 
+  transition: color 0.3s ease; 
 }
 
 .social-icons a:hover {
-  color: #3b5998; /* Facebook blue */
+  color: #3b5998;
 }
 
 .social-icons a:nth-child(2):hover {
-  color: #c32aa3; /* Instagram gradient */
+  color: #c32aa3;
 }
 
 .social-icons a:nth-child(3):hover {
-  color: #dd4b39; /* Gmail red */
+  color: #dd4b39;
 }
 </style>

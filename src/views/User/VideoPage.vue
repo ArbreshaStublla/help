@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading">Duke u ngarkuar...</div>
     <div v-else>
       <div v-if="filteredVideos.length === 0">
-        <p>No videos found.</p>
+        <p>Nuk është gjetur asnjë video.</p>
       </div>
       <div v-else>
         <div v-for="video in filteredVideos" :key="video.videoId" class="video-card">

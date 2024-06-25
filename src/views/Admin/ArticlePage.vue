@@ -1,31 +1,28 @@
 <template>
   <div>
-    <h2>Create Article</h2>
-   
-    <form @submit.prevent="submitForm" class="article-form">
+    <ButtonComponent v-if="!showForm" buttonText="Shto një post" @click="toggleForm" />
+  </div>
+  <div>
+    <form v-if="showForm" @submit.prevent="submitForm" class="article-form">
       <div class="form-group">
-        <label>Title:</label>
-        <input type="text" v-model="formData.title" required>
+        <label class="form-label">Titulli:</label>
+        <input type="text" v-model="formData.title" required class="form-input">
       </div>
       <div class="form-group">
-        <label>Content:</label>
-        <textarea v-model="formData.content" required></textarea>
+        <label class="form-label">Përmbajtja:</label>
+        <textarea v-model="formData.content" required class="form-input"></textarea>
       </div>
       <div class="form-group">
-        <label>Category:</label>
-        <input type="text" v-model="formData.category" required>
+        <label class="form-label">Kategoria:</label>
+        <input type="text" v-model="formData.category" required class="form-input">
       </div>
       <div class="form-group">
-        <label>Photo:</label>
-        <input type="file" @change="handleFileChange" accept="image/*">
+        <label class="form-label">Foto:</label>
+        <input type="file" @change="handleFileChange" accept="image/*" class="form-input">
       </div>
-      <button type="submit">Submit</button>
+      <ButtonComponent buttonText="Shto" class="komponenti" @click="handleCustomButtonClick" />
     </form>
- 
-    <hr>
- 
-    <h2>Articles</h2>
-   
+
     <div class="article-list">
       <div v-for="article in articles" :key="article.articleId" class="article-item">
         <h3>{{ article.title }}</h3>
@@ -34,20 +31,23 @@
      
         <img v-if="article.photo_path" :src="`http://192.168.33.31:3000/${article.photo_path}`"
              :alt="article.title + ' Photo'" class="article-image">
-        <img v-else src="placeholder.jpg" alt="Placeholder Image" class="article-image"> <!-- Example placeholder image -->
+        <img v-else src="placeholder.jpg" alt="Placeholder Image" class="article-image">
         
-        <!-- Delete button with SweetAlert confirmation -->
         <button @click="confirmDelete(article.articleId)">Delete</button>
       </div>
     </div>
   </div>
 </template>
- 
+
 <script>
 import axios from 'axios';
-import swal from 'sweetalert'; // Import sweetalert
+import swal from 'sweetalert'; 
+import ButtonComponent from '../../components/ButtonComponent.vue';
 
 export default {
+  components: {
+    ButtonComponent
+  },
   data() {
     return {
       formData: {
@@ -56,7 +56,8 @@ export default {
         category: '',
         photo: null
       },
-      articles: []
+      articles: [],
+      showForm: false
     };
   },
   methods: {
@@ -79,14 +80,17 @@ export default {
 
         console.log('Article created:', response.data);
 
-        // Update articles list after creating a new article
+        
         this.fetchArticles();
         
-        // Clear form data after submission
+       
         this.formData.title = '';
         this.formData.content = '';
         this.formData.category = '';
         this.formData.photo = null;
+
+        
+        this.showForm = false;
       } catch (error) {
         console.error('Error creating article:', error);
       }
@@ -100,7 +104,7 @@ export default {
       }
     },
     confirmDelete(articleId) {
-      // Using sweetalert for confirmation
+ 
       swal({
         title: 'Are you sure?',
         text: 'You will not be able to recover this article!',
@@ -111,7 +115,7 @@ export default {
         if (willDelete) {
           try {
             await axios.delete(`${process.env.VUE_APP_API_URL}article/${articleId}`);
-            // Update local articles array after deletion
+        
             this.articles = this.articles.filter(article => article.articleId !== articleId);
             swal('Poof! Your article has been deleted!', {
               icon: 'success',
@@ -126,6 +130,9 @@ export default {
           swal('Your article is safe!');
         }
       });
+    },
+    toggleForm() {
+      this.showForm = !this.showForm; 
     }
   },
   created() {
@@ -133,43 +140,57 @@ export default {
   }
 };
 </script>
- 
+
 <style scoped>
 .article-form {
   max-width: 600px;
   margin: auto;
   padding: 20px;
-  border: 1px solid #ccc;
   border-radius: 5px;
-  background-color: #f9f9f9;
 }
- 
+
+.komponenti{
+  margin-top: 350px;
+}
+
 .form-group {
   margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
 }
- 
-.form-group label {
-  font-weight: bold;
+
+.form-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d1d6;
+  border-radius: 3px;
+  box-sizing: border-box;
 }
- 
+
+
+.form-input[type="file"] {
+  border: none; 
+}
+
 .article-list {
   display: grid;
+  margin-top: 70px;
   gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   list-style: none;
   padding: 0;
 }
- 
+
 .article-item {
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
 }
- 
+
 .article-item h3 {
   margin-top: 0;
 }
- 
+
 .article-image {
   width: 100%;
   height: 200px;

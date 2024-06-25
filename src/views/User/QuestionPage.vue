@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <!-- Form to submit a new question -->
+  
     <div class="add-question">
       <h3 class="answer-title">Shto Pyetje:</h3>
       <form @submit.prevent="submitQuestion">
@@ -17,7 +17,7 @@
     </div>
 
     <div class="question-answer">
-      <!-- Display questions -->
+ 
       <div v-if="filteredQuestions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
         <div v-for="question in paginatedQuestions" :key="question.questionId" class="question">
@@ -26,7 +26,6 @@
             <span class="accordion-icon" :class="{ 'open': question.showAnswer }">+</span>
           </div>
 
-          <!-- Accordion content -->
           <div v-if="question.showAnswer" class="answers">
             <p class="answer" v-if="question.answerText">{{ question.answerText }}</p>
             <div v-else class="no-answers">
@@ -36,14 +35,13 @@
         </div>
       </div>
 
-      <!-- Pagination Component -->
       <PaginationComponent
         :items="filteredQuestions"
         :pageSize="pageSize"
         @pageChanged="handlePageChange"
       />
 
-      <!-- Error and success messages -->
+ 
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <p v-if="successMessage" class="success">{{ successMessage }}</p>
     </div>
@@ -100,8 +98,8 @@ export default {
           showAnswer: false
         }));
       } catch (error) {
-        console.error('Error fetching questions:', error);
-        this.errorMessage = 'Error fetching questions';
+        console.error('Ka ndodhur një gabim gjatë nxjerrjes së pyetjeve:', error);
+        this.errorMessage = 'Ka ndodhur një gabim gjatë nxjerrjes së pyetjeve';
       }
     },
     async submitQuestion() {
@@ -115,14 +113,14 @@ export default {
           userId: 1,
           userEmail: this.userEmail
         });
-        this.successMessage = 'Question added successfully!';
+        this.successMessage = 'Pyetja u shtua me sukses!';
         this.questionText = '';
         this.userEmail = '';
 
         this.fetchQuestions();
       } catch (error) {
-        console.error('Error adding question:', error);
-        this.errorMessage = 'Error adding question';
+        console.error('Ka ndodhur një problem gjatë shtimit të pyetjes:', error);
+        this.errorMessage = 'Ka ndodhur një problem gjatë shtimit të pyetjes';
       }
     },
     toggleAnswer(question) {
