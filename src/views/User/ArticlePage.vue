@@ -1,15 +1,16 @@
 <template>
-  <div>
-    <h2>Articles</h2>
-   
+  <div class="forma1">
     <div class="article-list">
-      <div v-for="article in articles" :key="article.articleId" class="article-item">
-        <h3>{{ article.title }}</h3>
-        <p><strong>Category:</strong> {{ article.category }}</p>
-        <p>{{ article.content }}</p>
-       
-        <img v-if="article.photo_path" :src="`http://192.168.33.31:3000/${article.photo_path}`"
-             :alt="article.title + ' Photo'" class="article-image">
+      <div v-for="(article, index) in articles" :key="article.articleId" class="article-item" :class="{ 'second-in-row': index % 2 !== 0 }">
+        <div class="article-image-container">
+          <img v-if="article.photo_path" :src="`http://192.168.33.31:3000/${article.photo_path}`" :alt="article.title + ' Photo'" class="article-image">
+          <img v-else src="placeholder.jpg" alt="Placeholder Image" class="article-image">
+        </div>
+        <div class="article-content-right">
+          <h3>{{ article.title }}</h3>
+          <p><strong>Category:</strong> {{ article.category }}</p>
+          <p>{{ article.content }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -27,27 +28,27 @@ export default {
   methods: {
     async fetchArticles() {
       try {
-      
         const response = await axios.get(`${process.env.VUE_APP_API_URL}article/`);
         this.articles = response.data;
       } catch (error) {
         console.error('Error fetching articles:', error);
-       
       }
     }
   },
   created() {
-
     this.fetchArticles();
   }
 };
 </script>
 
 <style scoped>
+.forma1{
+  margin-top: 30px;
+}
 .article-list {
   display: grid;
   gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr)); 
   list-style: none;
   padding: 0;
 }
@@ -55,18 +56,41 @@ export default {
 .article-item {
   border: 1px solid #ccc;
   border-radius: 5px;
-  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden; 
+  position: relative;
+  margin-bottom: 20px;
 }
 
-.article-item h3 {
-  margin-top: 0;
+.article-item.second-in-row {
+  margin-left: auto; 
+}
+
+.article-image-container {
+  flex: 0 0 40%; 
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
 }
 
 .article-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  width: 100%; 
+  height: auto; 
+  object-fit: cover; 
+  border-radius: 5px; 
+}
+
+.article-content-right {
+  flex: 1; 
+  padding: 10px;
+}
+
+.article-content-right h3 {
+  margin-top: 0;
+}
+
+.article-content-right p {
+  margin: 0 0 10px; 
 }
 </style>

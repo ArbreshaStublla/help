@@ -22,7 +22,7 @@
         <div class="icon">
           <i class="fas fa-comments"></i>
         </div>
-        <h2>Kontaktoni Mbështetjen për Konsumatorë</h2>
+        <h2>Kontaktoni Mbështetjen për Klientë</h2>
         <div class="social-icons">
           <a href="https://www.facebook.com/profile.php?id=61551479152730" target="_blank"><i class="fab fa-facebook-square"></i></a>
           <a href="https://www.instagram.com/cmdsoftwares/" target="_blank"><i class="fab fa-instagram"></i></a>
@@ -41,7 +41,7 @@ export default {
 
 <style scoped>
 .contact-section {
-  background-image: linear-gradient(to right top, #0047ab, #104197, #183c84, #1d3671, #1f305e);
+  background-image: linear-gradient(to right top, #4776d0, #0082cc, #008bc1, #0091b3, #3495a4);
   background-repeat: no-repeat;
   background-position: right center; 
   background-size: auto 100%; 
