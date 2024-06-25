@@ -2,7 +2,7 @@
   <div>
     <ButtonComponent v-if="!showForm" buttonText="Shto një post" @click="toggleForm" />
   </div>
-  <div>
+  <div class="forma">
     <form v-if="showForm" @submit.prevent="submitForm" class="article-form">
       <div class="form-group">
         <label class="form-label">Titulli:</label>
@@ -24,18 +24,17 @@
     </form>
 
     <div class="article-list">
-      <div v-for="article in articles" :key="article.articleId" class="article-item">
-        <h3>{{ article.title }}</h3>
-        <p><strong>Category:</strong> {{ article.category }}</p>
-        <p>{{ article.content }}</p>
-     
-        <img v-if="article.photo_path" :src="`http://192.168.33.31:3000/${article.photo_path}`"
-             :alt="article.title + ' Photo'" class="article-image">
-        <img v-else src="placeholder.jpg" alt="Placeholder Image" class="article-image">
-        
-        <button @click="confirmDelete(article.articleId)" class="delete-button">
-          <i class="fas fa-trash-alt"></i>
-        </button>
+      <div v-for="(article, index) in articles" :key="article.articleId" class="article-item" :class="{ 'second-in-row': index % 2 !== 0 }">
+        <div class="article-image-container">
+          <img v-if="article.photo_path" :src="`http://192.168.33.31:3000/${article.photo_path}`"
+               :alt="article.title + ' Photo'" class="article-image">
+          <img v-else src="placeholder.jpg" alt="Placeholder Image" class="article-image">
+        </div>
+        <div class="article-content-right">
+          <h3>{{ article.title }}</h3>
+          <p><strong>Kategoria:</strong> {{ article.category }}</p>
+          <p>{{ article.content }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -80,7 +79,7 @@ export default {
           }
         });
 
-        console.log('Article created:', response.data);
+        console.log('Artikulli u krijua:', response.data);
 
         this.fetchArticles();
         
@@ -91,7 +90,7 @@ export default {
 
         this.showForm = false;
       } catch (error) {
-        console.error('Error creating article:', error);
+        console.error('Gabim gjatë krijimit të artikullit:', error);
       }
     },
     async fetchArticles() {
@@ -99,13 +98,13 @@ export default {
         const response = await axios.get(`${process.env.VUE_APP_API_URL}article/`);
         this.articles = response.data;
       } catch (error) {
-        console.error('Error fetching articles:', error);
+        console.error('Gabim gjatë marrjes së artikujve:', error);
       }
     },
     confirmDelete(articleId) {
       swal({
-        title: 'Are you sure?',
-        text: 'You will not be able to recover this article!',
+        title: 'A jeni të sigurt?',
+        text: 'Nuk do të keni mundësi ta riktheni këtë artikull!',
         icon: 'warning',
         buttons: true,
         dangerMode: true,
@@ -115,22 +114,25 @@ export default {
             await axios.delete(`${process.env.VUE_APP_API_URL}article/${articleId}`);
         
             this.articles = this.articles.filter(article => article.articleId !== articleId);
-            swal('Poof! Your article has been deleted!', {
+            swal('Poof! Artikulli është fshirë me sukses!', {
               icon: 'success',
             });
           } catch (error) {
-            console.error('Error deleting article:', error);
-            swal('Oops! Something went wrong while deleting the article!', {
+            console.error('Gabim gjatë fshirjes së artikullit:', error);
+            swal('Oops! Diçka shkoi keq gjatë fshirjes së artikullit!', {
               icon: 'error',
             });
           }
         } else {
-          swal('Your article is safe!');
+          swal('Artikulli është i sigurt!');
         }
       });
     },
     toggleForm() {
       this.showForm = !this.showForm; 
+    },
+    viewMore(article) {
+      console.log(`View more clicked for article: ${article.title}`);
     }
   },
   created() {
@@ -140,6 +142,14 @@ export default {
 </script>
 
 <style scoped>
+.forma{
+  margin-top: 70px;
+}
+
+.komponenti {
+  margin-top: 325px !important;
+}
+
 .article-form {
   margin: auto;
   padding: 20px;
@@ -147,7 +157,7 @@ export default {
 }
 
 .komponenti {
-  margin-top: 350px;
+  margin-top: 20px; 
 }
 
 .form-group {
@@ -170,9 +180,8 @@ export default {
 
 .article-list {
   display: grid;
-  margin-top: 70px;
   gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr)); 
   list-style: none;
   padding: 0;
 }
@@ -180,33 +189,42 @@ export default {
 .article-item {
   border: 1px solid #ccc;
   border-radius: 5px;
-  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden; 
   position: relative;
+  margin-bottom: 20px; 
 }
 
-.article-item h3 {
-  margin-top: 0;
+.article-item.second-in-row {
+  margin-left: auto; 
+}
+
+.article-image-container {
+  flex: 0 0 40%; 
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  height: auto; 
 }
 
 .article-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  max-width: 100%; 
+  max-height: 100%;
+  object-fit: contain; 
+  border-radius: 5px; 
 }
 
-.delete-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #f44336; /* Red color for delete */
+.article-content-right {
+  flex: 1; 
+  padding: 10px;
 }
 
-.delete-button:hover {
-  color: #d32f2f; /* Darker red color on hover */
+.article-content-right h3 {
+  margin-top: 0;
+}
+
+.article-content-right p {
+  margin: 0 0 10px; 
 }
 </style>
