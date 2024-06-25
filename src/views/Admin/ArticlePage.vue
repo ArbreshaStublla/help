@@ -33,7 +33,9 @@
              :alt="article.title + ' Photo'" class="article-image">
         <img v-else src="placeholder.jpg" alt="Placeholder Image" class="article-image">
         
-        <button @click="confirmDelete(article.articleId)">Delete</button>
+        <button @click="confirmDelete(article.articleId)" class="delete-button">
+          <i class="fas fa-trash-alt"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -80,16 +82,13 @@ export default {
 
         console.log('Article created:', response.data);
 
-        
         this.fetchArticles();
         
-       
         this.formData.title = '';
         this.formData.content = '';
         this.formData.category = '';
         this.formData.photo = null;
 
-        
         this.showForm = false;
       } catch (error) {
         console.error('Error creating article:', error);
@@ -104,7 +103,6 @@ export default {
       }
     },
     confirmDelete(articleId) {
- 
       swal({
         title: 'Are you sure?',
         text: 'You will not be able to recover this article!',
@@ -148,7 +146,7 @@ export default {
   border-radius: 5px;
 }
 
-.komponenti{
+.komponenti {
   margin-top: 350px;
 }
 
@@ -165,7 +163,6 @@ export default {
   border-radius: 3px;
   box-sizing: border-box;
 }
-
 
 .form-input[type="file"] {
   border: none; 
@@ -184,6 +181,7 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
+  position: relative;
 }
 
 .article-item h3 {
@@ -196,5 +194,19 @@ export default {
   object-fit: cover;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
+}
+
+.delete-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #f44336; /* Red color for delete */
+}
+
+.delete-button:hover {
+  color: #d32f2f; /* Darker red color on hover */
 }
 </style>

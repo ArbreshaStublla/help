@@ -16,7 +16,7 @@
         </div>
         <h2>Komunikoni me ne</h2>
         <p>A jeni të interesuar për më shumë? Thjesht telefononi për të biseduar me ne.</p>
-        <a href="tel:+38344631998">+38344631998</a>
+        <a href="tel:+38344631998" target="_blank">+38344631998</a>
       </div>
       <div class="contact-card">
         <div class="icon">
@@ -24,9 +24,9 @@
         </div>
         <h2>Kontaktoni Mbështetjen për Konsumatorë</h2>
         <div class="social-icons">
-          <a href="https://www.facebook.com/profile.php?id=61551479152730"><i class="fab fa-facebook-square"></i></a>
-          <a href="https://www.instagram.com/cmdsoftwares/"><i class="fab fa-instagram"></i></a>
-          <a href="mailto:info@cmd-ks.com"><i class="fas fa-envelope"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61551479152730" target="_blank"><i class="fab fa-facebook-square"></i></a>
+          <a href="https://www.instagram.com/cmdsoftwares/" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="mailto:info@cmd-ks.com" target="_blank"><i class="fas fa-envelope"></i></a>
         </div>
       </div>
     </div>
