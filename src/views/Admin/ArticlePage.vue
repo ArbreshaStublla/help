@@ -2,7 +2,9 @@
   <div>
     <ButtonComponent v-if="!showForm" buttonText="Shto një post" @click="toggleForm" />
   </div>
+  
   <div class="forma">
+
     <form v-if="showForm" @submit.prevent="submitForm" class="article-form">
       <div class="form-group">
         <label class="form-label">Titulli:</label>
@@ -34,7 +36,11 @@
           <h3>{{ article.title }}</h3>
           <p><strong>Kategoria:</strong> {{ article.category }}</p>
           <p>{{ article.content }}</p>
+          <a href="#" class="read-more-link" @click.prevent="viewMore(article)">Më shumë <i class="fas fa-arrow-right"></i></a>
         </div>
+        <button @click="confirmDelete(article.articleId)" class="delete-button">
+          <i class="fas fa-trash"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -132,6 +138,8 @@ export default {
       this.showForm = !this.showForm; 
     },
     viewMore(article) {
+      // Here you can define the functionality to view more details
+      // For example, navigate to a new page with the full article content
       console.log(`View more clicked for article: ${article.title}`);
     }
   },
@@ -157,7 +165,7 @@ export default {
 }
 
 .komponenti {
-  margin-top: 20px; 
+  margin-top: 20px; /* Adjust top margin as needed */
 }
 
 .form-group {
@@ -181,7 +189,7 @@ export default {
 .article-list {
   display: grid;
   gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr)); 
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr)); /* Adjust width for two articles per row */
   list-style: none;
   padding: 0;
 }
@@ -191,32 +199,31 @@ export default {
   border-radius: 5px;
   display: flex;
   flex-direction: row;
-  overflow: hidden; 
+  overflow: hidden; /* Ensures content doesn't overflow */
   position: relative;
-  margin-bottom: 20px; 
+  margin-bottom: 20px; /* Space between rows */
 }
 
 .article-item.second-in-row {
-  margin-left: auto; 
+  margin-left: auto; /* Push the second article in a row to the right */
 }
 
 .article-image-container {
-  flex: 0 0 40%; 
+  flex: 0 0 40%; /* Adjust width of the image container */
   display: flex;
-  justify-content: center; 
-  align-items: center; 
-  height: auto; 
+  justify-content: center; /* Center the image horizontally */
+  align-items: center; /* Center the image vertically */
 }
 
 .article-image {
-  max-width: 100%; 
-  max-height: 100%;
-  object-fit: contain; 
-  border-radius: 5px; 
+  width: 100%; /* Ensure the image takes up the container width */
+  height: auto; /* Maintain aspect ratio */
+  object-fit: cover; /* Prevent image distortion */
+  border-radius: 5px; /* Rounded corners */
 }
 
 .article-content-right {
-  flex: 1; 
+  flex: 1; /* Take remaining space */
   padding: 10px;
 }
 
@@ -225,6 +232,31 @@ export default {
 }
 
 .article-content-right p {
-  margin: 0 0 10px; 
+  margin: 0 0 10px; /* Adjust spacing */
+}
+
+.read-more-link {
+  color: #007bff; /* Link color */
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.read-more-link i {
+  margin-left: 5px; /* Space between text and icon */
+}
+
+.delete-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #f44336;
+}
+
+.delete-button:hover {
+  color: #d32f2f;
 }
 </style>
