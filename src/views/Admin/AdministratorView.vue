@@ -52,6 +52,7 @@
 
 <script>
   import bcrypt from 'bcryptjs';
+  import { setAuthentication } from '@/router';
 
   export default {
     data() {
@@ -92,6 +93,7 @@
           if (user) {
             const isPasswordMatch = await bcrypt.compare(password, user.password);
             if (isPasswordMatch) {
+              setAuthentication(true);
               this.$router.push({ path: '/homeadmin' });
             } else {
               alert('Invalid password');
