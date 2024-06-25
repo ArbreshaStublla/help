@@ -26,7 +26,7 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminView,
-    meta: { requiresAuth: true } // Add meta field for authentication check
+    meta: { requiresAuth: true } 
   },
   {
     path: '/:pathMatch(.*)*',
@@ -44,9 +44,9 @@ let isAuthenticated = false;
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/administrator'); // Redirect to login if not authenticated and trying to access protected routes
+    next('/administrator'); 
   } else {
-    next(); // Continue to the requested route
+    next(); 
   }
 });
 
