@@ -4,12 +4,10 @@
       <ButtonComponent :buttonText="showUnanswered ? 'Kthehu' : 'Përgjigju pyetjeve'" @click="toggleUnansweredQuestions" />
     </div>
     <div class="question-answer">
-      <!-- Display questions -->
+    
       <div v-if="filteredQuestions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
-        <!-- Button to show unanswered questions -->
        
-        <!-- Display filtered questions -->
         <div v-if="showUnanswered">
           <div v-for="question in paginatedUnansweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
@@ -24,7 +22,7 @@
                 <input type="text" v-model="question.userId" required class="input" />
               </div>
              
-              <div class="form-group">
+              <div class="dorezo">
                 <ButtonComponent buttonText="Dorëzo Përgjigjen" @click="submitAnswer(question)" />
               </div>
             </form>
@@ -40,7 +38,7 @@
           />
         </div>
        
-        <!-- Display existing answers -->
+      
         <div v-else>
           <div v-for="question in paginatedAnsweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>

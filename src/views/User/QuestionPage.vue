@@ -12,7 +12,10 @@
           <label for="userEmail" class="label">Email-i juaj:</label>
           <input v-model="userEmail" type="email" required class="input">
         </div>
-        <ButtonComponent buttonText="Dorëzo Pyetjen" @click="submitQuestion(answer)" class="dorezo"/>
+        <div class="dorezo">
+          <ButtonComponent buttonText="Dorëzo Pyetjen" @click="submitQuestion(answer)" />
+        </div>
+
       </form>
     </div>
 
@@ -136,11 +139,12 @@ export default {
 <style scoped>
 form {
   margin-bottom: 45px;
+  position: relative;
 }
 
 .dorezo {
-  margin-top: 215px;
-  margin-right: 935px;
+position: absolute;
+top: -20px;
 }
 
 .question-answer {
