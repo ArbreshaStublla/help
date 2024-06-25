@@ -26,7 +26,7 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminView,
-    meta: { requiresAuth: true } 
+    meta: { requiresAuth: true }
   },
   {
     path: '/:pathMatch(.*)*',
@@ -40,18 +40,21 @@ const router = createRouter({
   routes
 });
 
-let isAuthenticated = false;
+
+let isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/administrator'); 
+    next('/administrator');
   } else {
-    next(); 
+    next();
   }
 });
 
 export function setAuthentication(value) {
   isAuthenticated = value;
+ 
+  sessionStorage.setItem('isAuthenticated', value);
 }
 
 export default router;
