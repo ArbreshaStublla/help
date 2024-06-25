@@ -143,7 +143,6 @@ export default {
 
 <style scoped>
 .article-form {
-  max-width: 600px;
   margin: auto;
   padding: 20px;
   border-radius: 5px;
