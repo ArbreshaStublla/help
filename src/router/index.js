@@ -15,7 +15,7 @@ const routes = [
     path: '/homeadmin',
     name: 'homeadmin',
     component: HomeViewAdmin,
-  
+    meta: { requiresAuth: true }
   },
   {
     path: '/administrator',
