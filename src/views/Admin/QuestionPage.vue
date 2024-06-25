@@ -22,7 +22,7 @@
                 <input type="text" v-model="question.userId" required class="input" />
               </div>
              
-              <div class="dorezo">
+              <div class="form-group">
                 <ButtonComponent buttonText="Dorëzo Përgjigjen" @click="submitAnswer(question)" />
               </div>
             </form>

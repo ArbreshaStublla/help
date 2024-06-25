@@ -1,4 +1,8 @@
-import VideoService from '@/services/videoService';
+// video.js - Vuex store module
+
+import axios from 'axios';
+
+const API_URL = process.env.VUE_APP_API_URL;
 
 export const video = {
   namespaced: true,
@@ -9,7 +13,7 @@ export const video = {
   },
 
   getters: {
-    filteredVideos: (state) => (searchQuery) => {
+    filteredVideos: state => searchQuery => {
       if (!searchQuery) {
         return state.videos;
       } else {
@@ -19,20 +23,40 @@ export const video = {
         );
       }
     },
-    loading: (state) => state.loading,
+    loading: state => state.loading,
   },
 
   actions: {
     async fetchVideos({ commit }) {
       try {
         commit('SET_LOADING', true);
-        const videos = await VideoService.fetchVideos();
-        commit('SET_VIDEOS', videos);
+        const response = await axios.get(`${API_URL}videos/`);
+        commit('SET_VIDEOS', response.data);
       } catch (error) {
-        console.error('Error fetching videos:', error.message);
-        throw error; // Rethrow the error to handle it in the component
+        console.error('Error fetching videos:', error);
+        throw error;
       } finally {
         commit('SET_LOADING', false);
+      }
+    },
+
+    async addVideo({ commit }, newVideo) {
+      try {
+        const response = await axios.post(`${API_URL}videos/add`, newVideo);
+        commit('ADD_VIDEO', response.data); // Assuming response.data is the newly added video
+      } catch (error) {
+        console.error('Error adding video:', error);
+        throw error;
+      }
+    },
+
+    async deleteVideo({ commit }, videoId) {
+      try {
+        await axios.delete(`${API_URL}videos/${videoId}`);
+        commit('DELETE_VIDEO', videoId);
+      } catch (error) {
+        console.error('Error deleting video:', error);
+        throw error;
       }
     },
   },
@@ -40,6 +64,12 @@ export const video = {
   mutations: {
     SET_VIDEOS(state, videos) {
       state.videos = videos;
+    },
+    ADD_VIDEO(state, video) {
+      state.videos.push(video);
+    },
+    DELETE_VIDEO(state, videoId) {
+      state.videos = state.videos.filter(video => video.videoId !== videoId);
     },
     SET_LOADING(state, isLoading) {
       state.loading = isLoading;

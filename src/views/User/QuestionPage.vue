@@ -1,6 +1,5 @@
 <template>
   <v-container>
-  
     <div class="add-question">
       <h3 class="answer-title">Shto Pyetje:</h3>
       <form @submit.prevent="submitQuestion">
@@ -13,20 +12,18 @@
           <input v-model="userEmail" type="email" required class="input">
         </div>
         <div class="dorezo">
-          <ButtonComponent buttonText="Dorëzo Pyetjen" @click="submitQuestion(answer)" />
+          <ButtonComponent buttonText="Dorëzo Pyetjen" @click="submitQuestion" />
         </div>
-
       </form>
     </div>
 
     <div class="question-answer">
- 
       <div v-if="filteredQuestions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
         <div v-for="question in paginatedQuestions" :key="question.questionId" class="question">
           <div class="question-header" @click="toggleAnswer(question)">
             <h2 class="question-text">{{ question.questionText }}</h2>
-            <span class="accordion-icon" :class="{ 'open': question.showAnswer }">+</span>
+            <span class="accordion-icon" :class="{ 'open': question.showAnswer }" @click.stop="toggleAnswer(question)">+</span>
           </div>
 
           <div v-if="question.showAnswer" class="answers">
@@ -44,7 +41,6 @@
         @pageChanged="handlePageChange"
       />
 
- 
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <p v-if="successMessage" class="success">{{ successMessage }}</p>
     </div>
@@ -52,89 +48,52 @@
 </template>
 
 <script>
-import axios from 'axios';
-import ButtonComponent from '../../components/ButtonComponent.vue';
-import PaginationComponent from '../../components/PaginationComponent.vue';
+import { mapState, mapGetters, mapActions } from 'vuex';
+import ButtonComponent from '@/components/ButtonComponent.vue';
+import PaginationComponent from '@/components/PaginationComponent.vue';
+import { debounce } from 'lodash'; 
 
 export default {
   components: {
     ButtonComponent,
-    PaginationComponent
+    PaginationComponent,
   },
   props: ['searchQuery'],
   data() {
     return {
-      questions: [],
       questionText: '',
       userEmail: '',
-      errorMessage: '',
-      successMessage: '',
-      currentPage: 1,
-      pageSize: 5 
     };
+  },
+  computed: {
+    ...mapState('question', ['errorMessage', 'successMessage', 'currentPage', 'pageSize']),
+    ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions']),
   },
   created() {
     this.fetchQuestions();
   },
-  computed: {
-    filteredQuestions() {
-      if (!this.searchQuery) {
-        return this.questions;
-      } else {
-        const query = this.searchQuery.toLowerCase();
-        return this.questions.filter(question =>
-          question.questionText.toLowerCase().includes(query)
-        );
-      }
-    },
-    paginatedQuestions() {
-      const startIndex = (this.currentPage - 1) * this.pageSize;
-      return this.filteredQuestions.slice(startIndex, startIndex + this.pageSize);
-    }
-  },
   methods: {
-    async fetchQuestions() {
-      try {
-        const response = await axios.get(`${process.env.VUE_APP_API_URL}questions/`);
-        this.questions = response.data.map(question => ({
-          ...question,
-          showAnswer: false
-        }));
-      } catch (error) {
-        console.error('Ka ndodhur një gabim gjatë nxjerrjes së pyetjeve:', error);
-        this.errorMessage = 'Ka ndodhur një gabim gjatë nxjerrjes së pyetjeve';
-      }
-    },
-    async submitQuestion() {
-      this.errorMessage = '';
-      this.successMessage = '';
-
-      try {
-        await axios.post(`${process.env.VUE_APP_API_URL}questions/add`,
-       {
-          questionText: this.questionText,
-          userId: 1,
-          userEmail: this.userEmail
-        });
-        this.successMessage = 'Pyetja u shtua me sukses!';
-        this.questionText = '';
-        this.userEmail = '';
-
-        this.fetchQuestions();
-      } catch (error) {
-        console.error('Ka ndodhur një problem gjatë shtimit të pyetjes:', error);
-        this.errorMessage = 'Ka ndodhur një problem gjatë shtimit të pyetjes';
-      }
-    },
+    ...mapActions('question', ['fetchQuestions', 'addQuestion', 'toggleAnswer', 'handlePageChange']),
+  
+    submitQuestion: debounce(async function() {
+      await this.addQuestion({
+        questionText: this.questionText,
+        userId: 1, 
+        userEmail: this.userEmail,
+      });
+      this.questionText = '';
+      this.userEmail = '';
+    }, 500), 
     toggleAnswer(question) {
+      this.toggleAnswerState(question);
+    },
+    toggleAnswerState(question) {
       question.showAnswer = !question.showAnswer;
     },
-    handlePageChange(page) {
-      this.currentPage = page;
-    }
-  }
+  },
 };
 </script>
+
 
 <style scoped>
 form {
@@ -143,8 +102,8 @@ form {
 }
 
 .dorezo {
-position: absolute;
-top: -20px;
+  position: absolute;
+  top: -20px;
 }
 
 .question-answer {

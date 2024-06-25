@@ -2,6 +2,7 @@
 
 import { createStore } from 'vuex';
 import { video } from '../store/video'; 
+import {question} from "../store/question"
 
 export default createStore({
   state: {
@@ -17,5 +18,6 @@ export default createStore({
   },
   modules: {
     video, 
+    question,
   }
 });
