@@ -1,9 +1,9 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/User/HomeView.vue'
-import AdministratorView from "@/views/Admin/AdministratorView"
-import AdminView from "@/views/Admin/AdminPage.vue"
-import NotFound from "../components/ErrorPage.vue"  
-import HomeViewAdmin from "@/views/Admin/HomeViewAdmin"
+import { createRouter, createWebHistory } from 'vue-router';
+import HomeView from '@/views/User/HomeView.vue';
+import AdministratorView from "@/views/Admin/AdministratorView.vue";
+import AdminView from "@/views/Admin/AdminPage.vue";
+import NotFound from "../components/ErrorPage.vue";
+import HomeViewAdmin from "@/views/Admin/HomeViewAdmin.vue";
 
 const routes = [
   {
@@ -14,7 +14,8 @@ const routes = [
   {
     path: '/homeadmin',
     name: 'homeadmin',
-    component: HomeViewAdmin
+    component: HomeViewAdmin,
+  
   },
   {
     path: '/administrator',
@@ -24,18 +25,31 @@ const routes = [
   {
     path: '/admin',
     name: 'admin',
-    component: AdminView
+    component: AdminView,
+    meta: { requiresAuth: true }
   },
   {
-    path: '/:pathMatch(.*)*',  
+    path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFound
   }
-]
+];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
-})
+});
+
+
+let isAuthenticated = false;
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    
+    next('/administrator');
+  } else {
+    next(); 
+  }
+});
 
 export default router;

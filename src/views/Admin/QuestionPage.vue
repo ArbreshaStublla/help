@@ -5,10 +5,10 @@
     </div>
     <div class="question-answer">
       <!-- Display questions -->
-      <div v-if="filteredQuestions.length === 0" class="no-questions">No questions available.</div>
+      <div v-if="filteredQuestions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
         <!-- Button to show unanswered questions -->
-        
+       
         <!-- Display filtered questions -->
         <div v-if="showUnanswered">
           <div v-for="question in paginatedUnansweredQuestions" :key="question.questionId" class="question">
@@ -39,7 +39,7 @@
             @pageChanged="handleUnansweredPageChange"
           />
         </div>
-        
+       
         <!-- Display existing answers -->
         <div v-else>
           <div v-for="question in paginatedAnsweredQuestions" :key="question.questionId" class="question">
@@ -69,13 +69,13 @@
     </div>
   </v-container>
 </template>
-
+ 
 <script>
 import axios from 'axios';
-import swal from 'sweetalert'; 
+import swal from 'sweetalert';
 import ButtonComponent from '../../components/ButtonComponent.vue';
 import PaginationComponent from '../../components/PaginationComponent.vue';
-
+ 
 export default {
   components: {
     ButtonComponent,
@@ -84,12 +84,12 @@ export default {
   data() {
     return {
       questions: [],
-      unansweredQuestions: [], 
-      answeredQuestions: [],   
+      unansweredQuestions: [],
+      answeredQuestions: [],  
       showUnanswered: false,  
       currentPageUnanswered: 1,
       currentPageAnswered: 1,
-      pageSize: 5 
+      pageSize: 5
     };
   },
   created() {
@@ -119,34 +119,34 @@ export default {
           userId: '',
           errorMessage: '',
           successMessage: '',
-          showAnswer: false 
+          showAnswer: false
         }));
-        
+       
         this.unansweredQuestions = this.questions.filter(question => !question.answerText);
         this.answeredQuestions = this.questions.filter(question => question.answerText);
-
+ 
       } catch (error) {
-        console.error('Error fetching questions:', error);
+        console.error('Ka ndodhur një gabim gjatë nxjerrjes së pyetjeve:', error);
       }
     },
     async submitAnswer(question) {
       question.errorMessage = '';
       question.successMessage = '';
-
+ 
       try {
         await axios.post(`${process.env.VUE_APP_API_URL}questions/${question.questionId}/answers`, {
           answerText: question.newAnswerText,
           userId: parseInt(question.userId)
         });
-        question.successMessage = 'Answer added successfully!';
+        question.successMessage = 'Përgjigja u shtua me sukses!';
         question.newAnswerText = '';
         question.userId = '';
-
-        
+ 
+       
         this.fetchQuestions();
       } catch (error) {
-        console.error('Error adding answer:', error);
-        question.errorMessage = 'Error adding answer';
+        console.error('Ka ndodhur një problem gjatë shtimit të përgjigjes:', error);
+        question.errorMessage = 'Ka ndodhur një problem gjatë shtimit të përgjigjes';
       }
     },
     toggleAnswer(question) {
@@ -163,10 +163,10 @@ export default {
     },
     confirmDelete(questionId) {
       swal({
-        title: 'Are you sure?',
-        text: 'Once deleted, you will not be able to recover this question!',
+        title: 'A jeni i sigurt?',
+        text: 'Pasi ta fshini, nuk do të mund ta riktheni këtë pyetje!',
         icon: 'warning',
-        buttons: ['Cancel', 'Yes, delete it!'],
+        buttons: ['Anulo', 'Po, fshije!'],
         dangerMode: true,
       })
       .then((willDelete) => {
@@ -174,25 +174,25 @@ export default {
           axios.delete(`${process.env.VUE_APP_API_URL}questions/${questionId}`)
             .then(response => {
               if (response.status === 200) {
-                swal('Poof! Your question has been deleted!', {
+                swal('Pyetja juaj është fshirë me sukses!', {
                   icon: 'success',
                 });
-                
-                this.fetchQuestions(); 
+               
+                this.fetchQuestions();
               } else {
-                swal('Oops! Something went wrong.', {
+                swal('Oops! Ndodhi një gabim.', {
                   icon: 'error',
                 });
               }
             })
             .catch(error => {
-              console.error('Error deleting question:', error);
-              swal('Oops! Something went wrong.', {
+              console.error('Ka ndodhur një gabim gjatë fshirjes së pyetjes:', error);
+              swal('Oops! Ndodhi një gabim.', {
                 icon: 'error',
               });
             });
         } else {
-          swal('Your question is safe!', {
+          swal('Pyetja juaj është e sigurtë!', {
             icon: 'info',
           });
         }
@@ -201,10 +201,10 @@ export default {
   }
 };
 </script>
-
+ 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
-
+ 
 form {
   margin-bottom: 70px;
 }
@@ -214,33 +214,33 @@ form {
 .question-answer {
   margin-top: 60px;
 }
-
+ 
 .question {
   border: 1px solid #ccc;
   padding: 15px;
   margin-bottom: 20px;
   border-radius: 5px;
-  position: relative; /* Needed for absolute positioning of delete button */
+  position: relative; 
 }
-
+ 
 .question-text {
   font-size: 18px;
   margin-bottom: 10px;
 }
-
+ 
 .question-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   cursor: pointer;
 }
-
+ 
 .toggle-icon {
   font-size: 24px;
   color: #666;
-  margin-bottom: 15px; 
+  margin-bottom: 15px;
 }
-
+ 
 .toggle-text {
   font-size: 16px;
   color: #333;
@@ -248,31 +248,31 @@ form {
   width: 0;
   overflow: hidden;
 }
-
+ 
 .answers {
   margin-top: 10px;
 }
-
+ 
 .answer {
   margin-bottom: 5px;
   color: #444;
 }
-
+ 
 .form-group {
   margin-bottom: 15px;
 }
-
+ 
 .form-group button {
   margin-right: 910px;
 }
-
+ 
 .label {
   display: block;
   font-size: 16px;
   margin-bottom: 5px;
   color: #333;
 }
-
+ 
 .input {
   width: 100%;
   padding: 10px;
@@ -280,7 +280,7 @@ form {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
+ 
 .button {
   padding: 10px 20px;
   font-size: 16px;
@@ -290,28 +290,28 @@ form {
   border-radius: 5px;
   cursor: pointer;
 }
-
+ 
 .button:hover {
   background-color: #45a049;
 }
-
+ 
 .error {
   color: red;
   margin-top: 10px;
 }
-
+ 
 .success {
   color: green;
   margin-top: 10px;
 }
-
+ 
 .no-questions {
   color: #888;
   margin-top: 20px;
   font-size: 18px;
 }
+ 
 
-/* Delete button styles */
 .delete-button {
   background: none;
   border: none;
@@ -322,7 +322,7 @@ form {
   top: 10px;
   right: 10px;
 }
-
+ 
 .delete-button:hover {
   color: #cc0000;
 }
