@@ -1,6 +1,7 @@
 // store/index.js
 
 import { createStore } from 'vuex';
+import { video } from '../store/video'; 
 
 export default createStore({
   state: {
@@ -12,9 +13,9 @@ export default createStore({
     }
   },
   actions: {
-    // Optional actions
+   
   },
   modules: {
-    // Optional modules
+    video, 
   }
 });

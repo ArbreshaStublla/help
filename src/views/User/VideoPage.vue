@@ -2,10 +2,10 @@
   <div>
     <div v-if="loading">Duke u ngarkuar...</div>
     <div v-else>
-      <div v-if="filteredVideos.length === 0">
+      <div v-if="filteredVideos && filteredVideos.length === 0">
         <p>Nuk është gjetur asnjë video.</p>
       </div>
-      <div v-else>
+      <div v-else-if="filteredVideos && filteredVideos.length > 0">
         <div v-for="video in filteredVideos" :key="video.videoId" class="video-card">
           <h4 class="video-title">{{ video.title }}</h4>
           <div class="video-content">
@@ -25,22 +25,17 @@
   </div>
 </template>
 
+
 <script>
-import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'VideoPage',
-  props: ['searchQuery'], 
-  data() {
-    return {
-      videos: [],
-      loading: true,
-    };
-  },
-  created() {
-    this.fetchVideos();
-  },
   computed: {
+    ...mapState({
+      videos: state => state.video.videos,
+      loading: state => state.video.loading
+    }),
     filteredVideos() {
       if (!this.searchQuery) {
         return this.videos;
@@ -50,26 +45,20 @@ export default {
           video.title.toLowerCase().includes(query)
         );
       }
-    }
+    },
   },
   methods: {
-    async fetchVideos() {
-      try {
-        const response = await axios.get(`${process.env.VUE_APP_API_URL}videos/`);
-        this.videos = response.data;
-      } catch (error) {
-        console.error('Error fetching videos:', error.message);
-        console.error('Full error details:', error);
-      } finally {
-        this.loading = false;
-      }
-    },
+    ...mapActions('video', ['fetchVideos']),
     goToVideo(url) {
       window.open(url, '_blank');
-    }
-  }
+    },
+  },
+  created() {
+    this.fetchVideos();
+  },
 };
 </script>
+
 
 <style scoped>
 .shto {
