@@ -1,13 +1,13 @@
 <template>
   <div>
     <h2>Articles</h2>
-    <!-- Display list of articles with their photos -->
+   
     <div class="article-list">
       <div v-for="article in articles" :key="article.articleId" class="article-item">
         <h3>{{ article.title }}</h3>
         <p><strong>Category:</strong> {{ article.category }}</p>
         <p>{{ article.content }}</p>
-        <!-- Display photo if photo_path is available -->
+       
         <img v-if="article.photo_path" :src="`http://192.168.33.31:3000/${article.photo_path}`"
              :alt="article.title + ' Photo'" class="article-image">
       </div>
@@ -27,17 +27,17 @@ export default {
   methods: {
     async fetchArticles() {
       try {
-        // Fetch all articles including their photo paths
+      
         const response = await axios.get(`${process.env.VUE_APP_API_URL}article/`);
         this.articles = response.data;
       } catch (error) {
         console.error('Error fetching articles:', error);
-        // Handle error, show error message, etc.
+       
       }
     }
   },
   created() {
-    // Fetch articles when the component is created
+
     this.fetchArticles();
   }
 };

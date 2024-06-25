@@ -18,10 +18,10 @@
         </div>
       </form>
     </div>
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading">Duke u ngarkuar...</div>
     <div v-else>
       <div v-if="filteredVideos.length === 0">
-        <p>No videos found.</p>
+        <p>Nuk është gjetur asnjë video.</p>
       </div>
       <div v-else>
         <div v-for="video in filteredVideos" :key="video.videoId" class="video-card">
@@ -36,8 +36,10 @@
             <div class="video-description">
               <p>{{ video.description }}</p>
             </div>
-            <ButtonComponent buttonText="Delete Video" @click="confirmDelete(video.videoId)" />
           </div>
+          <button class="delete-button" @click="confirmDelete(video.videoId)">
+            <i class="fas fa-trash"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -119,10 +121,10 @@ export default {
     },
     confirmDelete(videoId) {
       swal({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this video!",
+        title: "A je i sigurt?",
+        text: "Pasi të fshihet, nuk do të keni mundësi ta riktheni këtë video!",
         icon: "warning",
-        buttons: true,
+        buttons: ['Anulo', 'Po, fshije!'],
         dangerMode: true,
       })
       .then((willDelete) => {
@@ -135,7 +137,7 @@ export default {
       try {
         await axios.delete(`${process.env.VUE_APP_API_URL}videos/${videoId}`);
         this.videos = this.videos.filter(video => video.videoId !== videoId);
-        swal("Poof! Your video has been deleted!", {
+        swal("Videoja juaj është fshirë me sukses!", {
           icon: "success",
         });
       } catch (error) {
@@ -150,6 +152,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
 .shto {
   margin-bottom: 70px;
 }
@@ -160,6 +164,7 @@ export default {
   border: 1px solid #ddd;
   padding: 16px;
   margin: 16px 0;
+  position: relative;
 }
 .video-content {
   display: flex;
@@ -212,5 +217,18 @@ form button {
   border: 2px solid #1b4d3e;
   padding: 10px 20px;
   cursor: pointer;
+}
+.delete-button {
+  background: none;
+  border: none;
+  color: #ff0000;
+  cursor: pointer;
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.delete-button:hover {
+  color: #cc0000;
 }
 </style>

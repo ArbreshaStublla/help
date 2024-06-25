@@ -1,4 +1,3 @@
-<!-- SearchComponent.vue -->
 
 <template>
   <div class="search-container">

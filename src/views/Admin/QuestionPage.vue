@@ -13,7 +13,7 @@
         <div v-if="showUnanswered">
           <div v-for="question in paginatedUnansweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
-            <!-- Form to submit an answer -->
+         
             <form>
               <div class="form-group">
                 <label for="answerText" class="label">Përgjigja juaj:</label>
@@ -23,16 +23,16 @@
                 <label for="userId" class="label">ID-ja juaj:</label>
                 <input type="text" v-model="question.userId" required class="input" />
               </div>
-              <!-- Move the Submit Answer button under the input fields -->
+             
               <div class="form-group">
                 <ButtonComponent buttonText="Dorëzo Përgjigjen" @click="submitAnswer(question)" />
               </div>
             </form>
-            <!-- Error and success messages for each question -->
+            
             <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
             <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
           </div>
-          <!-- Pagination Component for Unanswered Questions -->
+         
           <PaginationComponent
             :items="unansweredQuestions"
             :pageSize="pageSize"
@@ -46,7 +46,7 @@
             <h2 class="question-text">{{ question.questionText }}</h2>
             <div class="answers">
               <div class="question-header">
-                <!-- Delete button for questions with answers -->
+            
                 <button class="delete-button" @click="confirmDelete(question.questionId)">
                   <i class="fas fa-trash"></i>
                 </button>
@@ -58,7 +58,7 @@
               <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
             </div>
           </div>
-          <!-- Pagination Component for Answered Questions -->
+          
           <PaginationComponent
             :items="answeredQuestions"
             :pageSize="pageSize"
