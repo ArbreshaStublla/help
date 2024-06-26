@@ -21,7 +21,7 @@
         <label class="form-label">Foto:</label>
         <input type="file" @change="handleFileChange" accept="image/*" class="form-input">
       </div>
-      <ButtonComponent buttonText="Shto" class="komponenti" @click="submitForm" />
+      <ButtonComponent buttonText="Shto" class="komponenti" />
     </form>
 
     <div class="article-list">
@@ -43,12 +43,12 @@
       </div>
     </div>
 
+    <!-- Pagination component -->
     <PaginationComponent
-      v-if="articles.length > pageSize"
-      :total-items="articles.length"
+      v-if="articles.length > 0"
+      :items="articles"
       :page-size="pageSize"
-      :current-page="currentPage"
-      @page-changed="handlePageChange"
+      @pageChanged="pageChanged"
     />
   </div>
 </template>
@@ -57,12 +57,12 @@
 import axios from 'axios';
 import swal from 'sweetalert'; 
 import ButtonComponent from '../../components/ButtonComponent.vue';
-import PaginationComponent from '../../components/PaginationComponent.vue'; // Adjust path as needed
+import PaginationComponent from '@/components/PaginationComponent.vue';
 
 export default {
   components: {
     ButtonComponent,
-    PaginationComponent
+    PaginationComponent // Register your pagination component
   },
   data() {
     return {
@@ -73,11 +73,17 @@ export default {
         photo: null
       },
       articles: [],
-      paginatedArticles: [],
       showForm: false,
-      currentPage: 1,
-      pageSize: 5  // Adjust the number of articles per page as needed
+      currentPage: 1, // Track current page
+      pageSize: 6 // Number of articles per page
     };
+  },
+  computed: {
+    // Paginate articles based on currentPage and pageSize
+    paginatedArticles() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      return this.articles.slice(startIndex, startIndex + this.pageSize);
+    }
   },
   methods: {
     handleFileChange(event) {
@@ -99,7 +105,8 @@ export default {
 
         console.log('Artikulli u krijua:', response.data);
 
-        this.fetchArticles();
+        // Update articles list after successful submission
+        this.articles.unshift(response.data); // Add new article to the beginning of the array
         
         this.formData.title = '';
         this.formData.content = '';
@@ -115,7 +122,6 @@ export default {
       try {
         const response = await axios.get(`${process.env.VUE_APP_API_URL}article/`);
         this.articles = response.data;
-        this.paginateArticles();
       } catch (error) {
         console.error('Gabim gjatë marrjes së artikujve:', error);
       }
@@ -133,7 +139,6 @@ export default {
             await axios.delete(`${process.env.VUE_APP_API_URL}article/${articleId}`);
         
             this.articles = this.articles.filter(article => article.articleId !== articleId);
-            this.paginateArticles(); // Update paginated articles after deletion
             swal('Poof! Artikulli është fshirë me sukses!', {
               icon: 'success',
             });
@@ -156,13 +161,8 @@ export default {
       // For example, navigate to a new page with the full article content
       console.log(`View more clicked for article: ${article.title}`);
     },
-    handlePageChange(page) {
+    pageChanged(page) {
       this.currentPage = page;
-      this.paginateArticles();
-    },
-    paginateArticles() {
-      const startIndex = (this.currentPage - 1) * this.pageSize;
-      this.paginatedArticles = this.articles.slice(startIndex, startIndex + this.pageSize);
     }
   },
   created() {
@@ -282,25 +282,7 @@ export default {
   color: #d32f2f;
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.pagination-container {
   margin-top: 20px;
-}
-
-.pagination button {
-  margin: 0 10px;
-  padding: 10px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.pagination button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
 }
 </style>

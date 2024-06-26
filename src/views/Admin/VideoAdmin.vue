@@ -1,9 +1,8 @@
 <template>
-     <div class="butoni">
-      <ButtonComponent v-if="!showForm" buttonText="Shto Video" @click="toggleForm" />
-    </div>
+  <div class="butoni">
+    <ButtonComponent v-if="!showForm" buttonText="Shto Video" @click="toggleForm" />
+  </div>
   <div>
- 
     <div>
       <div v-if="showForm">
         <form @submit.prevent="handleAddVideo">
@@ -26,7 +25,7 @@
           <p>Nuk është gjetur asnjë video.</p>
         </div>
         <div v-else>
-          <div v-for="video in filteredVideos" :key="video.videoId" class="video-card">
+          <div v-for="video in paginatedVideos" :key="video.videoId" class="video-card">
             <h4 class="video-title">{{ video.title }}</h4>
             <div class="video-content">
               <div class="video-thumbnail-container">
@@ -46,17 +45,25 @@
         </div>
       </div>
     </div>
+    <PaginationComponent
+      :items="filteredVideos"
+      :pageSize="pageSize"
+      :currentPage="currentPage"
+      @pageChanged="handlePageChange"
+    />
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
 import ButtonComponent from '@/components/ButtonComponent.vue';
+import PaginationComponent from '@/components/PaginationComponent.vue';
 import swal from 'sweetalert';
 
 export default {
   components: {
-    ButtonComponent
+    ButtonComponent,
+    PaginationComponent,
   },
   name: 'VideoPage',
   data() {
@@ -67,7 +74,9 @@ export default {
         url: '',
         description: '',
         category: ''
-      }
+      },
+      currentPage: 1,
+      pageSize: 5,
     };
   },
   computed: {
@@ -85,6 +94,11 @@ export default {
         );
       }
     },
+    paginatedVideos() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredVideos.slice(start, end);
+    },
   },
   methods: {
     ...mapActions('video', ['fetchVideos', 'addVideo', 'deleteVideo']),
@@ -98,7 +112,6 @@ export default {
         this.showForm = false;
       } catch (error) {
         console.error('Error adding video:', error);
-       
       }
     },
     resetForm() {
@@ -123,6 +136,9 @@ export default {
           this.deleteVideo(videoId);
         }
       });
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
     },
   },
   created() {
