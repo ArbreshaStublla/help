@@ -4,7 +4,7 @@
       <ButtonComponent :buttonText="showUnanswered ? 'Kthehu' : 'Përgjigju pyetjeve'" @click="toggleUnansweredQuestions" />
     </div>
     <div class="question-answer">
-      <div v-if="filteredQuestions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
+      <div v-if="filteredQuestions.length === 0 && !loading" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
         <div v-if="showUnanswered">
           <div v-for="question in paginatedUnansweredQuestions" :key="question.questionId" class="question">
@@ -32,14 +32,16 @@
           />
         </div>
         <div v-else>
-          <div v-for="question in paginatedAnsweredQuestions" :key="question.questionId" class="question">
+          <div v-for="question in filteredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <div class="answers">
               <div class="question-header">
                 <button class="delete-button" @click="confirmDelete(question.questionId)">
                   <i class="fas fa-trash"></i>
                 </button>
-                <div class="toggle-text" @click="toggleAnswer(question)"></div>
+                <div class="toggle-text" @click="toggleAnswer(question)">
+                  {{ question.showAnswer ? '-' : '+' }}
+                </div>
                 <span class="toggle-icon" @click="toggleAnswer(question)">
                   {{ question.showAnswer ? '-' : '+' }}
                 </span>
@@ -48,11 +50,11 @@
             </div>
           </div>
           <PaginationComponent
-        v-if="filteredQuestions.length > 0" 
-        :items="filteredQuestions"
-        :pageSize="pageSize"
-        @pageChanged="handlePageChange"
-      />
+            v-if="filteredQuestions.length > 0"
+            :items="filteredQuestions"
+            :pageSize="pageSize"
+            @pageChanged="handlePageChange"
+          />
         </div>
       </div>
     </div>
@@ -72,7 +74,9 @@ export default {
   },
   data() {
     return {
-      showUnanswered: false,  
+      showUnanswered: false,
+      searchQuery: '', 
+      loading: false,
     };
   },
   created() {
@@ -80,7 +84,7 @@ export default {
   },
   computed: {
     ...mapState('question', ['questions', 'currentPage', 'currentPageUnanswered', 'pageSize', 'errorMessage', 'successMessage']),
-    ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions', 'paginatedUnansweredQuestions', 'paginatedAnsweredQuestions', 'currentPage', 'currentPageUnanswered', 'pageSize']),
+    ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions', 'paginatedUnansweredQuestions', 'paginatedAnsweredQuestions']),
   },
   methods: {
     ...mapActions('question', ['fetchQuestions', 'answerQuestion', 'deleteQuestion', 'handlePageChange', 'handleUnansweredPageChange']),
@@ -139,7 +143,24 @@ export default {
         }
       });
     },
-  }
+  },
+  watch: {
+    searchQuery(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        if (newVal.trim() === '') {
+         
+          this.$store.commit('question/setFilter', null);
+        } else {
+          
+          this.$store.commit('question/setFilter', newVal.trim());
+        }
+      }
+    },
+    questions() {
+     
+      this.loading = false;
+    },
+  },
 };
 </script>
 

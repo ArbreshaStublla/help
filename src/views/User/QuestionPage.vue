@@ -1,5 +1,6 @@
 <template>
   <v-container>
+
     <div class="add-question">
       <h3 class="answer-title">Shto Pyetje:</h3>
       <form @submit.prevent="submitQuestion">
@@ -18,9 +19,9 @@
     </div>
 
     <div class="question-answer">
-      <div v-if="filteredQuestions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
+      <div v-if="filteredQuestions.length === 0 && searchQuery === ''" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
-        <div v-for="question in paginatedQuestions" :key="question.questionId" class="question">
+        <div v-for="question in filteredQuestions" :key="question.questionId" class="question">
           <div class="question-header" @click="toggleAnswer(question)">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <span class="accordion-icon" :class="{ 'open': question.showAnswer }" @click.stop="toggleAnswer(question)">+</span>
@@ -35,12 +36,14 @@
         </div>
       </div>
 
+
       <PaginationComponent
         v-if="filteredQuestions.length > 0" 
         :items="filteredQuestions"
         :pageSize="pageSize"
         @pageChanged="handlePageChange"
       />
+
 
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <p v-if="successMessage" class="success">{{ successMessage }}</p>
@@ -70,12 +73,23 @@ export default {
   computed: {
     ...mapState('question', ['errorMessage', 'successMessage', 'currentPage', 'pageSize']),
     ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions']),
+
+    filteredQuestions() {
+      const query = this.searchQuery.toLowerCase().trim();
+      if (!query) return this.$store.state.question.questions; 
+
+      return this.$store.state.question.questions.filter(question => {
+        const questionText = question.questionText.toLowerCase();
+        return questionText.includes(query);
+      });
+    },
   },
   created() {
-    this.fetchQuestions();
+    this.fetchQuestions(); 
   },
   methods: {
     ...mapActions('question', ['fetchQuestions', 'addQuestion', 'toggleAnswer', 'handlePageChange']),
+    
 
     submitQuestion: debounce(async function() {
       this.isSubmitting = true;
@@ -83,7 +97,7 @@ export default {
       try {
         await this.addQuestion({
           questionText: this.questionText,
-          userId: 1,
+          userId: 1, 
           userEmail: this.userEmail,
         });
         this.questionText = '';
@@ -95,6 +109,8 @@ export default {
         this.isSubmitting = false;
       }
     }, 500),
+
+ 
     toggleAnswer(question) {
       this.toggleAnswerState(question);
     },
@@ -104,8 +120,6 @@ export default {
   },
 };
 </script>
-
-
 
 <style scoped>
 form {

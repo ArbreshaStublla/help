@@ -62,7 +62,7 @@ import PaginationComponent from '@/components/PaginationComponent.vue';
 export default {
   components: {
     ButtonComponent,
-    PaginationComponent // Register your pagination component
+    PaginationComponent
   },
   data() {
     return {
@@ -74,12 +74,12 @@ export default {
       },
       articles: [],
       showForm: false,
-      currentPage: 1, // Track current page
-      pageSize: 6 // Number of articles per page
+      currentPage: 1, 
+      pageSize: 6 
     };
   },
   computed: {
-    // Paginate articles based on currentPage and pageSize
+    
     paginatedArticles() {
       const startIndex = (this.currentPage - 1) * this.pageSize;
       return this.articles.slice(startIndex, startIndex + this.pageSize);
@@ -105,8 +105,8 @@ export default {
 
         console.log('Artikulli u krijua:', response.data);
 
-        // Update articles list after successful submission
-        this.articles.unshift(response.data); // Add new article to the beginning of the array
+        
+        this.articles.unshift(response.data); 
         
         this.formData.title = '';
         this.formData.content = '';
@@ -157,8 +157,7 @@ export default {
       this.showForm = !this.showForm; 
     },
     viewMore(article) {
-      // Here you can define the functionality to view more details
-      // For example, navigate to a new page with the full article content
+     
       console.log(`View more clicked for article: ${article.title}`);
     },
     pageChanged(page) {
@@ -187,7 +186,7 @@ export default {
 }
 
 .komponenti {
-  margin-top: 20px; /* Adjust top margin as needed */
+  margin-top: 20px; 
 }
 
 .form-group {
@@ -211,7 +210,7 @@ export default {
 .article-list {
   display: grid;
   gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr)); /* Adjust width for two articles per row */
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr)); 
   list-style: none;
   padding: 0;
 }
@@ -221,31 +220,31 @@ export default {
   border-radius: 5px;
   display: flex;
   flex-direction: row;
-  overflow: hidden; /* Ensures content doesn't overflow */
+  overflow: hidden; 
   position: relative;
-  margin-bottom: 20px; /* Space between rows */
+  margin-bottom: 20px; 
 }
 
 .article-item.second-in-row {
-  margin-left: auto; /* Push the second article in a row to the right */
+  margin-left: auto; 
 }
 
 .article-image-container {
-  flex: 0 0 40%; /* Adjust width of the image container */
+  flex: 0 0 40%; 
   display: flex;
-  justify-content: center; /* Center the image horizontally */
-  align-items: center; /* Center the image vertically */
+  justify-content: center; 
+  align-items: center; 
 }
 
 .article-image {
-  width: 100%; /* Ensure the image takes up the container width */
-  height: auto; /* Maintain aspect ratio */
-  object-fit: cover; /* Prevent image distortion */
-  border-radius: 5px; /* Rounded corners */
+  width: 100%; 
+  height: auto; 
+  object-fit: cover; 
+  border-radius: 5px; 
 }
 
 .article-content-right {
-  flex: 1; /* Take remaining space */
+  flex: 1; 
   padding: 10px;
 }
 
@@ -254,18 +253,18 @@ export default {
 }
 
 .article-content-right p {
-  margin: 0 0 10px; /* Adjust spacing */
+  margin: 0 0 10px;
 }
 
 .read-more-link {
-  color: #007bff; /* Link color */
+  color: #007bff; 
   text-decoration: none;
   display: inline-flex;
   align-items: center;
 }
 
 .read-more-link i {
-  margin-left: 5px; /* Space between text and icon */
+  margin-left: 5px;
 }
 
 .delete-button {

@@ -3,7 +3,6 @@
     <v-main>
       <div class="container">
         <h1 class="title">Si mund të ju ndihmojmë?</h1>
-       
         <SearchComponent @search="handleSearch" />
         <ButtonComponent buttonText="Administrator" @click="handleCustomButtonClick" />
       </div>
@@ -19,7 +18,6 @@
               {{ item.label }}
             </button>
           </div>
-         
           <component :is="currentComponent" :searchQuery="searchQuery" />
         </v-container>
         <ContactComponent/>
@@ -32,8 +30,6 @@
 import { mapState } from 'vuex';
 import SearchComponent from '../../components/SearchComponent.vue';
 import ButtonComponent from '../../components/ButtonComponent.vue';
-
-
 import ArticlesPage from '../User/ArticlePage.vue';
 import QuestionsPage from './QuestionPage.vue';
 import VideosPage from './VideoPage.vue';
@@ -45,7 +41,7 @@ export default {
     ButtonComponent,
     ArticlesPage,
     QuestionsPage,
-    VideosPage, 
+    VideosPage,
     ContactComponent
   },
   computed: {
@@ -72,7 +68,6 @@ export default {
       this.currentComponent = components[index];
     },
     handleSearch() {
-  
     }
   }
 };
