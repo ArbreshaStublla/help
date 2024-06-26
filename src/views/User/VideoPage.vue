@@ -6,7 +6,7 @@
         <p>Nuk është gjetur asnjë video.</p>
       </div>
       <div v-else-if="filteredVideos && filteredVideos.length > 0">
-        <div v-for="video in filteredVideos" :key="video.videoId" class="video-card">
+        <div v-for="video in paginatedVideos" :key="video.videoId" class="video-card">
           <h4 class="video-title">{{ video.title }}</h4>
           <div class="video-content">
             <div class="video-thumbnail-container">
@@ -22,19 +22,34 @@
         </div>
       </div>
     </div>
+    <PaginationComponent
+      :items="filteredVideos"
+      :pageSize="pageSize"
+      :currentPage="currentPage"
+      @pageChanged="handlePageChange"
+    />
   </div>
 </template>
 
-
 <script>
 import { mapState, mapActions } from 'vuex';
+import PaginationComponent from '@/components/PaginationComponent.vue';
 
 export default {
   name: 'VideoPage',
+  components: {
+    PaginationComponent,
+  },
+  data() {
+    return {
+      currentPage: 1,
+      pageSize: 5,
+    };
+  },
   computed: {
     ...mapState({
       videos: state => state.video.videos,
-      loading: state => state.video.loading
+      loading: state => state.video.loading,
     }),
     filteredVideos() {
       if (!this.searchQuery) {
@@ -46,11 +61,19 @@ export default {
         );
       }
     },
+    paginatedVideos() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredVideos.slice(start, end);
+    },
   },
   methods: {
     ...mapActions('video', ['fetchVideos']),
     goToVideo(url) {
       window.open(url, '_blank');
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
     },
   },
   created() {
@@ -59,14 +82,7 @@ export default {
 };
 </script>
 
-
 <style scoped>
-.shto {
-  margin-bottom: 70px;
-}
-.butoni {
-  margin-bottom: 70px;
-}
 .video-card {
   border: 1px solid #ddd;
   padding: 16px;
@@ -80,8 +96,8 @@ export default {
   position: relative;
 }
 .video-thumbnail {
-  width: 300px; 
-  height: 200px; 
+  width: 300px;
+  height: 200px;
   margin-right: 16px;
 }
 .video-title {
@@ -101,26 +117,5 @@ export default {
   padding: 8px;
   margin-top: 50px;
   flex: 1;
-}
-.form-input {
-  border: 1px solid #d1d1d6;
-}
-form {
-  margin-bottom: 20px;
-}
-form label {
-  display: block;
-  margin-bottom: 5px;
-}
-form input, form textarea {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-}
-form button {
-  color: #000;
-  border: 2px solid #1B4D3E;
-  padding: 10px 20px;
-  cursor: pointer;
 }
 </style>

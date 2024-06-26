@@ -2,9 +2,8 @@
   <div>
     <ButtonComponent v-if="!showForm" buttonText="Shto një post" @click="toggleForm" />
   </div>
-  
-  <div class="forma">
 
+  <div class="forma">
     <form v-if="showForm" @submit.prevent="submitForm" class="article-form">
       <div class="form-group">
         <label class="form-label">Titulli:</label>
@@ -22,11 +21,11 @@
         <label class="form-label">Foto:</label>
         <input type="file" @change="handleFileChange" accept="image/*" class="form-input">
       </div>
-      <ButtonComponent buttonText="Shto" class="komponenti" @click="handleCustomButtonClick" />
+      <ButtonComponent buttonText="Shto" class="komponenti" @click="submitForm" />
     </form>
 
     <div class="article-list">
-      <div v-for="(article, index) in articles" :key="article.articleId" class="article-item" :class="{ 'second-in-row': index % 2 !== 0 }">
+      <div v-for="(article, index) in paginatedArticles" :key="article.articleId" class="article-item" :class="{ 'second-in-row': index % 2 !== 0 }">
         <div class="article-image-container">
           <img v-if="article.photo_path" :src="`http://192.168.33.31:3000/${article.photo_path}`"
                :alt="article.title + ' Photo'" class="article-image">
@@ -43,6 +42,14 @@
         </button>
       </div>
     </div>
+
+    <PaginationComponent
+      v-if="articles.length > pageSize"
+      :total-items="articles.length"
+      :page-size="pageSize"
+      :current-page="currentPage"
+      @page-changed="handlePageChange"
+    />
   </div>
 </template>
 
@@ -50,10 +57,12 @@
 import axios from 'axios';
 import swal from 'sweetalert'; 
 import ButtonComponent from '../../components/ButtonComponent.vue';
+import PaginationComponent from '../../components/PaginationComponent.vue'; // Adjust path as needed
 
 export default {
   components: {
-    ButtonComponent
+    ButtonComponent,
+    PaginationComponent
   },
   data() {
     return {
@@ -64,7 +73,10 @@ export default {
         photo: null
       },
       articles: [],
-      showForm: false
+      paginatedArticles: [],
+      showForm: false,
+      currentPage: 1,
+      pageSize: 5  // Adjust the number of articles per page as needed
     };
   },
   methods: {
@@ -103,6 +115,7 @@ export default {
       try {
         const response = await axios.get(`${process.env.VUE_APP_API_URL}article/`);
         this.articles = response.data;
+        this.paginateArticles();
       } catch (error) {
         console.error('Gabim gjatë marrjes së artikujve:', error);
       }
@@ -120,6 +133,7 @@ export default {
             await axios.delete(`${process.env.VUE_APP_API_URL}article/${articleId}`);
         
             this.articles = this.articles.filter(article => article.articleId !== articleId);
+            this.paginateArticles(); // Update paginated articles after deletion
             swal('Poof! Artikulli është fshirë me sukses!', {
               icon: 'success',
             });
@@ -141,6 +155,14 @@ export default {
       // Here you can define the functionality to view more details
       // For example, navigate to a new page with the full article content
       console.log(`View more clicked for article: ${article.title}`);
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
+      this.paginateArticles();
+    },
+    paginateArticles() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      this.paginatedArticles = this.articles.slice(startIndex, startIndex + this.pageSize);
     }
   },
   created() {
@@ -150,7 +172,7 @@ export default {
 </script>
 
 <style scoped>
-.forma{
+.forma {
   margin-top: 70px;
 }
 
@@ -258,5 +280,27 @@ export default {
 
 .delete-button:hover {
   color: #d32f2f;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>
