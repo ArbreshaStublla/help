@@ -130,7 +130,9 @@ export default {
 }
 
 .contact-card a {
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-top: 10px;
   color: #0066cc;
   text-decoration: none;

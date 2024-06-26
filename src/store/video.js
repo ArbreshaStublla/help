@@ -43,7 +43,7 @@ export const video = {
     async addVideo({ commit }, newVideo) {
       try {
         const response = await axios.post(`${API_URL}videos/add`, newVideo);
-        commit('ADD_VIDEO', response.data); // Assuming response.data is the newly added video
+        commit('ADD_VIDEO', response.data); 
       } catch (error) {
         console.error('Error adding video:', error);
         throw error;
