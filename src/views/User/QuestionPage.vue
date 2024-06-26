@@ -12,7 +12,7 @@
           <input v-model="userEmail" type="email" required class="input">
         </div>
         <div class="dorezo">
-          <ButtonComponent buttonText="Dorëzo Pyetjen" @click="submitQuestion" />
+          <ButtonComponent :disabled="isSubmitting" buttonText="Dorëzo Pyetjen" @click="submitQuestion" />
         </div>
       </form>
     </div>
@@ -36,6 +36,7 @@
       </div>
 
       <PaginationComponent
+        v-if="filteredQuestions.length > 0" 
         :items="filteredQuestions"
         :pageSize="pageSize"
         @pageChanged="handlePageChange"
@@ -51,7 +52,7 @@
 import { mapState, mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '@/components/ButtonComponent.vue';
 import PaginationComponent from '@/components/PaginationComponent.vue';
-import { debounce } from 'lodash'; 
+import { debounce } from 'lodash';
 
 export default {
   components: {
@@ -63,6 +64,7 @@ export default {
     return {
       questionText: '',
       userEmail: '',
+      isSubmitting: false,
     };
   },
   computed: {
@@ -74,16 +76,25 @@ export default {
   },
   methods: {
     ...mapActions('question', ['fetchQuestions', 'addQuestion', 'toggleAnswer', 'handlePageChange']),
-  
+
     submitQuestion: debounce(async function() {
-      await this.addQuestion({
-        questionText: this.questionText,
-        userId: 1, 
-        userEmail: this.userEmail,
-      });
-      this.questionText = '';
-      this.userEmail = '';
-    }, 500), 
+      this.isSubmitting = true;
+
+      try {
+        await this.addQuestion({
+          questionText: this.questionText,
+          userId: 1,
+          userEmail: this.userEmail,
+        });
+        this.questionText = '';
+        this.userEmail = '';
+        this.successMessage = 'Pyetja është dërguar me sukses.';
+      } catch (error) {
+        this.errorMessage = 'Ka ndodhur një problem gjatë dërgimit të pyetjes.';
+      } finally {
+        this.isSubmitting = false;
+      }
+    }, 500),
     toggleAnswer(question) {
       this.toggleAnswerState(question);
     },
@@ -93,6 +104,7 @@ export default {
   },
 };
 </script>
+
 
 
 <style scoped>

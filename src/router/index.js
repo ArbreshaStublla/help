@@ -1,9 +1,12 @@
+// router.js
+
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/User/HomeView.vue';
 import AdministratorView from "@/views/Admin/AdministratorView.vue";
 import AdminView from "@/views/Admin/AdminPage.vue";
 import NotFound from "../components/ErrorPage.vue";
 import HomeViewAdmin from "@/views/Admin/HomeViewAdmin.vue";
+
 
 const routes = [
   {
@@ -40,8 +43,7 @@ const router = createRouter({
   routes
 });
 
-
-let isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
+let isAuthenticated = localStorage.getItem('isLoggedIn') === 'true';
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
@@ -53,8 +55,7 @@ router.beforeEach((to, from, next) => {
 
 export function setAuthentication(value) {
   isAuthenticated = value;
- 
-  sessionStorage.setItem('isAuthenticated', value);
+  localStorage.setItem('isLoggedIn', value);
 }
 
 export default router;
