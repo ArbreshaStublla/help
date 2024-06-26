@@ -4,6 +4,7 @@
       <div class="container">
         <h1 class="title">Si mund të ju ndihmojmë?</h1>
        
+        <!-- SearchComponent integration -->
         <SearchComponent @search="handleSearch" />
         <ButtonComponent buttonText="Administrator" @click="handleCustomButtonClick" />
       </div>
@@ -20,6 +21,7 @@
             </button>
           </div>
          
+          <!-- Dynamically render current component based on currentIndex -->
           <component :is="currentComponent" :searchQuery="searchQuery" />
         </v-container>
         <ContactComponent/>
@@ -32,8 +34,6 @@
 import { mapState } from 'vuex';
 import SearchComponent from '../../components/SearchComponent.vue';
 import ButtonComponent from '../../components/ButtonComponent.vue';
-
-
 import ArticlesPage from '../User/ArticlePage.vue';
 import QuestionsPage from './QuestionPage.vue';
 import VideosPage from './VideoPage.vue';
@@ -45,7 +45,7 @@ export default {
     ButtonComponent,
     ArticlesPage,
     QuestionsPage,
-    VideosPage, 
+    VideosPage,
     ContactComponent
   },
   computed: {
@@ -72,7 +72,8 @@ export default {
       this.currentComponent = components[index];
     },
     handleSearch() {
-  
+      // Implement your search functionality here using `this.searchQuery`
+      // For example, filter articles, questions, or videos based on `this.searchQuery`
     }
   }
 };

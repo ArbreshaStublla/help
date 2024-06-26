@@ -46,6 +46,7 @@
       </div>
     </div>
     <PaginationComponent
+      v-if="filteredVideos.length > 0"
       :items="filteredVideos"
       :pageSize="pageSize"
       :currentPage="currentPage"
@@ -82,13 +83,14 @@ export default {
   computed: {
     ...mapState({
       videos: state => state.video.videos,
-      loading: state => state.video.loading
+      loading: state => state.video.loading,
+      searchQuery: state => state.searchQuery,
     }),
     filteredVideos() {
       if (!this.searchQuery) {
         return this.videos;
       } else {
-        const query = this.searchQuery.toLowerCase();
+        const query = this.searchQuery.toLowerCase().trim(); // Trim and convert to lowercase for case-insensitive comparison
         return this.videos.filter(video =>
           video.title.toLowerCase().includes(query)
         );

@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <!-- Add question form -->
     <div class="add-question">
       <h3 class="answer-title">Shto Pyetje:</h3>
       <form @submit.prevent="submitQuestion">
@@ -17,10 +18,11 @@
       </form>
     </div>
 
+    <!-- Display questions -->
     <div class="question-answer">
-      <div v-if="filteredQuestions.length === 0" class="no-questions">Nuk ka pyetje në dispozicion.</div>
+      <div v-if="filteredQuestions.length === 0 && searchQuery === ''" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
-        <div v-for="question in paginatedQuestions" :key="question.questionId" class="question">
+        <div v-for="question in filteredQuestions" :key="question.questionId" class="question">
           <div class="question-header" @click="toggleAnswer(question)">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <span class="accordion-icon" :class="{ 'open': question.showAnswer }" @click.stop="toggleAnswer(question)">+</span>
@@ -35,6 +37,7 @@
         </div>
       </div>
 
+      <!-- Pagination component -->
       <PaginationComponent
         v-if="filteredQuestions.length > 0" 
         :items="filteredQuestions"
@@ -42,6 +45,7 @@
         @pageChanged="handlePageChange"
       />
 
+      <!-- Error and success messages -->
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <p v-if="successMessage" class="success">{{ successMessage }}</p>
     </div>
@@ -70,20 +74,31 @@ export default {
   computed: {
     ...mapState('question', ['errorMessage', 'successMessage', 'currentPage', 'pageSize']),
     ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions']),
+    // Filter questions based on exact match with searchQuery
+    filteredQuestions() {
+      const query = this.searchQuery.toLowerCase().trim(); // Trim and convert to lowercase for case-insensitive comparison
+      if (!query) return this.$store.state.question.questions; // Return all questions if searchQuery is empty
+
+      return this.$store.state.question.questions.filter(question => {
+        const questionText = question.questionText.toLowerCase();
+        return questionText.includes(query); // Check if questionText contains the query
+      });
+    },
   },
   created() {
-    this.fetchQuestions();
+    this.fetchQuestions(); // Fetch questions on component creation
   },
   methods: {
     ...mapActions('question', ['fetchQuestions', 'addQuestion', 'toggleAnswer', 'handlePageChange']),
-
+    
+    // Submit question handler
     submitQuestion: debounce(async function() {
       this.isSubmitting = true;
 
       try {
         await this.addQuestion({
           questionText: this.questionText,
-          userId: 1,
+          userId: 1, // Assuming userId needs to be passed
           userEmail: this.userEmail,
         });
         this.questionText = '';
@@ -95,6 +110,8 @@ export default {
         this.isSubmitting = false;
       }
     }, 500),
+
+    // Toggle answer visibility
     toggleAnswer(question) {
       this.toggleAnswerState(question);
     },
@@ -104,8 +121,6 @@ export default {
   },
 };
 </script>
-
-
 
 <style scoped>
 form {
