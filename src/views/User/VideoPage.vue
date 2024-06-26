@@ -57,7 +57,7 @@ export default {
       if (!this.searchQuery) {
         return this.videos;
       } else {
-        const query = this.searchQuery.toLowerCase().trim(); // Trim and convert to lowercase for case-insensitive comparison
+        const query = this.searchQuery.toLowerCase().trim(); 
         return this.videos.filter(video =>
           video.title.toLowerCase().includes(query)
         );

@@ -3,8 +3,6 @@
     <v-main>
       <div class="container">
         <h1 class="title">Si mund të ju ndihmojmë?</h1>
-       
-        <!-- SearchComponent integration -->
         <SearchComponent @search="handleSearch" />
         <ButtonComponent buttonText="Administrator" @click="handleCustomButtonClick" />
       </div>
@@ -20,8 +18,6 @@
               {{ item.label }}
             </button>
           </div>
-         
-          <!-- Dynamically render current component based on currentIndex -->
           <component :is="currentComponent" :searchQuery="searchQuery" />
         </v-container>
         <ContactComponent/>
@@ -72,8 +68,6 @@ export default {
       this.currentComponent = components[index];
     },
     handleSearch() {
-      // Implement your search functionality here using `this.searchQuery`
-      // For example, filter articles, questions, or videos based on `this.searchQuery`
     }
   }
 };

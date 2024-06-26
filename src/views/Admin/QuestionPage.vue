@@ -75,8 +75,8 @@ export default {
   data() {
     return {
       showUnanswered: false,
-      searchQuery: '', // New state to hold search query
-      loading: false, // Flag to indicate loading state
+      searchQuery: '', 
+      loading: false,
     };
   },
   created() {
@@ -148,16 +148,16 @@ export default {
     searchQuery(newVal, oldVal) {
       if (newVal !== oldVal) {
         if (newVal.trim() === '') {
-          // Reset filtering when search query is empty
+         
           this.$store.commit('question/setFilter', null);
         } else {
-          // Apply filtering when search query is not empty
+          
           this.$store.commit('question/setFilter', newVal.trim());
         }
       }
     },
     questions() {
-      // Reset loading state when questions are updated
+     
       this.loading = false;
     },
   },
