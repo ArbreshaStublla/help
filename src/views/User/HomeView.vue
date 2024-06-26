@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     handleCustomButtonClick() {
-      this.$router.push({ path: '/administrator' });
+      this.$router.push({ path: '/login' });
     },
     handleSliderClick(index) {
       this.currentIndex = index;

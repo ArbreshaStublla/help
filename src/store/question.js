@@ -1,5 +1,3 @@
-// src/store/modules/question.js
-
 import QuestionService from '@/services/questionService';
 
 export const question = {
@@ -9,6 +7,7 @@ export const question = {
     questions: [],
     loading: false,
     currentPage: 1,
+    currentPageUnanswered: 1,
     pageSize: 5,
     errorMessage: '',
     successMessage: '',
@@ -20,7 +19,18 @@ export const question = {
       const startIndex = (state.currentPage - 1) * state.pageSize;
       return state.questions.slice(startIndex, startIndex + state.pageSize);
     },
+    paginatedUnansweredQuestions: state => {
+      const unansweredQuestions = state.questions.filter(q => !q.answerText);
+      const startIndex = (state.currentPageUnanswered - 1) * state.pageSize;
+      return unansweredQuestions.slice(startIndex, startIndex + state.pageSize);
+    },
+    paginatedAnsweredQuestions: state => {
+      const answeredQuestions = state.questions.filter(q => q.answerText);
+      const startIndex = (state.currentPage - 1) * state.pageSize;
+      return answeredQuestions.slice(startIndex, startIndex + state.pageSize);
+    },
     currentPage: state => state.currentPage,
+    currentPageUnanswered: state => state.currentPageUnanswered,
     pageSize: state => state.pageSize,
     errorMessage: state => state.errorMessage,
     successMessage: state => state.successMessage,
@@ -53,9 +63,9 @@ export const question = {
       }
     },
 
-    async answerQuestion({ commit }, { questionId, answerText }) {
+    async answerQuestion({ commit }, { questionId, answerText, userId }) {
       try {
-        await QuestionService.answerQuestion(questionId, { answerText });
+        await QuestionService.answerQuestion(questionId, { answerText, userId });
         commit('SET_ANSWER', { questionId, answerText });
         commit('SET_SUCCESS', 'Answer added successfully.');
       } catch (error) {
@@ -77,25 +87,12 @@ export const question = {
       }
     },
 
-    async toggleAnswer({ commit }, question) {
-      try {
-        await QuestionService.toggleAnswer(question);
-        commit('TOGGLE_ANSWER', question);
-      } catch (error) {
-        commit('SET_ERROR', 'Error toggling answer state.');
-        console.error('Error toggling answer state:', error);
-        throw error;
-      }
+    handlePageChange({ commit }, newPage) {
+      commit('SET_CURRENT_PAGE', newPage);
     },
 
-    async handlePageChange({ commit }, newPage) {
-      try {
-        commit('SET_CURRENT_PAGE', newPage);
-      } catch (error) {
-        commit('SET_ERROR', 'Error handling page change.');
-        console.error('Error handling page change:', error);
-        throw error;
-      }
+    handleUnansweredPageChange({ commit }, newPage) {
+      commit('SET_CURRENT_PAGE_UNANSWERED', newPage);
     },
   },
 
@@ -118,6 +115,9 @@ export const question = {
     SET_CURRENT_PAGE(state, page) {
       state.currentPage = page;
     },
+    SET_CURRENT_PAGE_UNANSWERED(state, page) {
+      state.currentPageUnanswered = page;
+    },
     SET_ANSWER(state, { questionId, answerText }) {
       const question = state.questions.find(q => q.questionId === questionId);
       if (question) {
@@ -126,9 +126,6 @@ export const question = {
     },
     DELETE_QUESTION(state, questionId) {
       state.questions = state.questions.filter(q => q.questionId !== questionId);
-    },
-    TOGGLE_ANSWER(state, question) {
-      question.showAnswer = !question.showAnswer;
     },
   },
 };

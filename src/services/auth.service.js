@@ -1,19 +1,22 @@
-// auth.service.js
-
-import axiosIns from "../Api/axios"; 
-import router from "../router"; 
+import axiosInstance from "../Api/axios";
+import router from "../router";
 
 class AuthService {
   async login(user) {
-    const response = await axiosIns.post("user/login", {
-      userName: user.username,
-      password: user.password,
-    });
+    try {
+      const response = await axiosInstance.post("user/login", {
+        userName: user.username,
+        password: user.password,
+      });
 
-    localStorage.setItem("accessToken", response.data.accessToken);
-    localStorage.setItem("isLoggedIn", true);
+      localStorage.setItem("accessToken", response.data.accessToken);
+      localStorage.setItem("isLoggedIn", true);
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
   }
 
   logout() {
@@ -23,14 +26,20 @@ class AuthService {
     router.push("/login");
   }
 
-  register(item) {
-    return axiosIns.post("authentication/create", {
-      id: item.id,
-      name: item.name,
-      password: item.password,
-      refreshToken: item.refreshToken,
-      refreshTokenExpiryTime: "2024-03-18T13:17:17.008Z",
-    });
+  async register(item) {
+    try {
+      const response = await axiosInstance.post("authentication/create", {
+        id: item.id,
+        name: item.name,
+        password: item.password,
+        refreshToken: item.refreshToken,
+        refreshTokenExpiryTime: "2024-03-18T13:17:17.008Z",
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Registration failed:", error);
+      throw error;
+    }
   }
 }
 

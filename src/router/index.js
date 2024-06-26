@@ -21,8 +21,8 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/administrator',
-    name: 'administrator',
+    path: '/login',
+    name: 'login',
     component: AdministratorView
   },
   {
@@ -47,7 +47,7 @@ let isAuthenticated = localStorage.getItem('isLoggedIn') === 'true';
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/administrator');
+    next('/login');
   } else {
     next();
   }

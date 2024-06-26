@@ -10,7 +10,7 @@ class VideoService {
     } catch (error) {
       console.error('Error fetching videos:', error.message);
       console.error('Full error details:', error);
-      throw error; // Rethrow the error to handle it in the component
+      throw error; 
     }
   }
 
