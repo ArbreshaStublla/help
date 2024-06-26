@@ -1,8 +1,6 @@
-// video.js - Vuex store module
+// video.js (Vuex module)
 
-import axios from 'axios';
-
-const API_URL = process.env.VUE_APP_API_URL;
+import VideoService from '../services/videoService';
 
 export const video = {
   namespaced: true,
@@ -30,8 +28,8 @@ export const video = {
     async fetchVideos({ commit }) {
       try {
         commit('SET_LOADING', true);
-        const response = await axios.get(`${API_URL}videos/`);
-        commit('SET_VIDEOS', response.data);
+        const videos = await VideoService.fetchVideos();
+        commit('SET_VIDEOS', videos);
       } catch (error) {
         console.error('Error fetching videos:', error);
         throw error;
@@ -42,17 +40,27 @@ export const video = {
 
     async addVideo({ commit }, newVideo) {
       try {
-        const response = await axios.post(`${API_URL}videos/add`, newVideo);
-        commit('ADD_VIDEO', response.data); 
+        const addedVideo = await VideoService.addVideo(newVideo);
+        commit('ADD_VIDEO', addedVideo);
       } catch (error) {
         console.error('Error adding video:', error);
         throw error;
       }
     },
 
+    async updateVideo({ commit }, { id, updatedVideo }) {
+      try {
+        const response = await VideoService.updateVideo(id, updatedVideo);
+        commit('UPDATE_VIDEO', response);
+      } catch (error) {
+        console.error('Error updating video:', error);
+        throw error;
+      }
+    },
+
     async deleteVideo({ commit }, videoId) {
       try {
-        await axios.delete(`${API_URL}videos/${videoId}`);
+        await VideoService.deleteVideo(videoId);
         commit('DELETE_VIDEO', videoId);
       } catch (error) {
         console.error('Error deleting video:', error);
@@ -70,6 +78,12 @@ export const video = {
     },
     DELETE_VIDEO(state, videoId) {
       state.videos = state.videos.filter(video => video.videoId !== videoId);
+    },
+    UPDATE_VIDEO(state, updatedVideo) {
+      const index = state.videos.findIndex(video => video.videoId === updatedVideo.videoId);
+      if (index !== -1) {
+        state.videos.splice(index, 1, updatedVideo);
+      }
     },
     SET_LOADING(state, isLoading) {
       state.loading = isLoading;

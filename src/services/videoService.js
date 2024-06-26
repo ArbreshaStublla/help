@@ -1,3 +1,5 @@
+// videoService.js
+
 import axios from 'axios';
 
 const API_URL = process.env.VUE_APP_API_URL;
@@ -10,7 +12,7 @@ class VideoService {
     } catch (error) {
       console.error('Error fetching videos:', error.message);
       console.error('Full error details:', error);
-      throw error; 
+      throw error;
     }
   }
 
@@ -30,6 +32,17 @@ class VideoService {
       await axios.delete(`${API_URL}videos/${videoId}`);
     } catch (error) {
       console.error('Error deleting video:', error.message);
+      console.error('Full error details:', error);
+      throw error;
+    }
+  }
+
+  async updateVideo(videoId, updatedVideo) {
+    try {
+      const response = await axios.put(`${API_URL}videos/${videoId}`, updatedVideo);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating video:', error.message);
       console.error('Full error details:', error);
       throw error;
     }

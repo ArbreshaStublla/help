@@ -5,17 +5,17 @@
   <div>
     <div>
       <div v-if="showForm">
-        <form @submit.prevent="handleAddVideo">
+        <form @submit.prevent="handleAddOrUpdateVideo">
           <label>Titulli:</label>
-          <input v-model="newVideo.title" class="form-input" required>
+          <input v-model="form.title" class="form-input" required>
           <label>Linku:</label>
-          <input v-model="newVideo.url" class="form-input" required>
+          <input v-model="form.url" class="form-input" required>
           <label>Përshkrimi:</label>
-          <textarea v-model="newVideo.description" class="form-input" required></textarea>
+          <textarea v-model="form.description" class="form-input" required></textarea>
           <label>Kategoria:</label>
-          <input v-model="newVideo.category" class="form-input" required>
+          <input v-model="form.category" class="form-input" required>
           <div class="shto">
-            <ButtonComponent buttonText="Shto Video" type="submit" />
+            <ButtonComponent :buttonText="editMode ? 'Ruaj Ndryshimet' : 'Shto Video'" type="submit" />
           </div>
         </form>
       </div>
@@ -38,6 +38,9 @@
                 <p>{{ video.description }}</p>
               </div>
             </div>
+            <button class="edit-button" @click="openEditForm(video)">
+              <i class="fas fa-edit"></i>
+            </button>
             <button class="delete-button" @click="confirmDelete(video.videoId)">
               <i class="fas fa-trash"></i>
             </button>
@@ -70,7 +73,9 @@ export default {
   data() {
     return {
       showForm: false,
-      newVideo: {
+      editMode: false,
+      form: {
+        id: null,
         title: '',
         url: '',
         description: '',
@@ -103,24 +108,55 @@ export default {
     },
   },
   methods: {
-    ...mapActions('video', ['fetchVideos', 'addVideo', 'deleteVideo']),
+    ...mapActions('video', ['fetchVideos', 'addVideo', 'deleteVideo', 'updateVideo']),
     toggleForm() {
+      this.editMode = false;
+      this.resetForm();
       this.showForm = !this.showForm;
     },
-    async handleAddVideo() {
+    openEditForm(video) {
+      this.editMode = true;
+      this.form.id = video.videoId;
+      this.form.title = video.title || '';
+      this.form.url = video.url || '';
+      this.form.description = video.description || '';
+      this.form.category = video.category || '';
+      this.showForm = true;
+    },
+    async handleAddOrUpdateVideo() {
       try {
-        await this.addVideo(this.newVideo);
+        if (this.editMode) {
+          if (!this.form.id) {
+            console.error('Video ID is undefined or invalid');
+            return;
+          }
+          if (!this.isValidForm(this.form)) {
+            console.error('Form data is incomplete or invalid');
+            return;
+          }
+          await this.updateVideo({ id: this.form.id, updatedVideo: this.form });
+        } else {
+          if (!this.isValidForm(this.form)) {
+            console.error('Form data is incomplete or invalid');
+            return;
+          }
+          await this.addVideo(this.form);
+        }
         this.resetForm();
         this.showForm = false;
       } catch (error) {
-        console.error('Error adding video:', error);
+        console.error('Error adding/updating video:', error);
       }
     },
     resetForm() {
-      this.newVideo.title = '';
-      this.newVideo.url = '';
-      this.newVideo.description = '';
-      this.newVideo.category = '';
+      this.form.id = null;
+      this.form.title = '';
+      this.form.url = '';
+      this.form.description = '';
+      this.form.category = '';
+    },
+    isValidForm(form) {
+      return !!form.title && !!form.url && !!form.description && !!form.category;
     },
     goToVideo(url) {
       window.open(url, '_blank');
@@ -215,6 +251,19 @@ form button {
   border: 2px solid #1b4d3e;
   padding: 10px 20px;
   cursor: pointer;
+}
+.edit-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 50px;
+}
+.edit-button:hover {
+  color: #0056b3;
 }
 .delete-button {
   background: none;
