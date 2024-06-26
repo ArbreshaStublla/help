@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 const API_URL = process.env.VUE_APP_API_URL;
@@ -26,9 +25,9 @@ class QuestionService {
     }
   }
 
-  async answerQuestion(questionId, answerData) {
+  async answerQuestion(questionId, answer) {
     try {
-      const response = await axios.post(`${API_URL}questions/${questionId}/answer`, answerData);
+      const response = await axios.post(`${API_URL}questions/${questionId}/answers`, answer);
       return response.data;
     } catch (error) {
       console.error('Error answering question:', error.message);
