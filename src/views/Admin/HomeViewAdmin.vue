@@ -1,16 +1,16 @@
 <template>
   <v-app>
     <v-main>
+      <div class="top-bar">
+        <ButtonComponent buttonText="Shkyçu" @click="handleLogout" />
+      </div>
       <div class="container">
         <h1 class="title">Si mund të ju ndihmojmë?</h1>
-      
         <SearchComponent @search="handleSearch" />
-       
       </div>
       <div class="hero">
         <v-container>
           <div class="slider">
-           
             <button
               v-for="(item, index) in items"
               :key="index"
@@ -20,10 +20,8 @@
               {{ item.label }}
             </button>
           </div>
-         
           <component :is="currentComponent" :searchQuery="searchQuery" />
         </v-container>
-      
       </div>
     </v-main>
   </v-app>
@@ -32,18 +30,19 @@
 <script>
 import { mapState } from 'vuex';
 import SearchComponent from '../../components/SearchComponent.vue';
+import ButtonComponent from '../../components/ButtonComponent.vue'; // Import your ButtonComponent
+
 import ArticlesPage from './ArticlePage.vue';
 import QuestionsPage from '../Admin/QuestionPage.vue';
 import VideosPage from '../Admin/VideoAdmin.vue';
 
-
 export default {
   components: {
     SearchComponent,
+    ButtonComponent, // Register ButtonComponent here
     ArticlesPage,
     QuestionsPage,
     VideosPage,
-   
   },
   computed: mapState(['searchQuery']),
   data() {
@@ -64,16 +63,27 @@ export default {
       this.currentComponent = components[index];
     },
     handleSearch(query) {
-      
       console.log('Search query:', query);
-   
       this.$store.commit('updateSearchQuery', query);
+    },
+    handleLogout() {
+      // Clear authentication token and redirect to login
+      localStorage.removeItem('isLoggedIn'); // Remove token from localStorage
+      this.$store.commit('updateSearchQuery', ''); // Clear search query if needed
+      this.$router.push('/login'); // Navigate to login page
     }
   }
 };
 </script>
 
+
 <style scoped>
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  background-color: #f5f5f5;
+}
+
 .container {
   display: flex;
   flex-direction: column;
