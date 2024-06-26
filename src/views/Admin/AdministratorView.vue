@@ -51,7 +51,7 @@
 </template>
 
 <script>
-  import bcrypt from 'bcryptjs';
+
   import { setAuthentication } from '@/router';
 
   export default {
@@ -75,32 +75,26 @@
     methods: {
       async loginUser() {
         try {
-          const response = await fetch(`${process.env.VUE_APP_API_URL}user/`, {
-            method: 'GET',
+          const response = await fetch(`${process.env.VUE_APP_API_URL}api/auth/login`, {
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify(this.loginData)
           });
 
           if (!response.ok) {
-            throw new Error('Failed to fetch user data');
+            throw new Error('Failed to log in');
           }
 
-          const users = await response.json();
-          const { email, password } = this.loginData;
-          const user = users.find(user => user.email === email);
+          const responseData = await response.json();
+          const { token } = responseData;
 
-          if (user) {
-            const isPasswordMatch = await bcrypt.compare(password, user.password);
-            if (isPasswordMatch) {
-              setAuthentication(true);
-              this.$router.push({ path: '/homeadmin' });
-            } else {
-              alert('Invalid password');
-            }
-          } else {
-            alert('User not found');
-          }
+          
+          localStorage.setItem('token', token);
+
+          setAuthentication(true);
+          this.$router.push({ path: '/homeadmin' });
         } catch (error) {
           console.error('Error logging in:', error);
           alert('Failed to login. Please try again.');
@@ -173,7 +167,7 @@
         }
       },
       checkRoleSelection() {
-       
+        
       },
       toggleTab(tab) {
         this.activeTab = tab;
@@ -211,15 +205,16 @@
 </script>
 
 
+
   <style scoped>
   .roli{
    width: 285px;
    height: 50px;
    background-color: #eee;
    margin-top: 7px;
-
+ 
   }
-  
+ 
   select {
     padding: 10px;
     font-size: 16px;
@@ -233,17 +228,17 @@
     -webkit-appearance: none;
     -moz-appearance: none;
   }
-  
+ 
   select option {
     font-size: 14px;
     background-color: #fff;
     color: #333;
   }
-  
+ 
   .forma{
     margin-top: 20px;
   }
-  
+ 
   .roli label{
     color: #757575;
     margin-left:-70px ;
@@ -253,21 +248,21 @@
     height: 250px;
     margin-bottom: 100px;
   }
-  
+ 
   .small-image {
-    width: 250px; 
-    height: 250px; 
+    width: 250px;
+    height: 250px;
     margin-left: 67px;
   }
-  
+ 
   .sign-up-container h1 {
     font-size: 25px;
   }
-  
+ 
   .butoni{
     margin-top: 30px;
   }
-  
+ 
   .butoni1{
     margin-top: 110px;
   }
@@ -275,12 +270,12 @@
     margin-top: 90px;
     font-size: 27px;
   }
-  
+ 
   .image{
     height: 200px ;
-  
+ 
   }
-  
+ 
   h1 {
     font-weight: bold;
     margin: 0;
@@ -290,24 +285,24 @@
     transform: translateX(-50%);
     z-index: 10;
   }
-  
+ 
   .sign-up-container h1 {
     display: none;
   }
-  
+ 
   .right-panel-active .sign-up-container h1 {
     display: block;
   }
-  
+ 
   .sign-in-container h1 {
     display: block;
     font-size: 25px;
   }
-  
+ 
   .right-panel-active .sign-in-container h1 {
     display: none;
   }
-  
+ 
   p {
     font-size: 16px;
     font-weight: 100;
@@ -315,18 +310,18 @@
     letter-spacing: 0.5px;
     margin: 20px 0 30px;
   }
-  
+ 
   span {
     font-size: 12px;
   }
-  
+ 
   a {
     color: #333;
     font-size: 14px;
     text-decoration: none;
     margin: 15px 0;
   }
-  
+ 
   button {
     border-radius: 20px;
     border: 1px solid #fff;
@@ -339,20 +334,20 @@
     text-transform: uppercase;
     transition: transform 80ms ease-in;
   }
-  
+ 
   button:active {
     transform: scale(0.95);
   }
-  
+ 
   button:focus {
     outline: none;
   }
-  
+ 
   button.ghost {
     background-color: transparent;
     border-color: #ffffff;
   }
-  
+ 
   form {
     background-color: #ffffff;
     display: flex;
@@ -363,7 +358,7 @@
     height: 100%;
     text-align: center;
   }
-  
+ 
   input {
     background-color: #eee;
     border: none;
@@ -371,7 +366,7 @@
     margin: 8px 0;
     width: 100%;
   }
-  
+ 
   .container {
     background-color: #fff;
     border-radius: 10px;
@@ -382,52 +377,52 @@
     max-width: 100%;
     min-height: 480px;
   }
-  
+ 
   .form-container {
     position: absolute;
     top: 50px;
     height: calc(100% - 50px);
     transition: all 0.6s ease-in-out;
   }
-  
+ 
   .sign-in-container {
     left: 0;
     width: 50%;
     z-index: 2;
   }
-  
+ 
   .container.right-panel-active .sign-in-container {
     transform: translateX(100%);
   }
-  
+ 
   .sign-up-container {
     left: 0;
     width: 50%;
     opacity: 0;
     z-index: 1;
   }
-  
+ 
   .container.right-panel-active .sign-up-container {
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
     animation: show 0.6s;
   }
-  
+ 
   @keyframes show {
     0%,
     49.99% {
       opacity: 0;
       z-index: 1;
     }
-  
+ 
     50%,
     100% {
       opacity: 1;
       z-index: 5;
     }
   }
-  
+ 
   .overlay-container {
     position: absolute;
     top: 0;
@@ -438,11 +433,11 @@
     transition: transform 0.6s ease-in-out;
     z-index: 100;
   }
-  
+ 
   .container.right-panel-active .overlay-container {
     transform: translateX(-100%);
   }
-  
+ 
   .overlay {
     background-image: linear-gradient(to right top, #add8e6, #8be1e7, #71e8d8, #72edba, #90ee90);
     background-repeat: no-repeat;
@@ -456,11 +451,11 @@
     transform: translateX(0);
     transition: transform 0.6s ease-in-out;
   }
-  
+ 
   .container.right-panel-active .overlay {
     transform: translateX(50%);
   }
-  
+ 
   .overlay-panel {
     position: absolute;
     display: flex;
@@ -475,34 +470,34 @@
     transform: translateX(0);
     transition: transform 0.6s ease-in-out;
   }
-  
+ 
   .overlay-left {
     transform: translateX(-20%);
   }
-  
+ 
   .container.right-panel-active .overlay-left {
     transform: translateX(0);
   }
-  
+ 
   .overlay-right {
     right: 0;
     transform: translateX(0);
-  
+ 
   }
-  
+ 
   .container.right-panel-active .overlay-right {
     transform: translateX(20%);
   }
-  
+ 
   .custom-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   }
-  
+ 
   .modal {
-    display: block; 
+    display: block;
     position: fixed;
     z-index: 101;
     left: 0;
@@ -512,7 +507,7 @@
     overflow: auto;
     background-color: rgba(0,0,0,0.5);
   }
-  
+ 
   .modal-content {
     background-color: #fefefe;
     margin: 15% auto;
@@ -523,14 +518,14 @@
     border-radius: 10px;
     position: relative;
   }
-  
+ 
   .close {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
   }
-  
+ 
   .close:hover,
   .close:focus {
     color: black;
