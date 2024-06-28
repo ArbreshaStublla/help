@@ -1,3 +1,4 @@
+
 <template>
   <v-container>
     <div class="kthehu">
@@ -124,6 +125,15 @@ export default {
         question.editingAnswer = false;
         question.editAnswerText = '';
         this.fetchQuestions();
+
+        // Show success alert with SweetAlert and hide after 3 seconds
+        swal({
+          title: 'Sukses!',
+          text: 'Ndryshimi është kryer me sukses.',
+          icon: 'success',
+          timer: 3000,
+          buttons: false,
+        });
       } catch (error) {
         console.error('Ka ndodhur një problem gjatë ndryshimit të përgjigjes:', error);
         question.errorMessage = 'Ka ndodhur një problem gjatë ndryshimit të përgjigjes';
@@ -179,6 +189,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
