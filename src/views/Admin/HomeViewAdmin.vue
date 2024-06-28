@@ -39,7 +39,7 @@ import VideosPage from '../Admin/VideoAdmin.vue';
 export default {
   components: {
     SearchComponent,
-    ButtonComponent, // Register ButtonComponent here
+    ButtonComponent, 
     ArticlesPage,
     QuestionsPage,
     VideosPage,
@@ -67,10 +67,10 @@ export default {
       this.$store.commit('updateSearchQuery', query);
     },
     handleLogout() {
-      // Clear authentication token and redirect to login
-      localStorage.removeItem('isLoggedIn'); // Remove token from localStorage
-      this.$store.commit('updateSearchQuery', ''); // Clear search query if needed
-      this.$router.push('/login'); // Navigate to login page
+      
+      localStorage.removeItem('isLoggedIn'); 
+      this.$store.commit('updateSearchQuery', ''); 
+      this.$router.push('/'); 
     }
   }
 };
