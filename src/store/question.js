@@ -1,3 +1,5 @@
+// question.js
+
 import QuestionService from '@/services/questionService';
 
 export const question = {
@@ -53,10 +55,15 @@ export const question = {
       }
     },
 
-    async addQuestion({ commit }, newQuestion) {
+    async addQuestion({ commit, state }, newQuestion) {
       try {
         const question = await QuestionService.addQuestion(newQuestion);
         commit('ADD_QUESTION', question);
+        
+        // Calculate new current page after adding a question
+        const totalPages = Math.ceil(state.questions.length / state.pageSize);
+        commit('SET_CURRENT_PAGE', totalPages); // Set to last page
+        
         commit('SET_SUCCESS', 'Question added successfully.');
       } catch (error) {
         commit('SET_ERROR', 'Error adding question.');

@@ -7,6 +7,7 @@
       <div v-if="filteredQuestions.length === 0 && !loading" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
         <div v-if="showUnanswered">
+          <!-- Display unanswered questions -->
           <div v-for="question in paginatedUnansweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <form @submit.prevent="submitAnswer(question)">
@@ -32,40 +33,44 @@
           />
         </div>
         <div v-else>
-          <div v-for="question in filteredAnsweredQuestions" :key="question.questionId" class="question">
-            <h2 class="question-text">{{ question.questionText }}</h2>
-            <div class="answers">
-              <div class="question-header">
-                <button class="delete-button" @click="confirmDelete(question.questionId)">
-                  <i class="fas fa-trash"></i>
+          <!-- Display answered questions -->
+          <div v-for="question in paginatedQuestions" :key="question.questionId">
+            <div v-if="question.answerText" class="question">
+              <h2 class="question-text">{{ question.questionText }}</h2>
+              <div class="answers">
+                <div class="question-header">
+                  <button class="delete-button" @click="confirmDelete(question.questionId)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                  <div class="toggle-text" @click="toggleAnswer(question)">
+                    {{ question.showAnswer ? '-' : '+' }}
+                  </div>
+                  <span class="toggle-icon" @click="toggleAnswer(question)">
+                    {{ question.showAnswer ? '-' : '+' }}
+                  </span>
+                </div>
+                <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
+                <button v-if="question.showAnswer" @click="toggleEditAnswer(question)" class="edit-button">
+                  {{ question.editingAnswer ? 'Anulo' : 'Ndrysho përgjigjen' }}
                 </button>
-                <div class="toggle-text" @click="toggleAnswer(question)">
-                  {{ question.showAnswer ? '-' : '+' }}
-                </div>
-                <span class="toggle-icon" @click="toggleAnswer(question)">
-                  {{ question.showAnswer ? '-' : '+' }}
-                </span>
+                <form v-if="question.editingAnswer" @submit.prevent="submitEditedAnswer(question)">
+                  <div class="form-group">
+                    <label for="editAnswerText" class="label">Ndrysho përgjigjen:</label>
+                    <textarea v-model="question.editAnswerText" required rows="3" class="input"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <ButtonComponent buttonText="Ruaj Ndryshimet" />
+                  </div>
+                </form>
+                <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
+                <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
               </div>
-              <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
-              <button v-if="question.showAnswer" @click="toggleEditAnswer(question)" class="edit-button">
-                {{ question.editingAnswer ? 'Anulo' : 'Ndrysho përgjigjen' }}
-              </button>
-              <form v-if="question.editingAnswer" @submit.prevent="submitEditedAnswer(question)">
-                <div class="form-group">
-                  <label for="editAnswerText" class="label">Ndrysho përgjigjen:</label>
-                  <textarea v-model="question.editAnswerText" required rows="3" class="input"></textarea>
-                </div>
-                <div class="form-group">
-                  <ButtonComponent buttonText="Ruaj Ndryshimet" />
-                </div>
-              </form>
-              <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
-              <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
             </div>
+           
           </div>
           <PaginationComponent
-            v-if="filteredAnsweredQuestions.length > 0"
-            :items="filteredAnsweredQuestions"
+            v-if="filteredQuestions.length > 0"
+            :items="filteredQuestions"
             :pageSize="pageSize"
             @pageChanged="handlePageChange"
           />
@@ -74,6 +79,7 @@
     </div>
   </v-container>
 </template>
+
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '../../components/ButtonComponent.vue';
@@ -88,19 +94,14 @@ export default {
   data() {
     return {
       showUnanswered: false,
-      searchQuery: '', 
-      loading: false,
     };
   },
   created() {
     this.fetchQuestions();
   },
   computed: {
-    ...mapState('question', ['questions', 'currentPage', 'currentPageUnanswered', 'pageSize', 'errorMessage', 'successMessage']),
-    ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions', 'paginatedUnansweredQuestions', 'paginatedAnsweredQuestions']),
-    filteredAnsweredQuestions() {
-      return this.filteredQuestions.filter(question => question.answerText);
-    }
+    ...mapState('question', ['loading', 'pageSize']),
+    ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions', 'paginatedUnansweredQuestions']),
   },
   methods: {
     ...mapActions('question', ['fetchQuestions', 'answerQuestion', 'editAnswer', 'deleteQuestion', 'handlePageChange', 'handleUnansweredPageChange']),
@@ -133,7 +134,7 @@ export default {
     },
     toggleEditAnswer(question) {
       question.editingAnswer = !question.editingAnswer;
-      question.editAnswerText = question.answerText; 
+      question.editAnswerText = question.answerText; // Pre-fill with existing answer text
     },
     toggleUnansweredQuestions() {
       this.showUnanswered = !this.showUnanswered;
@@ -176,25 +177,9 @@ export default {
       });
     },
   },
-  watch: {
-    searchQuery(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        if (newVal.trim() === '') {
-         
-          this.$store.commit('question/setFilter', null);
-        } else {
-          
-          this.$store.commit('question/setFilter', newVal.trim());
-        }
-      }
-    },
-    questions() {
-     
-      this.loading = false;
-    },
-  },
 };
 </script>
+
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 

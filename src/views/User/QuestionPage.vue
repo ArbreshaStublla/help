@@ -21,7 +21,7 @@
     <div class="question-answer">
       <div v-if="filteredQuestions.length === 0 && searchQuery === ''" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
-        <div v-for="question in filteredQuestions" :key="question.questionId" class="question">
+        <div v-for="question in paginatedQuestions" :key="question.questionId" class="question">
           <div class="question-header" @click="toggleAnswer(question)">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <span class="accordion-icon" :class="{ 'open': question.showAnswer }" @click.stop="toggleAnswer(question)">+</span>
@@ -36,14 +36,12 @@
         </div>
       </div>
 
-
       <PaginationComponent
         v-if="filteredQuestions.length > 0" 
         :items="filteredQuestions"
         :pageSize="pageSize"
         @pageChanged="handlePageChange"
       />
-
 
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <p v-if="successMessage" class="success">{{ successMessage }}</p>
@@ -71,12 +69,12 @@ export default {
     };
   },
   computed: {
-    ...mapState('question', ['errorMessage', 'successMessage', 'currentPage', 'pageSize']),
+    ...mapState('question', ['errorMessage', 'successMessage', 'pageSize', 'currentPage']),
     ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions']),
 
     filteredQuestions() {
       const query = this.searchQuery.toLowerCase().trim();
-      if (!query) return this.$store.state.question.questions; 
+      if (!query) return this.$store.state.question.questions;
 
       return this.$store.state.question.questions.filter(question => {
         const questionText = question.questionText.toLowerCase();
@@ -85,11 +83,10 @@ export default {
     },
   },
   created() {
-    this.fetchQuestions(); 
+    this.fetchQuestions();
   },
   methods: {
     ...mapActions('question', ['fetchQuestions', 'addQuestion', 'toggleAnswer', 'handlePageChange']),
-    
 
     submitQuestion: debounce(async function() {
       this.isSubmitting = true;
@@ -97,7 +94,7 @@ export default {
       try {
         await this.addQuestion({
           questionText: this.questionText,
-          userId: 1, 
+          userId: 1, // Assuming userId is fixed or comes from elsewhere
           userEmail: this.userEmail,
         });
         this.questionText = '';
@@ -110,7 +107,6 @@ export default {
       }
     }, 500),
 
- 
     toggleAnswer(question) {
       this.toggleAnswerState(question);
     },
