@@ -75,6 +75,18 @@ export const question = {
       }
     },
 
+    async editAnswer({ commit }, { questionId, answerText }) {
+      try {
+        await QuestionService.editAnswer(questionId, { answerText });
+        commit('EDIT_ANSWER', { questionId, answerText });
+        commit('SET_SUCCESS', 'Answer edited successfully.');
+      } catch (error) {
+        commit('SET_ERROR', 'Error editing answer.');
+        console.error('Error editing answer:', error);
+        throw error;
+      }
+    },
+
     async deleteQuestion({ commit }, questionId) {
       try {
         await QuestionService.deleteQuestion(questionId);
@@ -119,6 +131,12 @@ export const question = {
       state.currentPageUnanswered = page;
     },
     SET_ANSWER(state, { questionId, answerText }) {
+      const question = state.questions.find(q => q.questionId === questionId);
+      if (question) {
+        question.answerText = answerText;
+      }
+    },
+    EDIT_ANSWER(state, { questionId, answerText }) {
       const question = state.questions.find(q => q.questionId === questionId);
       if (question) {
         question.answerText = answerText;

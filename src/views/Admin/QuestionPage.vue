@@ -47,6 +47,20 @@
                 </span>
               </div>
               <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
+              <button v-if="question.showAnswer" @click="toggleEditAnswer(question)" class="edit-button">
+                {{ question.editingAnswer ? 'Anulo' : 'Ndrysho përgjigjen' }}
+              </button>
+              <form v-if="question.editingAnswer" @submit.prevent="submitEditedAnswer(question)">
+                <div class="form-group">
+                  <label for="editAnswerText" class="label">Ndrysho përgjigjen:</label>
+                  <textarea v-model="question.editAnswerText" required rows="3" class="input"></textarea>
+                </div>
+                <div class="form-group">
+                  <ButtonComponent buttonText="Ruaj Ndryshimet" />
+                </div>
+              </form>
+              <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
+              <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
             </div>
           </div>
           <PaginationComponent
@@ -87,7 +101,7 @@ export default {
     ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions', 'paginatedUnansweredQuestions', 'paginatedAnsweredQuestions']),
   },
   methods: {
-    ...mapActions('question', ['fetchQuestions', 'answerQuestion', 'deleteQuestion', 'handlePageChange', 'handleUnansweredPageChange']),
+    ...mapActions('question', ['fetchQuestions', 'answerQuestion', 'editAnswer', 'deleteQuestion', 'handlePageChange', 'handleUnansweredPageChange']),
     async submitAnswer(question) {
       try {
         await this.answerQuestion({ questionId: question.questionId, answerText: question.newAnswerText, userId: question.userId });
@@ -100,8 +114,24 @@ export default {
         question.errorMessage = 'Ka ndodhur një problem gjatë shtimit të përgjigjes';
       }
     },
+    async submitEditedAnswer(question) {
+      try {
+        await this.editAnswer({ questionId: question.questionId, answerText: question.editAnswerText });
+        question.successMessage = 'Përgjigja u ndryshua me sukses!';
+        question.editingAnswer = false;
+        question.editAnswerText = '';
+        this.fetchQuestions();
+      } catch (error) {
+        console.error('Ka ndodhur një problem gjatë ndryshimit të përgjigjes:', error);
+        question.errorMessage = 'Ka ndodhur një problem gjatë ndryshimit të përgjigjes';
+      }
+    },
     toggleAnswer(question) {
       question.showAnswer = !question.showAnswer;
+    },
+    toggleEditAnswer(question) {
+      question.editingAnswer = !question.editingAnswer;
+      question.editAnswerText = question.answerText; // Pre-fill with existing answer text
     },
     toggleUnansweredQuestions() {
       this.showUnanswered = !this.showUnanswered;
@@ -268,5 +298,16 @@ form {
 }
 .delete-button:hover {
   color: #cc0000;
+}
+.edit-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+.edit-button:hover {
+  color: #0056b3;
 }
 </style>

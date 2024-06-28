@@ -36,6 +36,17 @@ class QuestionService {
     }
   }
 
+  async editAnswer(questionId, answer) {
+    try {
+      const response = await axios.put(`${API_URL}questions/${questionId}/answers`, answer);
+      return response.data;
+    } catch (error) {
+      console.error('Error editing answer:', error.message);
+      console.error('Full error details:', error);
+      throw error;
+    }
+  }
+
   async deleteQuestion(questionId) {
     try {
       await axios.delete(`${API_URL}questions/${questionId}`);

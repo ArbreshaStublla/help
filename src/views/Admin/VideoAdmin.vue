@@ -55,6 +55,26 @@
       :currentPage="currentPage"
       @pageChanged="handlePageChange"
     />
+    <ModalComponent v-if="showModal" v-model="showModal" @close="closeModal">
+      <template #header>
+        <span>{{ editMode ? 'Të dhënat për këtë video' : 'Add Video' }}</span>
+      </template>
+      <template #body>
+        <form @submit.prevent="handleAddOrUpdateVideo">
+          <label>Titulli:</label>
+          <input v-model="form.title" class="form-input" required>
+          <label>Linku:</label>
+          <input v-model="form.url" class="form-input" required>
+          <label>Përshkrimi:</label>
+          <textarea v-model="form.description" class="form-input" required></textarea>
+          <label>Kategoria:</label>
+          <input v-model="form.category" class="form-input" required>
+          <div class="shto">
+            <ButtonComponent :buttonText="editMode ? 'Ruaj Ndryshimet' : 'Shto Video'" type="submit" />
+          </div>
+        </form>
+      </template>
+    </ModalComponent>
   </div>
 </template>
 
@@ -62,17 +82,20 @@
 import { mapState, mapActions } from 'vuex';
 import ButtonComponent from '@/components/ButtonComponent.vue';
 import PaginationComponent from '@/components/PaginationComponent.vue';
+import ModalComponent from '@/components/ModalComponents.vue'; 
 import swal from 'sweetalert';
 
 export default {
   components: {
     ButtonComponent,
     PaginationComponent,
+    ModalComponent, 
   },
   name: 'VideoPage',
   data() {
     return {
       showForm: false,
+      showModal: false, 
       editMode: false,
       form: {
         id: null,
@@ -121,7 +144,11 @@ export default {
       this.form.url = video.url || '';
       this.form.description = video.description || '';
       this.form.category = video.category || '';
-      this.showForm = true;
+      this.showModal = true; 
+    },
+    closeModal() {
+      this.showModal = false; 
+      this.resetForm();
     },
     async handleAddOrUpdateVideo() {
       try {
@@ -143,7 +170,7 @@ export default {
           await this.addVideo(this.form);
         }
         this.resetForm();
-        this.showForm = false;
+        this.showModal = false;
       } catch (error) {
         console.error('Error adding/updating video:', error);
       }
@@ -268,7 +295,7 @@ form button {
 .delete-button {
   background: none;
   border: none;
-  color: #ff0000;
+  color: #dc3545;
   cursor: pointer;
   font-size: 20px;
   position: absolute;
