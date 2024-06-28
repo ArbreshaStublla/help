@@ -49,9 +49,9 @@ export default {
     return {
       currentIndex: 0,
       items: [
-        { label: 'Postimet' },
-        { label: 'Pyetjet' },
-        { label: 'Videot' }
+        { label: 'Postime' },
+        { label: 'Pyetje' },
+        { label: 'Udhëzime' }
       ],
       currentComponent: 'ArticlesPage' 
     };
@@ -67,7 +67,7 @@ export default {
       this.$store.commit('updateSearchQuery', query);
     },
     handleLogout() {
-      
+      localStorage.removeItem('token');
       localStorage.removeItem('isLoggedIn'); 
       this.$store.commit('updateSearchQuery', ''); 
       this.$router.push('/'); 

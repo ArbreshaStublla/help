@@ -1,80 +1,78 @@
 <template>
   <div class="butoni">
-    <ButtonComponent v-if="!showForm" buttonText="Shto Video" @click="toggleForm" />
+    <ButtonComponent v-if="!showForm" buttonText="Shto Video" @click="toggleModal" />
   </div>
   <div>
     <div>
-      <div v-if="showForm">
-        <form @submit.prevent="handleAddOrUpdateVideo">
-          <label>Titulli:</label>
-          <input v-model="form.title" class="form-input" required>
-          <label>Linku:</label>
-          <input v-model="form.url" class="form-input" required>
-          <label>Përshkrimi:</label>
-          <textarea v-model="form.description" class="form-input" required></textarea>
-          <label>Kategoria:</label>
-          <input v-model="form.category" class="form-input" required>
-          <div class="shto">
-            <ButtonComponent :buttonText="editMode ? 'Ruaj Ndryshimet' : 'Shto Video'" type="submit" />
-          </div>
-        </form>
-      </div>
-      <div v-if="loading">Duke u ngarkuar...</div>
-      <div v-else>
-        <div v-if="filteredVideos.length === 0">
-          <p>Nuk është gjetur asnjë video.</p>
+      <div>
+        <div v-if="showForm">
+          <form @submit.prevent="handleAddOrUpdateVideo">
+            <label>Titulli:</label>
+            <input v-model="form.title" class="form-input" required>
+            <label>Linku:</label>
+            <input v-model="form.url" class="form-input" required>
+            <label>Përshkrimi:</label>
+            <textarea v-model="form.description" class="form-input" required></textarea>
+            <div class="shto">
+              <ButtonComponent :buttonText="editMode ? 'Ruaj Ndryshimet' : 'Shto Video'" type="submit" />
+            </div>
+          </form>
         </div>
+        <div v-if="loading">Duke u ngarkuar...</div>
         <div v-else>
-          <div v-for="video in paginatedVideos" :key="video.videoId" class="video-card">
-            <h4 class="video-title">{{ video.title }}</h4>
-            <div class="video-content">
-              <div class="video-thumbnail-container">
-                <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail">
-                <div class="play-icon" @click="goToVideo(video.url)">
-                  ▶️
+          <div v-if="filteredVideos.length === 0">
+            <p>Nuk është gjetur asnjë video.</p>
+          </div>
+          <div v-else>
+            <div v-for="video in paginatedVideos" :key="video.videoId" class="video-card">
+              <h4 class="video-title">{{ video.title }}</h4>
+              <div class="video-content">
+                <div class="video-thumbnail-container">
+                  <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail">
+                  <div class="play-icon" @click="goToVideo(video.url)">
+                    ▶️
+                  </div>
+                </div>
+                <div class="video-description">
+                  <p>{{ video.description }}</p>
                 </div>
               </div>
-              <div class="video-description">
-                <p>{{ video.description }}</p>
-              </div>
+              <button class="edit-button" @click="openEditForm(video)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="delete-button" @click="confirmDelete(video.videoId)">
+                <i class="fas fa-trash"></i>
+              </button>
             </div>
-            <button class="edit-button" @click="openEditForm(video)">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="delete-button" @click="confirmDelete(video.videoId)">
-              <i class="fas fa-trash"></i>
-            </button>
           </div>
         </div>
       </div>
+      <PaginationComponent
+        v-if="filteredVideos.length > 0"
+        :items="filteredVideos"
+        :pageSize="pageSize"
+        :currentPage="currentPage"
+        @pageChanged="handlePageChange"
+      />
+      <ModalComponent v-if="showModal" v-model="showModal" @close="closeModal">
+        <template #header>
+          <span>{{ editMode ? 'Të dhënat për këtë video' : 'Shto Video' }}</span>
+        </template>
+        <template #body>
+          <form @submit.prevent="handleAddOrUpdateVideo">
+            <label>Titulli:</label>
+            <input v-model="form.title" class="form-input" required>
+            <label>Linku:</label>
+            <input v-model="form.url" class="form-input" required>
+            <label>Përshkrimi:</label>
+            <textarea v-model="form.description" class="form-input" required></textarea>
+            <div class="shto">
+              <ButtonComponent :buttonText="editMode ? 'Ruaj Ndryshimet' : 'Shto Video'" type="submit" />
+            </div>
+          </form>
+        </template>
+      </ModalComponent>
     </div>
-    <PaginationComponent
-      v-if="filteredVideos.length > 0"
-      :items="filteredVideos"
-      :pageSize="pageSize"
-      :currentPage="currentPage"
-      @pageChanged="handlePageChange"
-    />
-    <ModalComponent v-if="showModal" v-model="showModal" @close="closeModal">
-      <template #header>
-        <span>{{ editMode ? 'Të dhënat për këtë video' : 'Add Video' }}</span>
-      </template>
-      <template #body>
-        <form @submit.prevent="handleAddOrUpdateVideo">
-          <label>Titulli:</label>
-          <input v-model="form.title" class="form-input" required>
-          <label>Linku:</label>
-          <input v-model="form.url" class="form-input" required>
-          <label>Përshkrimi:</label>
-          <textarea v-model="form.description" class="form-input" required></textarea>
-          <label>Kategoria:</label>
-          <input v-model="form.category" class="form-input" required>
-          <div class="shto">
-            <ButtonComponent :buttonText="editMode ? 'Ruaj Ndryshimet' : 'Shto Video'" type="submit" />
-          </div>
-        </form>
-      </template>
-    </ModalComponent>
   </div>
 </template>
 
@@ -82,27 +80,26 @@
 import { mapState, mapActions } from 'vuex';
 import ButtonComponent from '@/components/ButtonComponent.vue';
 import PaginationComponent from '@/components/PaginationComponent.vue';
-import ModalComponent from '@/components/ModalComponents.vue'; 
+import ModalComponent from '@/components/ModalComponents.vue';
 import swal from 'sweetalert';
 
 export default {
   components: {
     ButtonComponent,
     PaginationComponent,
-    ModalComponent, 
+    ModalComponent,
   },
   name: 'VideoPage',
   data() {
     return {
       showForm: false,
-      showModal: false, 
+      showModal: false,
       editMode: false,
       form: {
         id: null,
         title: '',
         url: '',
         description: '',
-        category: ''
       },
       currentPage: 1,
       pageSize: 5,
@@ -110,16 +107,16 @@ export default {
   },
   computed: {
     ...mapState({
-      videos: state => state.video.videos,
-      loading: state => state.video.loading,
-      searchQuery: state => state.searchQuery,
+      videos: (state) => state.video.videos,
+      loading: (state) => state.video.loading,
+      searchQuery: (state) => state.searchQuery,
     }),
     filteredVideos() {
       if (!this.searchQuery) {
         return this.videos;
       } else {
-        const query = this.searchQuery.toLowerCase().trim(); 
-        return this.videos.filter(video =>
+        const query = this.searchQuery.toLowerCase().trim();
+        return this.videos.filter((video) =>
           video.title.toLowerCase().includes(query)
         );
       }
@@ -132,10 +129,10 @@ export default {
   },
   methods: {
     ...mapActions('video', ['fetchVideos', 'addVideo', 'deleteVideo', 'updateVideo']),
-    toggleForm() {
+    toggleModal() {
       this.editMode = false;
       this.resetForm();
-      this.showForm = !this.showForm;
+      this.showModal = !this.showModal;
     },
     openEditForm(video) {
       this.editMode = true;
@@ -143,11 +140,10 @@ export default {
       this.form.title = video.title || '';
       this.form.url = video.url || '';
       this.form.description = video.description || '';
-      this.form.category = video.category || '';
-      this.showModal = true; 
+      this.showModal = true;
     },
     closeModal() {
-      this.showModal = false; 
+      this.showModal = false;
       this.resetForm();
     },
     async handleAddOrUpdateVideo() {
@@ -180,23 +176,21 @@ export default {
       this.form.title = '';
       this.form.url = '';
       this.form.description = '';
-      this.form.category = '';
     },
     isValidForm(form) {
-      return !!form.title && !!form.url && !!form.description && !!form.category;
+      return !!form.title && !!form.url && !!form.description;
     },
     goToVideo(url) {
       window.open(url, '_blank');
     },
     confirmDelete(videoId) {
       swal({
-        title: "A je i sigurt?",
-        text: "Pasi të fshihet, nuk do të keni mundësi ta riktheni këtë video!",
-        icon: "warning",
+        title: 'A je i sigurt?',
+        text: 'Pasi të fshihet, nuk do të keni mundësi ta riktheni këtë video!',
+        icon: 'warning',
         buttons: ['Anulo', 'Po, fshije!'],
         dangerMode: true,
-      })
-      .then((willDelete) => {
+      }).then((willDelete) => {
         if (willDelete) {
           this.deleteVideo(videoId);
         }
@@ -280,29 +274,31 @@ form button {
   cursor: pointer;
 }
 .edit-button {
-  background: none;
-  border: none;
-  color: #007bff;
-  cursor: pointer;
-  font-size: 20px;
-  position: absolute;
-  top: 10px;
-  right: 50px;
+background: none;
+border: none;
+color: #007bff;
+cursor: pointer;
+font-size: 20px;
+position: absolute;
+top: 10px;
+right: 50px;
 }
-.edit-button:hover {
-  color: #0056b3;
+.edit-button
+{
+color: #0056b3;
 }
 .delete-button {
-  background: none;
-  border: none;
-  color: #dc3545;
-  cursor: pointer;
-  font-size: 20px;
-  position: absolute;
-  top: 10px;
-  right: 10px;
+background: none;
+border: none;
+color: #dc3545;
+cursor: pointer;
+font-size: 20px;
+position: absolute;
+top: 10px;
+right: 10px;
 }
-.delete-button:hover {
-  color: #cc0000;
+.delete-button
+{
+color: #cc0000;
 }
 </style>

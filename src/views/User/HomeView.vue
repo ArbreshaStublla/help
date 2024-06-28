@@ -51,9 +51,9 @@ export default {
     return {
       currentIndex: 0,
       items: [
-        { label: 'Postimet' },
-        { label: 'Pyetjet' },
-        { label: 'Videot' }
+        { label: 'Postime' },
+        { label: 'Pyetje' },
+        { label: 'Udhëzime' }
       ],
       currentComponent: 'ArticlesPage'
     };

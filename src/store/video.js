@@ -1,5 +1,3 @@
-// video.js (Vuex module)
-
 import VideoService from '../services/videoService';
 
 export const video = {
@@ -48,10 +46,16 @@ export const video = {
       }
     },
 
-    async updateVideo({ commit }, { id, updatedVideo }) {
+    async updateVideo({ commit, state }, { id, updatedVideo }) {
       try {
         const response = await VideoService.updateVideo(id, updatedVideo);
         commit('UPDATE_VIDEO', response);
+
+        
+        const updatedIndex = state.videos.findIndex(v => v.videoId === id);
+        if (updatedIndex !== -1) {
+          commit('SET_VIDEO', { index: updatedIndex, video: response });
+        }
       } catch (error) {
         console.error('Error updating video:', error);
         throw error;
@@ -87,6 +91,11 @@ export const video = {
     },
     SET_LOADING(state, isLoading) {
       state.loading = isLoading;
+    },
+    SET_VIDEO(state, { index, video }) {
+      if (index !== -1) {
+        state.videos.splice(index, 1, video);
+      }
     },
   },
 };
