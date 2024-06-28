@@ -27,7 +27,7 @@
     <div class="article-list">
       <div v-for="(article, index) in paginatedArticles" :key="article.articleId" class="article-item" :class="{ 'second-in-row': index % 2 !== 0 }">
         <div class="article-image-container">
-          <img v-if="article.photo_path" :src="`192.168.44.239:3000/${article.photo_path}`"
+          <img v-if="article.photo_path" :src="`http://192.168.44.239:3000/${article.photo_path}`"
                :alt="article.title + ' Photo'" class="article-image">
           <img v-else src="placeholder.jpg" alt="Placeholder Image" class="article-image">
         </div>
