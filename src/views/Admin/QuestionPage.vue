@@ -69,8 +69,8 @@
            
           </div>
           <PaginationComponent
-            v-if="filteredQuestions.length > 0"
-            :items="filteredQuestions"
+            v-if="filteredAnsweredQuestions.length > 0"
+            :items="filteredAnsweredQuestions"
             :pageSize="pageSize"
             @pageChanged="handlePageChange"
           />
@@ -79,7 +79,6 @@
     </div>
   </v-container>
 </template>
-
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '../../components/ButtonComponent.vue';
@@ -100,8 +99,8 @@ export default {
     this.fetchQuestions();
   },
   computed: {
-    ...mapState('question', ['loading', 'pageSize']),
-    ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions', 'paginatedUnansweredQuestions']),
+    ...mapState('question', ['questions', 'currentPage', 'currentPageUnanswered', 'pageSize', 'errorMessage', 'successMessage']),
+    ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions', 'paginatedUnansweredQuestions', 'paginatedAnsweredQuestions']),
   },
   methods: {
     ...mapActions('question', ['fetchQuestions', 'answerQuestion', 'editAnswer', 'deleteQuestion', 'handlePageChange', 'handleUnansweredPageChange']),
@@ -134,7 +133,7 @@ export default {
     },
     toggleEditAnswer(question) {
       question.editingAnswer = !question.editingAnswer;
-      question.editAnswerText = question.answerText; // Pre-fill with existing answer text
+      question.editAnswerText = question.answerText; 
     },
     toggleUnansweredQuestions() {
       this.showUnanswered = !this.showUnanswered;
@@ -179,7 +178,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
