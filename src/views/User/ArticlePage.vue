@@ -1,10 +1,20 @@
 <template>
   <div class="forma1">
     <div class="article-list">
-      <div v-for="(article, index) in paginatedArticles" :key="article.articleId" class="article-item" :class="{ 'second-in-row': index % 2 !== 0 }">
+      <div
+        v-for="(article, index) in paginatedArticles"
+        :key="article.articleId"
+        class="article-item"
+        :class="{ 'second-in-row': index % 2 !== 0 }"
+      >
         <div class="article-image-container">
-          <img v-if="article.photo_path" :src="`http://192.168.44.239:3000/${article.photo_path}`" :alt="article.title + ' Photo'" class="article-image">
-          <img v-else src="placeholder.jpg" alt="Placeholder Image" class="article-image">
+          <img
+            v-if="article.photo_path"
+            :src="`http://192.168.44.239:3000/${article.photo_path}`"
+            :alt="article.title + ' Photo'"
+            class="article-image"
+          />
+          <img src="placeholder.jpg" alt="Placeholder Image" class="article-image" v-else />
         </div>
         <div class="article-content-right">
           <h3>{{ article.title }}</h3>
@@ -67,6 +77,7 @@ export default {
 .forma1 {
   margin-top: 30px;
 }
+
 .article-list {
   display: grid;
   gap: 20px;
@@ -79,18 +90,19 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column; 
   overflow: hidden;
   position: relative;
   margin-bottom: 20px;
+  width: 100%; 
 }
 
 .article-item.second-in-row {
-  margin-left: auto;
+  margin-right: auto;
 }
 
 .article-image-container {
-  flex: 0 0 40%;
+  flex: 0 0 50%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -104,7 +116,7 @@ export default {
 }
 
 .article-content-right {
-  flex: 1;
+  flex: 1; 
   padding: 10px;
 }
 
@@ -114,5 +126,15 @@ export default {
 
 .article-content-right p {
   margin: 0 0 10px;
+}
+
+@media (min-width: 600px) {
+  .article-item {
+    flex-direction: row; 
+  }
+
+  .article-item:nth-child(odd) {
+    margin-right: 20px; 
+  }
 }
 </style>
