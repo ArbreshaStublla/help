@@ -20,15 +20,17 @@ export const question = {
       return state.questions.slice(startIndex, startIndex + state.pageSize);
     },
     paginatedUnansweredQuestions: state => {
-      const unansweredQuestions = state.questions.filter(q => !q.answerText);
       const startIndex = (state.currentPageUnanswered - 1) * state.pageSize;
-      return unansweredQuestions.slice(startIndex, startIndex + state.pageSize);
+      const endIndex = startIndex + state.pageSize;
+      return state.questions.filter(q => !q.answerText).slice(startIndex, endIndex);
     },
     paginatedAnsweredQuestions: state => {
-      const answeredQuestions = state.questions.filter(q => q.answerText);
       const startIndex = (state.currentPage - 1) * state.pageSize;
-      return answeredQuestions.slice(startIndex, startIndex + state.pageSize);
+      const endIndex = startIndex + state.pageSize;
+      return state.questions.filter(q => q.answerText).slice(startIndex, endIndex);
     },
+    
+    
     currentPage: state => state.currentPage,
     currentPageUnanswered: state => state.currentPageUnanswered,
     pageSize: state => state.pageSize,

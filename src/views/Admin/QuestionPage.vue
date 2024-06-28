@@ -32,7 +32,7 @@
           />
         </div>
         <div v-else>
-          <div v-for="question in filteredQuestions" :key="question.questionId" class="question">
+          <div v-for="question in filteredAnsweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <div class="answers">
               <div class="question-header">
@@ -64,8 +64,8 @@
             </div>
           </div>
           <PaginationComponent
-            v-if="filteredQuestions.length > 0"
-            :items="filteredQuestions"
+            v-if="filteredAnsweredQuestions.length > 0"
+            :items="filteredAnsweredQuestions"
             :pageSize="pageSize"
             @pageChanged="handlePageChange"
           />
@@ -74,7 +74,6 @@
     </div>
   </v-container>
 </template>
-
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '../../components/ButtonComponent.vue';
@@ -99,6 +98,9 @@ export default {
   computed: {
     ...mapState('question', ['questions', 'currentPage', 'currentPageUnanswered', 'pageSize', 'errorMessage', 'successMessage']),
     ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions', 'paginatedUnansweredQuestions', 'paginatedAnsweredQuestions']),
+    filteredAnsweredQuestions() {
+      return this.filteredQuestions.filter(question => question.answerText);
+    }
   },
   methods: {
     ...mapActions('question', ['fetchQuestions', 'answerQuestion', 'editAnswer', 'deleteQuestion', 'handlePageChange', 'handleUnansweredPageChange']),
@@ -131,7 +133,7 @@ export default {
     },
     toggleEditAnswer(question) {
       question.editingAnswer = !question.editingAnswer;
-      question.editAnswerText = question.answerText; // Pre-fill with existing answer text
+      question.editAnswerText = question.answerText; 
     },
     toggleUnansweredQuestions() {
       this.showUnanswered = !this.showUnanswered;
@@ -193,7 +195,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
