@@ -25,11 +25,19 @@
     </form>
 
     <div class="article-list">
-      <div v-for="(article, index) in paginatedArticles" :key="article.articleId" class="article-item" :class="{ 'second-in-row': index % 2 !== 0 }">
+      <div
+        v-for="(article, index) in paginatedArticles"
+        :key="article.articleId"
+        :class="['article-item', { 'second-in-row': index % 2 !== 0, 'new-article': article.isNew }]"
+      >
         <div class="article-image-container">
-          <img v-if="article.photo_path" :src="`http://192.168.44.239:3000/${article.photo_path}`"
-               :alt="article.title + ' Photo'" class="article-image">
-          <img v-else src="placeholder.jpg" alt="Placeholder Image" class="article-image">
+          <img
+            v-if="article.photo_path"
+            :src="`http://192.168.44.239:3000/${article.photo_path}`"
+            :alt="article.title + ' Photo'"
+            class="article-image"
+          />
+          <img v-else src="placeholder.jpg" alt="Placeholder Image" class="article-image" />
         </div>
         <div class="article-content-right">
           <h3>{{ article.title }}</h3>
@@ -43,7 +51,6 @@
       </div>
     </div>
 
-    <!-- Pagination component -->
     <PaginationComponent
       v-if="articles.length > 0"
       :items="articles"
@@ -55,7 +62,7 @@
 
 <script>
 import axios from 'axios';
-import swal from 'sweetalert'; 
+import swal from 'sweetalert';
 import ButtonComponent from '../../components/ButtonComponent.vue';
 import PaginationComponent from '@/components/PaginationComponent.vue';
 
@@ -74,12 +81,11 @@ export default {
       },
       articles: [],
       showForm: false,
-      currentPage: 1, 
-      pageSize: 6 
+      currentPage: 1,
+      pageSize: 6
     };
   },
   computed: {
-    
     paginatedArticles() {
       const startIndex = (this.currentPage - 1) * this.pageSize;
       return this.articles.slice(startIndex, startIndex + this.pageSize);
@@ -105,9 +111,13 @@ export default {
 
         console.log('Artikulli u krijua:', response.data);
 
-        
-        this.articles.unshift(response.data); 
-        
+        const newArticle = { ...response.data, isNew: true };
+        this.articles.unshift(newArticle);
+
+        setTimeout(() => {
+          newArticle.isNew = false;
+        }, 3000); 
+
         this.formData.title = '';
         this.formData.content = '';
         this.formData.category = '';
@@ -137,7 +147,6 @@ export default {
         if (willDelete) {
           try {
             await axios.delete(`${process.env.VUE_APP_API_URL}article/${articleId}`);
-        
             this.articles = this.articles.filter(article => article.articleId !== articleId);
             swal('Poof! Artikulli është fshirë me sukses!', {
               icon: 'success',
@@ -154,10 +163,9 @@ export default {
       });
     },
     toggleForm() {
-      this.showForm = !this.showForm; 
+      this.showForm = !this.showForm;
     },
     viewMore(article) {
-     
       console.log(`View more clicked for article: ${article.title}`);
     },
     pageChanged(page) {
@@ -186,7 +194,7 @@ export default {
 }
 
 .komponenti {
-  margin-top: 20px; 
+  margin-top: 20px;
 }
 
 .form-group {
@@ -204,12 +212,12 @@ export default {
 }
 
 .form-input[type="file"] {
-  border: none; 
+  border: none;
 }
 
 .article-list {
   display: grid;
-  gap: 20px;
+  gap: 20px; 
   grid-template-columns: repeat(auto-fit, minmax(45%, 1fr)); 
   list-style: none;
   padding: 0;
@@ -219,32 +227,33 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
   display: flex;
-  flex-direction: row;
-  overflow: hidden; 
+  flex-direction: column; 
+  overflow: hidden;
   position: relative;
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
+  width: 100%; 
 }
 
-.article-item.second-in-row {
-  margin-left: auto; 
+.article-item:nth-child(odd) {
+  margin-right: auto; 
 }
 
 .article-image-container {
-  flex: 0 0 40%; 
+  flex: 0 0 50%; 
   display: flex;
-  justify-content: center; 
-  align-items: center; 
+  justify-content: center;
+  align-items: center;
 }
 
 .article-image {
-  width: 100%; 
-  height: auto; 
-  object-fit: cover; 
-  border-radius: 5px; 
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 5px;
 }
 
 .article-content-right {
-  flex: 1; 
+  flex: 1 1 100%; 
   padding: 10px;
 }
 
@@ -257,7 +266,7 @@ export default {
 }
 
 .read-more-link {
-  color: #007bff; 
+  color: #007bff;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -269,8 +278,8 @@ export default {
 
 .delete-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  bottom: 10px; 
+  right: 10px; 
   background: none;
   border: none;
   cursor: pointer;
@@ -283,5 +292,19 @@ export default {
 
 .pagination-container {
   margin-top: 20px;
+}
+
+.new-article {
+  width: 100%; 
+  height: auto; 
+}
+
+@media (min-width: 600px) {
+  .article-item {
+    flex-direction: row;
+  }
+  .article-item:nth-child(odd) {
+    margin-right: 20px; 
+  }
 }
 </style>
