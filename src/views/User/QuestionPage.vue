@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <div class="add-question">
       <h3 class="answer-title">Shto Pyetje:</h3>
       <form @submit.prevent="submitQuestion">
@@ -10,10 +9,11 @@
         </div>
         <div class="form-group">
           <label for="userEmail" class="label">Email-i juaj:</label>
-          <input v-model="userEmail" type="email" required class="input">
+          <input v-model="userEmail" type="email" @input="validateEmail" required class="input">
+          <p v-if="emailErrorMessage" class="error">{{ emailErrorMessage }}</p>
         </div>
         <div class="dorezo">
-          <ButtonComponent :disabled="isSubmitting" buttonText="Dorëzo Pyetjen" @click="submitQuestion" />
+          <ButtonComponent :disabled="isSubmitting || !isEmailValid" buttonText="Dorëzo Pyetjen" @click="submitQuestion" />
         </div>
       </form>
     </div>
@@ -44,7 +44,6 @@
       />
 
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      <p v-if="successMessage" class="success">{{ successMessage }}</p>
     </div>
   </v-container>
 </template>
@@ -54,6 +53,7 @@ import { mapState, mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '@/components/ButtonComponent.vue';
 import PaginationComponent from '@/components/PaginationComponent.vue';
 import { debounce } from 'lodash';
+import swal from 'sweetalert';
 
 export default {
   components: {
@@ -66,11 +66,12 @@ export default {
       questionText: '',
       userEmail: '',
       isSubmitting: false,
+      emailErrorMessage: '',
     };
   },
   computed: {
     ...mapState('question', ['errorMessage', 'successMessage', 'pageSize', 'currentPage']),
-    ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions']),
+    ...mapGetters('question', ['paginatedQuestions']),
 
     filteredQuestions() {
       const query = this.searchQuery.toLowerCase().trim();
@@ -81,6 +82,10 @@ export default {
         return questionText.includes(query);
       });
     },
+    isEmailValid() {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailPattern.test(this.userEmail);
+    },
   },
   created() {
     this.fetchQuestions();
@@ -88,8 +93,22 @@ export default {
   methods: {
     ...mapActions('question', ['fetchQuestions', 'addQuestion', 'toggleAnswer', 'handlePageChange']),
 
+    validateEmail() {
+      if (!this.isEmailValid) {
+        this.emailErrorMessage = 'Email-i nuk është i vlefshëm.';
+      } else {
+        this.emailErrorMessage = '';
+      }
+    },
+
     submitQuestion: debounce(async function() {
       this.isSubmitting = true;
+
+      if (!this.isEmailValid) {
+        this.emailErrorMessage = 'Email-i nuk është i vlefshëm.';
+        this.isSubmitting = false;
+        return;
+      }
 
       try {
         await this.addQuestion({
@@ -99,7 +118,13 @@ export default {
         });
         this.questionText = '';
         this.userEmail = '';
-        this.successMessage = 'Pyetja është dërguar me sukses.';
+        swal({
+          title: "Sukses",
+          text: "Pyetja është shtuar me sukses.",
+          icon: "success",
+          buttons: false,
+          timer: 3000,
+        });
       } catch (error) {
         this.errorMessage = 'Ka ndodhur një problem gjatë dërgimit të pyetjes.';
       } finally {
