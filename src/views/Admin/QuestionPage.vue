@@ -1,4 +1,3 @@
-
 <template>
   <v-container>
     <div class="kthehu">
@@ -21,7 +20,7 @@
                 <input type="text" v-model="question.userId" required class="input" />
               </div>
               <div class="form-group">
-                <ButtonComponent buttonText="Dorëzo Përgjigjen" />
+                <ButtonComponent buttonText="Dorëzo Përgjigjen" @click="submitAnswer(question)" />
               </div>
             </form>
             <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
@@ -29,13 +28,13 @@
           </div>
           <PaginationComponent
             :items="unansweredQuestions"
-            :pageSize="pageSize"
+            :pageSize="pageSizeUnanswered"
             @pageChanged="handleUnansweredPageChange"
           />
         </div>
         <div v-else>
           <!-- Display answered questions -->
-          <div v-for="question in paginatedQuestions" :key="question.questionId">
+          <div v-for="question in paginatedAnsweredQuestions" :key="question.questionId">
             <div v-if="question.answerText" class="question">
               <h2 class="question-text">{{ question.questionText }}</h2>
               <div class="answers">
@@ -60,18 +59,16 @@
                     <textarea v-model="question.editAnswerText" required rows="3" class="input"></textarea>
                   </div>
                   <div class="form-group">
-                    <ButtonComponent buttonText="Ruaj Ndryshimet" />
+                    <ButtonComponent buttonText="Ruaj Ndryshimet" @click="submitEditedAnswer(question)" />
                   </div>
                 </form>
                 <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
                 <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
               </div>
             </div>
-           
           </div>
           <PaginationComponent
-            v-if="filteredQuestions.length > 0"
-            :items="filteredQuestions"
+            :items="filteredQuestions.filter(q => q.answerText)"
             :pageSize="pageSize"
             @pageChanged="handlePageChange"
           />
@@ -97,22 +94,46 @@ export default {
       showUnanswered: false,
     };
   },
+  computed: {
+    ...mapState('question', ['loading', 'pageSize', 'pageSizeUnanswered']),
+    ...mapGetters('question', [
+      'filteredQuestions',
+      'paginatedQuestions',
+      'paginatedUnansweredQuestions',
+      'paginatedAnsweredQuestions',
+      'unansweredQuestions',
+    ]),
+  },
   created() {
     this.fetchQuestions();
   },
-  computed: {
-    ...mapState('question', ['loading', 'pageSize']),
-    ...mapGetters('question', ['filteredQuestions', 'paginatedQuestions', 'paginatedUnansweredQuestions']),
-  },
   methods: {
-    ...mapActions('question', ['fetchQuestions', 'answerQuestion', 'editAnswer', 'deleteQuestion', 'handlePageChange', 'handleUnansweredPageChange']),
+    ...mapActions('question', [
+      'fetchQuestions',
+      'answerQuestion',
+      'editAnswer',
+      'deleteQuestion',
+      'handlePageChange',
+      'handleUnansweredPageChange',
+    ]),
     async submitAnswer(question) {
       try {
-        await this.answerQuestion({ questionId: question.questionId, answerText: question.newAnswerText, userId: question.userId });
+        await this.answerQuestion({
+          questionId: question.questionId,
+          answerText: question.newAnswerText,
+          userId: question.userId,
+        });
         question.successMessage = 'Përgjigja u shtua me sukses!';
         question.newAnswerText = '';
         question.userId = '';
         this.fetchQuestions();
+        swal({
+          title: 'Sukses!',
+          text: 'Përgjigja u shtua me sukses!',
+          icon: 'success',
+          timer: 3000,
+          buttons: false,
+        });
       } catch (error) {
         console.error('Ka ndodhur një problem gjatë shtimit të përgjigjes:', error);
         question.errorMessage = 'Ka ndodhur një problem gjatë shtimit të përgjigjes';
@@ -120,13 +141,14 @@ export default {
     },
     async submitEditedAnswer(question) {
       try {
-        await this.editAnswer({ questionId: question.questionId, answerText: question.editAnswerText });
+        await this.editAnswer({
+          questionId: question.questionId,
+          answerText: question.editAnswerText,
+        });
         question.successMessage = 'Përgjigja u ndryshua me sukses!';
         question.editingAnswer = false;
         question.editAnswerText = '';
         this.fetchQuestions();
-
-        // Show success alert with SweetAlert and hide after 3 seconds
         swal({
           title: 'Sukses!',
           text: 'Ndryshimi është kryer me sukses.',
@@ -144,16 +166,13 @@ export default {
     },
     toggleEditAnswer(question) {
       question.editingAnswer = !question.editingAnswer;
-      question.editAnswerText = question.answerText; // Pre-fill with existing answer text
+      question.editAnswerText = question.answerText;
     },
     toggleUnansweredQuestions() {
       this.showUnanswered = !this.showUnanswered;
     },
     handleUnansweredPageChange(page) {
       this.handleUnansweredPageChange(page);
-    },
-    handleAnsweredPageChange(page) {
-      this.handleAnsweredPageChange(page);
     },
     confirmDelete(questionId) {
       swal({
@@ -162,7 +181,7 @@ export default {
         icon: 'warning',
         buttons: ['Anulo', 'Po, fshije!'],
         dangerMode: true,
-      }).then((willDelete) => {
+      }).then(willDelete => {
         if (willDelete) {
           this.deleteQuestion(questionId)
             .then(() => {
@@ -170,7 +189,7 @@ export default {
                 icon: 'success',
               });
             })
-            .catch((error) => {
+            .catch(error => {
               console.error('Ka ndodhur një gabim gjatë fshirjes së pyetjes:', error);
               swal('Oops! Ndodhi një gabim.', {
                 icon: 'error',
@@ -189,7 +208,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
