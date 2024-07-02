@@ -1,12 +1,9 @@
 <template>
   <div class="article-manager">
-    <h1>Article Manager</h1>
-
-    <hr>
-
+  
     <!-- Display articles -->
     <div v-if="articles.length" class="articles">
-      <h2>Articles</h2>
+    
       <div v-for="article in articles" :key="article.articleId" class="article">
         <h3>{{ article.title }}</h3>
         <p>Category: {{ article.category }}</p>
