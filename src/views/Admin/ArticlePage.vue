@@ -1,42 +1,49 @@
 <template>
   <div class="article-manager">
-   
-  
-    <form @submit.prevent="handleSubmit" class="form">
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" id="title" v-model="form.title" required>
-      </div>
-      <div class="form-group">
-        <label for="category">Category</label>
-        <input type="text" id="category" v-model="form.category" required>
-      </div>
-      <div class="form-group">
+    <ButtonComponent v-if="!showModal" buttonText="Postim i ri" @click="toggleModal" />
+    
+    <ModalComponent v-if="showModal" v-model="showModal" @close="closeModal">
+      <template #header>
+        <span>{{ editMode ? 'Edit Article' : 'Postim i ri' }}</span>
+      </template>
+      <template #body>
+        <form @submit.prevent="handleSubmit" class="form">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" v-model="form.title" required>
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <input type="text" id="category" v-model="form.category" required>
+          </div>
+          <div class="form-group">
         <label for="content">Content</label>
         <textarea id="content" v-model="form.contentText"></textarea>
-        <button class="btn add-content-btn" type="button" @click="addContent">Add Content</button>
-      </div>
-      <div class="form-group">
-        <label for="photos">Photos</label>
-        <input type="file" id="photos" accept="image/*" multiple @change="handleFileUpload">
-    
-        <div v-if="form.photos.length > 0" class="selected-photos">
-          <div v-for="(photo, index) in form.photos" :key="index" class="selected-photo">
-            <img :src="getPhotoPreview(photo)" alt="Selected Photo" class="preview-image">
-          </div>
+        <div class="boton">
+          <ButtonComponent buttonText="Shto Permbajtjen" type="button" @click="addContent"/>
         </div>
       </div>
-      <button class="btn submit-btn" type="submit">{{ editMode ? 'Update Article' : 'Add Article' }}</button>
-    </form>
+          <div class="form-group">
+            <label for="photos">Photos</label>
+            <input type="file" id="photos" accept="image/*" multiple @change="handleFileUpload">
+            <div v-if="form.photos.length > 0" class="selected-photos">
+              <div v-for="(photo, index) in form.photos" :key="index" class="selected-photo">
+                <img :src="getPhotoPreview(photo)" alt="Selected Photo" class="preview-image">
+              </div>
+            </div>
+          </div>
+          <div class="shto">
+            <ButtonComponent :buttonText="editMode ? 'Posto' : 'Posto'" type="submit" />
+          </div>
+        </form>
+      </template>
+    </ModalComponent>
 
-    <hr>
-
-  
     <div v-if="articles.length" class="articles">
       <h2>Articles</h2>
       <div v-for="article in articles" :key="article.articleId" class="article">
         <h3>{{ article.title }}</h3>
-        <p>Category: {{ article.category }}</p>
+        <p>Updated {{ getTimeAgo(article.updatedAt) }}</p>
         <button class="btn toggle-details-btn" @click="toggleDetails(article)">
           {{ article.showDetails ? 'Hide Details' : 'Show Details' }}
         </button>
@@ -62,9 +69,15 @@
 </template>
 
 <script>
+import ButtonComponent from '@/components/ButtonComponent.vue';
+import ModalComponent from '@/components/ModalComponents.vue';
 import axios from 'axios';
 
 export default {
+  components: {
+    ButtonComponent,
+    ModalComponent
+  },
   data() {
     return {
       form: {
@@ -75,6 +88,7 @@ export default {
         photos: []
       },
       articles: [],
+      showModal: false,
       editMode: false,
       editArticleId: null
     };
@@ -92,9 +106,7 @@ export default {
       }
     },
     handleFileUpload(event) {
-      // Reset form.photos array to clear previous selections
       this.form.photos = [];
-      // Capture selected files and display them
       Array.from(event.target.files).forEach(file => {
         this.form.photos.push(file);
       });
@@ -129,6 +141,7 @@ export default {
           });
         }
         this.resetForm();
+        this.showModal = false; // Close modal after submitting the form
         this.fetchArticles();
       } catch (error) {
         console.error('Error submitting article:', error);
@@ -148,6 +161,7 @@ export default {
       this.form.title = article.title;
       this.form.category = article.category;
       this.form.contents = article.contents.map(content => ({ content: content.content }));
+      this.showModal = true;
     },
     resetForm() {
       this.form = {
@@ -164,7 +178,6 @@ export default {
       return `http://192.168.44.239:3000/${photoPath}`;
     },
     getPhotoPreview(photo) {
-      // Create a URL object from the File or Blob object to display preview
       return URL.createObjectURL(photo);
     },
     toggleDetails(article) {
@@ -172,24 +185,50 @@ export default {
       if (article.showDetails) {
         this.$router.push({ name: 'articleDetails', params: { id: article.articleId } });
       }
+    },
+    getTimeAgo(updatedAt) {
+      const currentTime = new Date();
+      const articleTime = new Date(updatedAt);
+      const timeDiff = currentTime.getTime() - articleTime.getTime();
+      const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
+
+      if (hoursDiff === 0) {
+        return 'just now';
+      } else if (hoursDiff === 1) {
+        return 'about 1 hour ago';
+      } else {
+        return `about ${hoursDiff} hours ago`;
+      }
+    },
+    toggleModal() {
+      this.editMode = false;
+      this.resetForm();
+      this.showModal = !this.showModal;
+    },
+    closeModal() {
+      this.showModal = false;
+      this.resetForm();
     }
   }
 };
 </script>
 
 <style scoped>
+.boton{
+  padding-top: 45px;
+}
 .article-manager {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h1, h2 {
   text-align: center;
   color: #333;
+}
+.shto {
+  margin-bottom: 70px;
 }
 
 .form {
@@ -253,64 +292,48 @@ h1, h2 {
   padding: 15px;
   margin-bottom: 10px;
   background-color: #fff;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .article h3 {
   margin-top: 0;
 }
 
-.article-content,
-.article-photo {
-  margin: 10px 0;
-}
-
-.article-content p {
-  margin: 0;
-}
-
-.article-photo img {
-  max-width: 100%;
-  border-radius: 4px;
-}
-
-.selected-photo {
-  margin-top: 10px;
-}
-
-.preview-image {
-  max-width: 50%; 
-  height: auto;
-  border-radius: 6px;
-}
-
 .article-actions {
   display: flex;
-  justify-content: flex-end;
   gap: 10px;
 }
 
-.edit-btn {
-  background-color: #ffc107;
+.article-content,
+.article-photos {
+  margin-top: 10px;
 }
 
-.edit-btn:hover {
-  background-color: #e0a800;
+.article-content ul {
+  padding-left: 20px;
 }
 
-.delete-btn {
-  background-color: #dc3545;
+.article-photo img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
 }
 
-.delete-btn:hover {
-  background-color: #c82333;
+.selected-photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-.toggle-details-btn {
-  background-color: #17a2b8;
+.selected-photo {
+  position: relative;
 }
 
-.toggle-details-btn:hover {
-  background-color: #138496;
+.preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
 }
 </style>
+
