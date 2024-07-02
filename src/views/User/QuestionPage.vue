@@ -113,7 +113,7 @@ export default {
       try {
         await this.addQuestion({
           questionText: this.questionText,
-          userId: 1, // Assuming userId is fixed or comes from elsewhere
+          userId: 1, 
           userEmail: this.userEmail,
         });
         this.questionText = '';

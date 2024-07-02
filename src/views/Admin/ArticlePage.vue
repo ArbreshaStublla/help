@@ -66,19 +66,19 @@ export default {
   max-width: 100%;
   height: auto;
   margin-bottom: 10px;
-  max-height: 200px; /* Adjust the maximum height as needed */
+  max-height: 200px; 
 }
 
 .article-card button {
   margin-top: 10px;
   padding: 5px 10px;
-  background-color: #dc3545; /* Red color for delete button */
+  background-color: #dc3545; 
   color: white;
   border: none;
   cursor: pointer;
 }
 
 .article-card button:hover {
-  background-color: #c82333; /* Darker shade on hover */
+  background-color: #c82333; 
 }
 </style>

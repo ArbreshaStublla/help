@@ -7,7 +7,6 @@
       <div v-if="filteredQuestions.length === 0 && !loading" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
         <div v-if="showUnanswered">
-          <!-- Display unanswered questions -->
           <div v-for="question in paginatedUnansweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <form @submit.prevent="submitAnswer(question)">
@@ -33,7 +32,6 @@
           />
         </div>
         <div v-else>
-          <!-- Display answered questions -->
           <div v-for="question in paginatedAnsweredQuestions" :key="question.questionId">
             <div v-if="question.answerText" class="question">
               <h2 class="question-text">{{ question.questionText }}</h2>
