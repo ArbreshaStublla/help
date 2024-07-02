@@ -30,7 +30,7 @@
 <script>
 import { mapState } from 'vuex';
 import SearchComponent from '../../components/SearchComponent.vue';
-import ButtonComponent from '../../components/ButtonComponent.vue'; // Import your ButtonComponent
+import ButtonComponent from '../../components/ButtonComponent.vue'; 
 
 import ArticlesPage from './ArticlePage.vue';
 import QuestionsPage from '../Admin/QuestionPage.vue';
