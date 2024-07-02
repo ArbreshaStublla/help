@@ -4,6 +4,7 @@ import AdministratorView from "@/views/Admin/AdministratorView.vue";
 import AdminView from "@/views/Admin/AdminPage.vue";
 import NotFound from "../components/ErrorPage.vue";
 import HomeViewAdmin from "@/views/Admin/HomeViewAdmin.vue";
+import ArticleDetails from "../views/Admin/ArticleDetails.vue"; 
 
 const routes = [
   {
@@ -29,6 +30,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/article/:id', 
+    name: 'articleDetails',
+    component: ArticleDetails,
+    props: true 
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFound
@@ -42,13 +49,13 @@ const router = createRouter({
 
 let isAuthenticated = localStorage.getItem('isLoggedIn') === 'true';
 
-// Function to update isAuthenticated status
+
 export function setAuthentication(value) {
   isAuthenticated = value;
-  localStorage.setItem('isLoggedIn', value); // Update localStorage
+  localStorage.setItem('isLoggedIn', value); 
 }
 
-// Guard navigation routes based on authentication
+
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login');

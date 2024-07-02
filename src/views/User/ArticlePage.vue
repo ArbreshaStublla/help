@@ -1,140 +1,126 @@
 <template>
-  <div class="forma1">
-    <div class="article-list">
-      <div
-        v-for="(article, index) in paginatedArticles"
-        :key="article.articleId"
-        class="article-item"
-        :class="{ 'second-in-row': index % 2 !== 0 }"
-      >
-        <div class="article-image-container">
-          <img
-            v-if="article.photo_path"
-            :src="`http://192.168.44.239:3000/${article.photo_path}`"
-            :alt="article.title + ' Photo'"
-            class="article-image"
-          />
-          <img src="placeholder.jpg" alt="Placeholder Image" class="article-image" v-else />
-        </div>
-        <div class="article-content-right">
-          <h3>{{ article.title }}</h3>
-          <p><strong>Category:</strong> {{ article.category }}</p>
-          <p>{{ article.content }}</p>
+  <div class="article-manager">
+    <h1>Article Manager</h1>
+
+    <hr>
+
+    <!-- Display articles -->
+    <div v-if="articles.length" class="articles">
+      <h2>Articles</h2>
+      <div v-for="article in articles" :key="article.articleId" class="article">
+        <h3>{{ article.title }}</h3>
+        <p>Category: {{ article.category }}</p>
+        <button class="btn toggle-details-btn" @click="toggleDetails(article)">
+          {{ article.showDetails ? 'Hide Details' : 'Show Details' }}
+        </button>
+        <div v-if="article.showDetails" class="article-details">
+          <div v-if="article.contents && article.contents.length > 0" class="article-content">
+            <ul>
+              <li v-for="(content, index) in article.contents" :key="index">{{ content.content }}</li>
+            </ul>
+          </div>
+          <div v-if="article.photos && article.photos.length > 0" class="article-photos">
+            <div v-for="(photo, index) in article.photos" :key="index" class="article-photo">
+              <img :src="getPhotoUrl(photo.photoUrl)" alt="Article Photo" class="article-preview-image">
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <PaginationComponent
-      :items="articles"
-      :pageSize="pageSize"
-      :currentPage="currentPage"
-      @pageChanged="handlePageChange"
-    />
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import PaginationComponent from '@/components/PaginationComponent.vue';
 
 export default {
-  components: {
-    PaginationComponent,
-  },
   data() {
     return {
-      articles: [],
-      currentPage: 1,
-      pageSize: 6,
+      articles: []
     };
+  },
+  mounted() {
+    this.fetchArticles();
   },
   methods: {
     async fetchArticles() {
       try {
-        const response = await axios.get(`${process.env.VUE_APP_API_URL}article/`);
+        const response = await axios.get('http://192.168.44.239:3000/article');
         this.articles = response.data;
       } catch (error) {
         console.error('Error fetching articles:', error);
       }
     },
-    handlePageChange(page) {
-      this.currentPage = page;
+    toggleDetails(article) {
+      if (!article.showDetails) {
+        article.showDetails = true;
+        this.$router.push({ name: 'articleDetails', params: { id: article.articleId } });
+      }
     },
-  },
-  computed: {
-    paginatedArticles() {
-      const start = (this.currentPage - 1) * this.pageSize;
-      const end = start + this.pageSize;
-      return this.articles.slice(start, end);
-    },
-  },
-  created() {
-    this.fetchArticles();
-  },
+    getPhotoUrl(photoPath) {
+      return `http://192.168.44.239:3000/${photoPath}`;
+    }
+  }
 };
 </script>
 
 <style scoped>
-.forma1 {
-  margin-top: 30px;
+.article-manager {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.article-list {
-  display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
-  list-style: none;
-  padding: 0;
+h1, h2 {
+  text-align: center;
+  color: #333;
 }
 
-.article-item {
+.articles {
+  margin-top: 20px;
+}
+
+.article {
   border: 1px solid #ccc;
-  border-radius: 5px;
-  display: flex;
-  flex-direction: column; 
-  overflow: hidden;
-  position: relative;
-  margin-bottom: 20px;
-  width: 100%; 
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.article-item.second-in-row {
-  margin-right: auto;
-}
-
-.article-image-container {
-  flex: 0 0 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.article-image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-.article-content-right {
-  flex: 1; 
-  padding: 10px;
-}
-
-.article-content-right h3 {
+.article h3 {
   margin-top: 0;
 }
 
-.article-content-right p {
-  margin: 0 0 10px;
+.article-content,
+.article-photo {
+  margin: 10px 0;
 }
 
-@media (min-width: 600px) {
-  .article-item {
-    flex-direction: row; 
-  }
+.article-content p {
+  margin: 0;
+}
 
-  .article-item:nth-child(odd) {
-    margin-right: 20px; 
-  }
+.article-photo img {
+  max-width: 100%;
+  border-radius: 4px;
+}
+
+.preview-image {
+  max-width: 50%; 
+  height: auto;
+  border-radius: 6px;
+}
+
+.toggle-details-btn {
+  background-color: #17a2b8;
+}
+
+.toggle-details-btn:hover {
+  background-color: #138496;
 }
 </style>
