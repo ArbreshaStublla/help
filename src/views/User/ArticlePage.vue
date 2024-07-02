@@ -1,27 +1,32 @@
 <template>
   <div class="article-manager">
-  
-    <!-- Display articles -->
-    <div v-if="articles.length" class="articles">
-    
+    <div v-if="articles.length" class="articles-grid">
       <div v-for="article in articles" :key="article.articleId" class="article">
-        <h3>{{ article.title }}</h3>
-        <p>Category: {{ article.category }}</p>
+        <div class="article-header">
+          <h3>{{ article.title }}</h3>
+          <p>Category: {{ article.category }}</p>
+        </div>
+        <div class="article-content" v-if="!article.showDetails">
+          <!-- Show only the first content -->
+          <div v-if="article.contents && article.contents.length > 0">
+            <p>{{ article.contents[0].content }}</p>
+          </div>
+          <div class="article-photo" v-if="article.photos && article.photos.length > 0">
+            <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Article Photo" class="article-preview-image">
+          </div>
+        </div>
+        <div class="article-details" v-else>
+          <!-- Show all contents and photos when details are expanded -->
+          <div v-for="(content, index) in article.contents" :key="index" class="article-content">
+            <p>{{ content.content }}</p>
+          </div>
+          <div v-for="(photo, index) in article.photos" :key="index" class="article-photo">
+            <img :src="getPhotoUrl(photo.photoUrl)" alt="Article Photo" class="article-full-image">
+          </div>
+        </div>
         <button class="btn toggle-details-btn" @click="toggleDetails(article)">
           {{ article.showDetails ? 'Hide Details' : 'Show Details' }}
         </button>
-        <div v-if="article.showDetails" class="article-details">
-          <div v-if="article.contents && article.contents.length > 0" class="article-content">
-            <ul>
-              <li v-for="(content, index) in article.contents" :key="index">{{ content.content }}</li>
-            </ul>
-          </div>
-          <div v-if="article.photos && article.photos.length > 0" class="article-photos">
-            <div v-for="(photo, index) in article.photos" :key="index" class="article-photo">
-              <img :src="getPhotoUrl(photo.photoUrl)" alt="Article Photo" class="article-preview-image">
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -49,8 +54,8 @@ export default {
       }
     },
     toggleDetails(article) {
-      if (!article.showDetails) {
-        article.showDetails = true;
+      article.showDetails = !article.showDetails;
+      if (article.showDetails) {
         this.$router.push({ name: 'articleDetails', params: { id: article.articleId } });
       }
     },
@@ -63,28 +68,18 @@ export default {
 
 <style scoped>
 .article-manager {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1, h2 {
-  text-align: center;
-  color: #333;
-}
-
-.articles {
   margin-top: 20px;
 }
 
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+}
+
 .article {
-  border: 1px solid #ccc;
   border-radius: 4px;
   padding: 15px;
-  margin-bottom: 10px;
   background-color: #fff;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
@@ -93,28 +88,37 @@ h1, h2 {
   margin-top: 0;
 }
 
-.article-content,
-.article-photo {
-  margin: 10px 0;
+.article-header {
+  margin-bottom: 10px;
+}
+
+.article-content {
+  margin-bottom: 10px;
 }
 
 .article-content p {
   margin: 0;
 }
 
-.article-photo img {
-  max-width: 100%;
-  border-radius: 4px;
+.article-preview {
+  display: flex;
+  align-items: center;
 }
 
-.preview-image {
-  max-width: 50%; 
+.article-preview-image, .article-full-image {
+  width: 80%;
+  max-width: 80%;
   height: auto;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .toggle-details-btn {
   background-color: #17a2b8;
+  margin-top: 10px;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
 }
 
 .toggle-details-btn:hover {

@@ -10,7 +10,7 @@ export default createStore({
   },
   mutations: {
     setSearchQuery(state, query) {
-      state.searchQuery = query.toLowerCase();
+      state.searchQuery = query.toLowerCase().trim();
     }
   },
   actions: {
