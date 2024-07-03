@@ -1,8 +1,8 @@
 <template>
-  <div class="butoni">
-    <CustomButton buttonText="Postim i ri" @click="showModal = true"></CustomButton>
-  </div>
   <div class="article-manager">
+    <div class="butoni">
+      <CustomButton buttonText="Postim i ri" @click="showModal = true"></CustomButton>
+    </div>
     <ModalComponent v-model="showModal">
       <template v-slot:header>
         <v-card-title class="modal-header">
@@ -42,25 +42,22 @@
     <!-- Article Grid -->
     <div v-if="articles.length" class="articles-grid">
       <div v-for="article in articles" :key="article.articleId" class="article">
-        <div class="article-header">
-          <h3>{{ article.title }}</h3>
-          <p>Category: {{ article.category }}</p>
-        </div>
-        <div class="article-content">
-          <!-- Show only the first content -->
-          <div v-if="!article.showDetails">
-            <p>{{ article.contents && article.contents.length > 0 ? article.contents[0].content : '' }}</p>
+        <div class="article-image">
+          <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Article Photo" class="article-preview-image">
+          <div class="articleee">
+            <div class="article-details">
+              <div class="article-header">
+                <button class="btn delete-btn" @click="confirmDelete(article.articleId)">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <h3>{{ article.title }}</h3>
+              </div>
+              <p>Category: {{ article.category }}</p>
+              <div class="article-actions">
+                <ButtonComponent buttonText="Shfaq më shumë" @click="navigateToArticleDetails(article.articleId)" />
+              </div>
+            </div>
           </div>
-          <div class="article-photo" v-if="article.photos && article.photos.length > 0">
-            <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Article Photo" class="article-preview-image">
-          </div>
-        </div>
-        <div class="article-actions">
-          <button class="btn toggle-details-btn" @click="navigateToArticleDetails(article.articleId)">
-            Show Details
-          </button>
-          <button class="btn edit-btn" @click="editArticle(article)">Edit</button>
-          <button class="btn delete-btn" @click="deleteArticle(article.articleId)">Delete</button>
         </div>
       </div>
     </div>
@@ -69,13 +66,16 @@
 
 <script>
 import axios from 'axios';
-import ModalComponent from '../../components/ModalComponents.vue'; // Adjust the path as per your actual structure
-import CustomButton from '../../components/ButtonComponent.vue'; // Adjust the path as per your actual structure
+import swal from 'sweetalert';
+import ModalComponent from '../../components/ModalComponents.vue'; 
+import CustomButton from '../../components/ButtonComponent.vue'; 
+import ButtonComponent from '../../components/ButtonComponent.vue'; 
 
 export default {
   components: {
     ModalComponent,
-    CustomButton
+    CustomButton,
+    ButtonComponent
   },
   data() {
     return {
@@ -89,7 +89,7 @@ export default {
       articles: [],
       editMode: false,
       editArticleId: null,
-      showModal: false 
+      showModal: false
     };
   },
   mounted() {
@@ -138,10 +138,31 @@ export default {
         }
         this.resetForm();
         this.fetchArticles();
-        this.showModal = false; 
+        this.showModal = false;
       } catch (error) {
         console.error('Error submitting article:', error);
       }
+    },
+    async confirmDelete(articleId) {
+      swal({
+        title: 'A jeni i sigurt?',
+        text: 'Kjo veprim do të fshijë përgjithmonë artikullin!',
+        icon: 'warning',
+        buttons: ['Anulo', 'Fshij'],
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          await this.deleteArticle(articleId);
+          this.fetchArticles();
+          swal({
+            title: 'Fshirë!',
+            text: 'Artikulli është fshirë.',
+            icon: 'success',
+            timer: 3000,
+            buttons: false,
+          });
+        }
+      });
     },
     async deleteArticle(articleId) {
       try {
@@ -157,7 +178,7 @@ export default {
       this.form.title = article.title;
       this.form.category = article.category;
       this.form.contents = article.contents.map(content => content.content);
-      this.showModal = true; 
+      this.showModal = true;
     },
     resetForm() {
       this.form = {
@@ -181,20 +202,18 @@ export default {
 </script>
 
 <style scoped>
-.butoni{
-margin-right: 20px;
+.articleee {
+  margin-bottom: 200px;
 }
 
 .article-manager {
- 
   margin: 0 auto;
-  padding: 80px 20px 0px 0px;
- 
+  padding: 80px 20px 0px 20px;
 }
 
-h1 {
-  text-align: center;
-  color: #333;
+.butoni {
+  margin-top: -75px !important;
+  margin-bottom: 70px;
 }
 
 .form {
@@ -216,12 +235,8 @@ h1 {
 .form-group input,
 .form-group textarea {
   padding: 8px;
-  border: 1px solid #ccc;
   border-radius: 4px;
 }
-
-
-
 
 .add-content-btn {
   background-color: #28a745;
@@ -237,60 +252,62 @@ h1 {
 
 .articles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
   gap: 20px;
+  align-items: start; 
 }
 
 .article {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 15px;
-
-  
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.article h3 {
-  margin-top: 0;
+.article-image {
+  position: relative;
+  text-align: center;
+}
+
+.article-preview-image {
+  width: 100%; 
+  height: 300px; 
+  object-fit: cover; 
+  border-radius: 4px;
+}
+
+.article-details {
+  position: absolute;
+  bottom: -200px; 
+  left: 50%; 
+  transform: translateX(-50%);
+  width: 70%; 
+  height: 250px;
+  padding: 10px;
+  background-color: #ffffff;
+  text-align: center; 
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
 }
 
 .article-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 10px;
+  text-align: center; 
 }
 
-.article-content {
-  margin-bottom: 10px;
-}
-
-.article-content p {
+.article-header h3 {
   margin: 0;
-}
-
-.article-photo img {
-  max-width: 80%;
-  height: auto;
-  border-radius: 4px;
+  flex: 1;
+  text-align: center; 
 }
 
 .article-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.edit-btn {
-  background-color: #ffc107;
-}
-
-.edit-btn:hover {
-  background-color: #e0a800;
-}
-
-.delete-btn {
-  background-color: #dc3545;
-}
-
-.delete-btn:hover {
-  background-color: #c82333;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
 .toggle-details-btn {
@@ -299,5 +316,19 @@ h1 {
 
 .toggle-details-btn:hover {
   background-color: #138496;
+}
+
+.delete-btn {
+  background-color: transparent; 
+  border: none; 
+  cursor: pointer;
+}
+
+.delete-btn i {
+  color: #dc3545; 
+}
+
+.delete-btn:hover i {
+  color: #c82333; 
 }
 </style>
