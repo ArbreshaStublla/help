@@ -1,5 +1,5 @@
 <template>
-  <button class="btn create-article-btn" @click="showModal = true">Create Article</button>
+
   <div class="article-manager">
     <div v-if="articles.length" class="articles-grid">
       <div v-for="article in articles" :key="article.articleId" class="article">
@@ -8,7 +8,7 @@
           <p>Category: {{ article.category }}</p>
         </div>
         <div class="article-content" v-if="!article.showDetails">
-          <!-- Show only the first content -->
+        
           <div v-if="article.contents && article.contents.length > 0">
             <p>{{ article.contents[0].content }}</p>
           </div>
@@ -17,7 +17,7 @@
           </div>
         </div>
         <div class="article-details" v-else>
-          <!-- Show all contents and photos when details are expanded -->
+        
           <div v-for="(content, index) in article.contents" :key="index" class="article-content">
             <p>{{ content.content }}</p>
           </div>

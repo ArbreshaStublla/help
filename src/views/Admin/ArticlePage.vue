@@ -39,7 +39,7 @@
       </template>
     </ModalComponent>
 
-    <!-- Article Grid -->
+    
     <div v-if="articles.length" class="articles-grid">
       <div v-for="article in articles" :key="article.articleId" class="article">
         <div class="article-image">
@@ -204,11 +204,13 @@ export default {
 <style scoped>
 .articleee {
   margin-bottom: 200px;
+ 
 }
 
 .article-manager {
   margin: 0 auto;
   padding: 80px 20px 0px 20px;
+  
 }
 
 .butoni {
@@ -252,14 +254,17 @@ export default {
 
 .articles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
   gap: 20px;
   align-items: start; 
+  
 }
 
 .article {
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+ 
+  background-color: #eee !important;
 }
 
 .article-image {
@@ -288,6 +293,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .article-header {
