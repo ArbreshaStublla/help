@@ -5,6 +5,7 @@ import AdminView from "@/views/Admin/AdminPage.vue";
 import NotFound from "../components/ErrorPage.vue";
 import HomeViewAdmin from "@/views/Admin/HomeViewAdmin.vue";
 import ArticleDetails from "../views/Admin/ArticleDetails.vue"; 
+import EditArticle from "../components/EditArticle.vue"
 
 const routes = [
   {
@@ -34,6 +35,13 @@ const routes = [
     name: 'articleDetails',
     component: ArticleDetails,
     props: true 
+  },
+  {
+    path: '/edit/:id', 
+    name: 'editArticle',
+    component: EditArticle,
+    props: true ,
+    meta: { requiresAuth: true }
   },
   {
     path: '/:pathMatch(.*)*',
