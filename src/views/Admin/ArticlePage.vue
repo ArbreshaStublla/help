@@ -1,65 +1,64 @@
 <template>
+  <div class="butoni">
+    <CustomButton buttonText="Postim i ri" @click="showModal = true"></CustomButton>
+  </div>
   <div class="article-manager">
-    <ButtonComponent v-if="!showModal" buttonText="Postim i ri" @click="toggleModal" />
-    
-    <ModalComponent v-if="showModal" v-model="showModal" @close="closeModal">
-      <template #header>
-        <span>{{ editMode ? 'Edit Article' : 'Postim i ri' }}</span>
+    <ModalComponent v-model="showModal">
+      <template v-slot:header>
+        <v-card-title class="modal-header">
+          {{ editMode ? 'Update Article' : 'Create Article' }}
+        </v-card-title>
       </template>
-      <template #body>
+      <template v-slot:body>
         <form @submit.prevent="handleSubmit" class="form">
           <div class="form-group">
-            <label for="title">Title</label>
+            <label for="title">Title:</label>
             <input type="text" id="title" v-model="form.title" required>
           </div>
           <div class="form-group">
-            <label for="category">Category</label>
+            <label for="category">Category:</label>
             <input type="text" id="category" v-model="form.category" required>
           </div>
           <div class="form-group">
-        <label for="content">Content</label>
-        <textarea id="content" v-model="form.contentText"></textarea>
-        <div class="boton">
-          <ButtonComponent buttonText="Shto Permbajtjen" type="button" @click="addContent"/>
-        </div>
-      </div>
+            <label for="contents">Contents:</label>
+            <textarea v-model="form.contentText" rows="3"></textarea>
+            <button class="btn add-content-btn" @click.prevent="addContent">Add Content</button>
+          </div>
+          <ul class="content-list">
+            <li v-for="(content, index) in form.contents" :key="index">{{ content }}</li>
+          </ul>
           <div class="form-group">
-            <label for="photos">Photos</label>
-            <input type="file" id="photos" accept="image/*" multiple @change="handleFileUpload">
-            <div v-if="form.photos.length > 0" class="selected-photos">
-              <div v-for="(photo, index) in form.photos" :key="index" class="selected-photo">
-                <img :src="getPhotoPreview(photo)" alt="Selected Photo" class="preview-image">
-              </div>
-            </div>
+            <label for="photos">Photos:</label>
+            <input type="file" id="photos" multiple @change="handleFileUpload">
           </div>
-          <div class="shto">
-            <ButtonComponent :buttonText="editMode ? 'Posto' : 'Posto'" type="submit" />
-          </div>
+          <button class="btn submit-btn" type="submit">{{ editMode ? 'Update Article' : 'Create Article' }}</button>
         </form>
+      </template>
+      <template v-slot:footer>
+        <v-btn @click="showModal = false" color="primary">Close</v-btn>
       </template>
     </ModalComponent>
 
-    <div v-if="articles.length" class="articles">
-      <h2>Articles</h2>
+    <!-- Article Grid -->
+    <div v-if="articles.length" class="articles-grid">
       <div v-for="article in articles" :key="article.articleId" class="article">
-        <h3>{{ article.title }}</h3>
-        <p>Updated {{ getTimeAgo(article.updatedAt) }}</p>
-        <button class="btn toggle-details-btn" @click="toggleDetails(article)">
-          {{ article.showDetails ? 'Hide Details' : 'Show Details' }}
-        </button>
-        <div v-if="article.showDetails" class="article-details">
-          <div v-if="article.contents && article.contents.length > 0" class="article-content">
-            <ul>
-              <li v-for="(content, index) in article.contents" :key="index">{{ content.content }}</li>
-            </ul>
+        <div class="article-header">
+          <h3>{{ article.title }}</h3>
+          <p>Category: {{ article.category }}</p>
+        </div>
+        <div class="article-content">
+          <!-- Show only the first content -->
+          <div v-if="!article.showDetails">
+            <p>{{ article.contents && article.contents.length > 0 ? article.contents[0].content : '' }}</p>
           </div>
-          <div v-if="article.photos && article.photos.length > 0" class="article-photos">
-            <div v-for="(photo, index) in article.photos" :key="index" class="article-photo">
-              <img :src="getPhotoUrl(photo.photoUrl)" alt="Article Photo" class="article-preview-image">
-            </div>
+          <div class="article-photo" v-if="article.photos && article.photos.length > 0">
+            <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Article Photo" class="article-preview-image">
           </div>
         </div>
         <div class="article-actions">
+          <button class="btn toggle-details-btn" @click="navigateToArticleDetails(article.articleId)">
+            Show Details
+          </button>
           <button class="btn edit-btn" @click="editArticle(article)">Edit</button>
           <button class="btn delete-btn" @click="deleteArticle(article.articleId)">Delete</button>
         </div>
@@ -69,14 +68,14 @@
 </template>
 
 <script>
-import ButtonComponent from '@/components/ButtonComponent.vue';
-import ModalComponent from '@/components/ModalComponents.vue';
 import axios from 'axios';
+import ModalComponent from '../../components/ModalComponents.vue'; // Adjust the path as per your actual structure
+import CustomButton from '../../components/ButtonComponent.vue'; // Adjust the path as per your actual structure
 
 export default {
   components: {
-    ButtonComponent,
-    ModalComponent
+    ModalComponent,
+    CustomButton
   },
   data() {
     return {
@@ -88,9 +87,9 @@ export default {
         photos: []
       },
       articles: [],
-      showModal: false,
       editMode: false,
-      editArticleId: null
+      editArticleId: null,
+      showModal: false 
     };
   },
   mounted() {
@@ -106,14 +105,11 @@ export default {
       }
     },
     handleFileUpload(event) {
-      this.form.photos = [];
-      Array.from(event.target.files).forEach(file => {
-        this.form.photos.push(file);
-      });
+      this.form.photos = Array.from(event.target.files);
     },
     addContent() {
       if (this.form.contentText) {
-        this.form.contents.push({ content: this.form.contentText });
+        this.form.contents.push(this.form.contentText);
         this.form.contentText = '';
       }
     },
@@ -141,8 +137,8 @@ export default {
           });
         }
         this.resetForm();
-        this.showModal = false; // Close modal after submitting the form
         this.fetchArticles();
+        this.showModal = false; 
       } catch (error) {
         console.error('Error submitting article:', error);
       }
@@ -160,8 +156,8 @@ export default {
       this.editArticleId = article.articleId;
       this.form.title = article.title;
       this.form.category = article.category;
-      this.form.contents = article.contents.map(content => ({ content: content.content }));
-      this.showModal = true;
+      this.form.contents = article.contents.map(content => content.content);
+      this.showModal = true; 
     },
     resetForm() {
       this.form = {
@@ -177,58 +173,27 @@ export default {
     getPhotoUrl(photoPath) {
       return `http://192.168.44.239:3000/${photoPath}`;
     },
-    getPhotoPreview(photo) {
-      return URL.createObjectURL(photo);
-    },
-    toggleDetails(article) {
-      article.showDetails = !article.showDetails;
-      if (article.showDetails) {
-        this.$router.push({ name: 'articleDetails', params: { id: article.articleId } });
-      }
-    },
-    getTimeAgo(updatedAt) {
-      const currentTime = new Date();
-      const articleTime = new Date(updatedAt);
-      const timeDiff = currentTime.getTime() - articleTime.getTime();
-      const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
-
-      if (hoursDiff === 0) {
-        return 'just now';
-      } else if (hoursDiff === 1) {
-        return 'about 1 hour ago';
-      } else {
-        return `about ${hoursDiff} hours ago`;
-      }
-    },
-    toggleModal() {
-      this.editMode = false;
-      this.resetForm();
-      this.showModal = !this.showModal;
-    },
-    closeModal() {
-      this.showModal = false;
-      this.resetForm();
+    navigateToArticleDetails(articleId) {
+      this.$router.push({ name: 'articleDetails', params: { id: articleId } });
     }
   }
 };
 </script>
 
 <style scoped>
-.boton{
-  padding-top: 45px;
+.butoni{
+margin-right: 20px;
 }
 .article-manager {
-  max-width: 800px;
+ 
   margin: 0 auto;
-  padding: 20px;
+  padding: 80px 20px 0px 0px;
+ 
 }
 
-h1, h2 {
+h1 {
   text-align: center;
   color: #333;
-}
-.shto {
-  margin-bottom: 70px;
 }
 
 .form {
@@ -254,21 +219,8 @@ h1, h2 {
   border-radius: 4px;
 }
 
-.btn {
-  display: inline-block;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: #fff;
-  cursor: pointer;
-  margin-top: 10px;
-  text-align: center;
-}
 
-.btn:hover {
-  background-color: #0056b3;
-}
+
 
 .add-content-btn {
   background-color: #28a745;
@@ -282,58 +234,69 @@ h1, h2 {
   align-self: flex-end;
 }
 
-.articles {
-  margin-top: 20px;
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .article {
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 4px;
   padding: 15px;
-  margin-bottom: 10px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  
 }
 
 .article h3 {
   margin-top: 0;
 }
 
-.article-actions {
-  display: flex;
-  gap: 10px;
+.article-header {
+  margin-bottom: 10px;
 }
 
-.article-content,
-.article-photos {
-  margin-top: 10px;
+.article-content {
+  margin-bottom: 10px;
 }
 
-.article-content ul {
-  padding-left: 20px;
+.article-content p {
+  margin: 0;
 }
 
 .article-photo img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
+  max-width: 80%;
+  height: auto;
+  border-radius: 4px;
 }
 
-.selected-photos {
+.article-actions {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 10px;
-  margin-top: 10px;
 }
 
-.selected-photo {
-  position: relative;
+.edit-btn {
+  background-color: #ffc107;
 }
 
-.preview-image {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
+.edit-btn:hover {
+  background-color: #e0a800;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+.toggle-details-btn {
+  background-color: #17a2b8;
+}
+
+.toggle-details-btn:hover {
+  background-color: #138496;
 }
 </style>
-

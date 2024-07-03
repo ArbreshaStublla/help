@@ -1,4 +1,5 @@
 <template>
+  <button class="btn create-article-btn" @click="showModal = true">Create Article</button>
   <div class="article-manager">
     <div v-if="articles.length" class="articles-grid">
       <div v-for="article in articles" :key="article.articleId" class="article">
