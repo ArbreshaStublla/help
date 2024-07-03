@@ -184,6 +184,7 @@ export default {
 .butoni{
 margin-right: 20px;
 }
+
 .article-manager {
  
   margin: 0 auto;

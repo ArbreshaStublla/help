@@ -175,30 +175,20 @@ export default {
     confirmDelete(questionId) {
       swal({
         title: 'A jeni i sigurt?',
-        text: 'Pasi ta fshini, nuk do të mund ta riktheni këtë pyetje!',
+        text: 'Kjo veprim do të fshijë përgjithmonë pyetjen dhe përgjigjet e saj!',
         icon: 'warning',
-        buttons: ['Anulo', 'Po, fshije!'],
+        buttons: ['Anulo', 'Fshij'],
         dangerMode: true,
-      }).then(willDelete => {
+      }).then(async (willDelete) => {
         if (willDelete) {
-          this.deleteQuestion(questionId)
-            .then(() => {
-              swal('Pyetja është fshirë me sukses!', {
-                icon: 'success',
-              });
-            })
-            .catch(error => {
-              console.error('Ka ndodhur një gabim gjatë fshirjes së pyetjes:', error);
-              swal('Oops! Ndodhi një gabim.', {
-                icon: 'error',
-              });
-            })
-            .finally(() => {
-              this.fetchQuestions();
-            });
-        } else {
-          swal('Pyetja është e sigurtë!', {
-            icon: 'info',
+          await this.deleteQuestion(questionId);
+          this.fetchQuestions();
+          swal({
+            title: 'Fshirë!',
+            text: 'Pyetja dhe përgjigjet e saj janë fshirë.',
+            icon: 'success',
+            timer: 3000,
+            buttons: false,
           });
         }
       });
