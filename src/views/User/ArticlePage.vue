@@ -24,9 +24,7 @@
             <img :src="getPhotoUrl(photo.photoUrl)" alt="Article Photo" class="article-full-image">
           </div>
         </div>
-        <button class="btn toggle-details-btn" @click="toggleDetails(article)">
-          {{ article.showDetails ? 'Hide Details' : 'Show Details' }}
-        </button>
+        <ButtonComponent v-if="!showDetails" buttonText="Më shumë" @click="toggleDetails(article)" />
       </div>
     </div>
   </div>
@@ -34,8 +32,12 @@
 
 <script>
 import axios from 'axios';
+import ButtonComponent from '@/components/ButtonComponent.vue';
 
 export default {
+  components: {
+    ButtonComponent
+  },
   data() {
     return {
       articles: []

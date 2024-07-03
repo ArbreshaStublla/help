@@ -164,6 +164,13 @@ export default {
             return;
           }
           await this.addVideo(this.form);
+          swal({
+            title: 'Sukses!',
+            text: 'Video u shtua me sukses!',
+            icon: 'success',
+            timer: 3000,
+            buttons: false,
+          });
         }
         this.resetForm();
         this.showModal = false;
@@ -205,6 +212,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');

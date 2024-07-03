@@ -1,6 +1,8 @@
 <template>
   <div class="article-manager">
-    <ButtonComponent v-if="!showModal" buttonText="Postim i ri" @click="toggleModal" />
+    <div class="divi">
+      <ButtonComponent v-if="!showModal" buttonText="Postim i ri" @click="toggleModal" />
+    </div>
     
     <ModalComponent v-if="showModal" v-model="showModal" @close="closeModal">
       <template #header>
@@ -20,7 +22,7 @@
         <label for="content">Content</label>
         <textarea id="content" v-model="form.contentText"></textarea>
         <div class="boton">
-          <ButtonComponent buttonText="Shto Permbajtjen" type="button" @click="addContent"/>
+          <ButtonComponent buttonText="Shto Përmbajtjen" type="button" @click="addContent"/>
         </div>
       </div>
           <div class="form-group">
@@ -40,7 +42,6 @@
     </ModalComponent>
 
     <div v-if="articles.length" class="articles">
-      <h2>Articles</h2>
       <div v-for="article in articles" :key="article.articleId" class="article">
         <h3>{{ article.title }}</h3>
         <p>Updated {{ getTimeAgo(article.updatedAt) }}</p>
@@ -214,9 +215,14 @@ export default {
 </script>
 
 <style scoped>
+.divi{
+  padding-bottom: 50px;
+}
+
 .boton{
   padding-top: 45px;
 }
+
 .article-manager {
   max-width: 800px;
   margin: 0 auto;
@@ -227,6 +233,7 @@ h1, h2 {
   text-align: center;
   color: #333;
 }
+
 .shto {
   margin-bottom: 70px;
 }
