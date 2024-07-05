@@ -296,7 +296,7 @@ export default {
 .articles-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
-  gap: 120px;
+  gap: 80px;
   align-items: start;
 }
  
