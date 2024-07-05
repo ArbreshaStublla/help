@@ -190,18 +190,25 @@ export default {
     goToVideo(url) {
       window.open(url, '_blank');
     },
-    confirmDelete(videoId) {
-      swal({
+    async confirmDelete(videoId) {
+      const willDelete = await swal({
         title: 'A je i sigurt?',
         text: 'Pasi të fshihet, nuk do të keni mundësi ta riktheni këtë video!',
         icon: 'warning',
         buttons: ['Anulo', 'Po, fshije!'],
         dangerMode: true,
-      }).then((willDelete) => {
-        if (willDelete) {
-          this.deleteVideo(videoId);
-        }
       });
+
+      if (willDelete) {
+        await this.deleteVideo(videoId);
+        swal({
+          title: 'Sukses!',
+          text: 'Video është fshirë me sukses!',
+          icon: 'success',
+          timer: 3000,
+          buttons: false,
+        });
+      }
     },
     handlePageChange(page) {
       this.currentPage = page;
@@ -212,7 +219,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
@@ -282,31 +288,29 @@ form button {
   cursor: pointer;
 }
 .edit-button {
-background: none;
-border: none;
-color: #007bff;
-cursor: pointer;
-font-size: 20px;
-position: absolute;
-top: 10px;
-right: 50px;
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 50px;
 }
-.edit-button
-{
-color: #0056b3;
+.edit-button {
+  color: #0056b3;
 }
 .delete-button {
-background: none;
-border: none;
-color: #dc3545;
-cursor: pointer;
-font-size: 20px;
-position: absolute;
-top: 10px;
-right: 10px;
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
-.delete-button
-{
-color: #cc0000;
+.delete-button {
+  color: #cc0000;
 }
 </style>
