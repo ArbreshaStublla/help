@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <div class="article-details">
+      <ButtonComponent buttonText="Ndrysho postin" @click="editArticle"></ButtonComponent>
       <div class="header-section" v-if="article.photos && article.photos.length > 0">
         <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Header Photo" class="header-photo">
         <div class="overlay">
@@ -15,17 +16,21 @@
         </div>
         <p :class="{'article-content': index === 1}">{{ content.content }}</p>
       </div>
-
-      <v-btn @click="editArticle" color="primary">Edit Article</v-btn>
+     
     </div>
   </v-container>
 </template>
 
 <script>
 import axios from 'axios';
+import ButtonComponent from '../../components/ButtonComponent.vue'; 
+
 
 
 export default {
+  components: {
+    ButtonComponent
+  },
   props: ['id'],
   data() {
     return {
@@ -64,6 +69,7 @@ export default {
 
 .header-section {
   position: relative;
+  margin-top: 80px;
 }
 
 .header-photo {

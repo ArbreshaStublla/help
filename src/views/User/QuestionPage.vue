@@ -36,22 +36,23 @@
         </div>
       </div>
 
-      <PaginationComponent
-        v-if="filteredQuestions.length > 0" 
-        :items="filteredQuestions"
-        :pageSize="pageSize"
-        @pageChanged="handlePageChange"
-      />
-
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </div>
+
+    <PaginationComponent
+      v-if="filteredQuestions.length > 0"
+      :items="filteredQuestions"
+      :pageSize="pageSize"
+      :currentPage="currentPage"
+      @pageChanged="handlePageChange"
+    />
   </v-container>
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '@/components/ButtonComponent.vue';
-import PaginationComponent from '@/components/PaginationComponent.vue';
+import PaginationComponent from '@/components/PaginationComponent.vue'; // Import your PaginationComponent
 import { debounce } from 'lodash';
 import swal from 'sweetalert';
 
@@ -63,6 +64,8 @@ export default {
   props: ['searchQuery'],
   data() {
     return {
+      currentPage: 1,
+      pageSize: 5,
       questionText: '',
       userEmail: '',
       isSubmitting: false,
@@ -70,8 +73,8 @@ export default {
     };
   },
   computed: {
-    ...mapState('question', ['errorMessage', 'successMessage', 'pageSize', 'currentPage']),
-    ...mapGetters('question', ['paginatedQuestions']),
+    ...mapState('question', ['errorMessage']),
+    ...mapGetters('question', ['questions']),
 
     filteredQuestions() {
       const query = this.searchQuery.toLowerCase().trim();
@@ -82,6 +85,11 @@ export default {
         return questionText.includes(query);
       });
     },
+    paginatedQuestions() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredQuestions.slice(start, end);
+    },
     isEmailValid() {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailPattern.test(this.userEmail);
@@ -91,7 +99,7 @@ export default {
     this.fetchQuestions();
   },
   methods: {
-    ...mapActions('question', ['fetchQuestions', 'addQuestion', 'toggleAnswer', 'handlePageChange']),
+    ...mapActions('question', ['fetchQuestions', 'addQuestion', 'toggleAnswer']),
 
     validateEmail() {
       if (!this.isEmailValid) {
@@ -113,7 +121,7 @@ export default {
       try {
         await this.addQuestion({
           questionText: this.questionText,
-          userId: 1, 
+          userId: 1,
           userEmail: this.userEmail,
         });
         this.questionText = '';
@@ -132,6 +140,9 @@ export default {
       }
     }, 500),
 
+    handlePageChange(page) {
+      this.currentPage = page;
+    },
     toggleAnswer(question) {
       this.toggleAnswerState(question);
     },
@@ -143,14 +154,11 @@ export default {
 </script>
 
 <style scoped>
-form {
-  margin-bottom: 45px;
-  position: relative;
-}
-
-.dorezo {
-  position: absolute;
-  top: -20px;
+.add-question {
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
 }
 
 .question-answer {
@@ -192,13 +200,6 @@ form {
 
 .no-answers p {
   margin: 0;
-}
-
-.add-question {
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 20px;
 }
 
 .form-group {
@@ -251,5 +252,8 @@ form {
 
 .accordion-icon.open {
   transform: rotate(45deg);
+}
+.dorezo{
+  padding:30px 0;
 }
 </style>

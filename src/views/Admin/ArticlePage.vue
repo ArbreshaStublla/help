@@ -6,40 +6,47 @@
     <ModalComponent v-model="showModal">
       <template v-slot:header>
         <v-card-title class="modal-header">
-          {{ editMode ? 'Update Article' : 'Create Article' }}
+          {{ editMode ? 'Update Article' : 'Krijo Postin' }}
         </v-card-title>
       </template>
       <template v-slot:body>
         <form @submit.prevent="handleSubmit" class="form">
           <div class="form-group">
-            <label for="title">Title:</label>
+            <label for="title">Titulli:</label>
             <input type="text" id="title" v-model="form.title" required>
           </div>
           <div class="form-group">
-            <label for="category">Category:</label>
+            <label for="category">Kategoria:</label>
             <input type="text" id="category" v-model="form.category" required>
           </div>
           <div class="form-group">
-            <label for="contents">Contents:</label>
+            <label for="contents">Përmbajtja:</label>
             <textarea v-model="form.contentText" rows="3"></textarea>
-            <button class="btn add-content-btn" @click.prevent="addContent">Add Content</button>
+            <CustomButton class="kontenti" buttonText="Shto përmbajtjen" @click.prevent="addContent" />
           </div>
           <ul class="content-list">
             <li v-for="(content, index) in form.contents" :key="index">{{ content }}</li>
           </ul>
           <div class="form-group">
-            <label for="photos">Photos:</label>
+            <label for="photos">Fotot:</label>
             <input type="file" id="photos" multiple @change="handleFileUpload">
+            <div class="photo-previews">
+              <img v-for="(photo, index) in photoPreviews" :key="index" :src="photo" class="photo-preview">
+            </div>
           </div>
-          <button class="btn submit-btn" type="submit">{{ editMode ? 'Update Article' : 'Create Article' }}</button>
+          <div class="krijo">
+            <CustomButton :buttonText="editMode ? 'Update Article' : 'Krijo Postin'" type="submit" class="artikuull" />
+          </div>
+
         </form>
       </template>
       <template v-slot:footer>
-        <v-btn @click="showModal = false" color="primary">Close</v-btn>
+        
+          
+        <v-btn class="mbyll" @click="showModal = false" color="primary">Mbyll</v-btn>
       </template>
     </ModalComponent>
 
-    
     <div v-if="articles.length" class="articles-grid">
       <div v-for="article in articles" :key="article.articleId" class="article">
         <div class="article-image">
@@ -52,7 +59,7 @@
                 </button>
                 <h3>{{ article.title }}</h3>
               </div>
-              <p>Category: {{ article.category }}</p>
+              <p>Kategoria: {{ article.category }}</p>
               <div class="article-actions">
                 <ButtonComponent buttonText="Shfaq më shumë" @click="navigateToArticleDetails(article.articleId)" />
               </div>
@@ -67,9 +74,9 @@
 <script>
 import axios from 'axios';
 import swal from 'sweetalert';
-import ModalComponent from '../../components/ModalComponents.vue'; 
-import CustomButton from '../../components/ButtonComponent.vue'; 
-import ButtonComponent from '../../components/ButtonComponent.vue'; 
+import ModalComponent from '../../components/ModalComponents.vue';
+import CustomButton from '../../components/ButtonComponent.vue';
+import ButtonComponent from '../../components/ButtonComponent.vue';
 
 export default {
   components: {
@@ -86,6 +93,7 @@ export default {
         contentText: '',
         photos: []
       },
+      photoPreviews: [],
       articles: [],
       editMode: false,
       editArticleId: null,
@@ -105,7 +113,9 @@ export default {
       }
     },
     handleFileUpload(event) {
-      this.form.photos = Array.from(event.target.files);
+      const files = Array.from(event.target.files);
+      this.form.photos = files;
+      this.photoPreviews = files.map(file => URL.createObjectURL(file));
     },
     addContent() {
       if (this.form.contentText) {
@@ -188,6 +198,7 @@ export default {
         contentText: '',
         photos: []
       };
+      this.photoPreviews = [];
       this.editMode = false;
       this.editArticleId = null;
     },
@@ -202,139 +213,184 @@ export default {
 </script>
 
 <style scoped>
+.modal-header{
+  margin-left: -10px;
+}
+.mbyll{
+  margin-top: 60px;
+}
+.kontenti{
+  margin-top: 120px;
+}
 .articleee {
   margin-bottom: 200px;
- 
 }
-
+ 
 .article-manager {
   margin: 0 auto;
   padding: 80px 20px 0px 20px;
-  
 }
-
+ 
+.form-groupp {
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+}
+ 
+.form-groupp input:not([type="file"]),
+.form-groupp textarea{
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+ 
+.form-groupp label {
+  margin-bottom: 5px;
+}
+ 
+.form-groupp label {
+  margin-bottom: 5px;
+}
+ 
+ 
+ 
 .butoni {
   margin-top: -75px !important;
   margin-bottom: 70px;
 }
-
+ 
 .form {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
+ 
 .form-group {
   display: flex;
   flex-direction: column;
 }
-
+ 
 .form-group label {
-  font-weight: bold;
   margin-bottom: 5px;
 }
-
-.form-group input,
+ 
+.form-group input:not([type="file"]),
 .form-group textarea {
   padding: 8px;
   border-radius: 4px;
+  border: 1px solid #ddd;
 }
-
+ 
 .add-content-btn {
   background-color: #28a745;
 }
-
+ 
 .add-content-btn:hover {
   background-color: #218838;
 }
-
+ 
 .submit-btn {
   align-self: flex-end;
 }
-
+ 
 .articles-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
   gap: 20px;
-  align-items: start; 
-  
+  align-items: start;
 }
-
+ 
 .article {
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
- 
   background-color: #eee !important;
 }
-
+ 
 .article-image {
   position: relative;
   text-align: center;
 }
-
+ 
 .article-preview-image {
-  width: 100%; 
-  height: 300px; 
-  object-fit: cover; 
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
   border-radius: 4px;
 }
-
+ 
 .article-details {
   position: absolute;
-  bottom: -200px; 
-  left: 50%; 
+  bottom: -200px;
+  left: 50%;
   transform: translateX(-50%);
-  width: 70%; 
+  width: 70%;
   height: 250px;
   padding: 10px;
   background-color: #ffffff;
-  text-align: center; 
+  text-align: center;
   color: #333;
   display: flex;
   flex-direction: column;
-  justify-content: center; 
+  justify-content: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
+ 
 .article-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
-  text-align: center; 
+  text-align: center;
 }
-
+ 
 .article-header h3 {
   margin: 0;
   flex: 1;
-  text-align: center; 
+  text-align: center;
 }
-
+ 
 .article-actions {
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
 }
-
+ 
 .toggle-details-btn {
   background-color: #17a2b8;
 }
-
+ 
 .toggle-details-btn:hover {
   background-color: #138496;
 }
-
+ 
 .delete-btn {
-  background-color: transparent; 
-  border: none; 
+  background-color: transparent;
+  border: none;
   cursor: pointer;
 }
-
+ 
 .delete-btn i {
-  color: #dc3545; 
+  color: #dc3545;
 }
-
+ 
 .delete-btn:hover i {
-  color: #c82333; 
+  color: #c82333;
+}
+ 
+.photo-previews {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+ 
+.photo-preview {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 </style>
+ 
