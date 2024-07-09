@@ -7,7 +7,7 @@
       <div v-if="filteredQuestions.length === 0 && !loading" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
         <div v-if="showUnanswered">
-          <div v-for="question in paginatedUnansweredQuestions" :key="question.questionId" class="question">
+          <div v-for="question in unansweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
             <form @submit.prevent="submitAnswer(question)">
               <div class="form-group">
@@ -27,7 +27,7 @@
           </div>
         </div>
         <div v-else>
-          <div v-for="question in filteredQuestions" :key="question.questionId">
+          <div v-for="question in paginatedQuestions" :key="question.questionId">
             <div v-if="question.answerText" class="question-inner">
               <h2 class="question-text">{{ question.questionText }}</h2>
               <div class="answers">
@@ -63,28 +63,39 @@
         </div>
       </div>
     </div>
+
+    <PaginationComponent
+      v-if="answeredQuestions.length > 0 && !showUnanswered"
+      :items="answeredQuestions"
+      :pageSize="pageSize"
+      :currentPage="currentPage"
+      @pageChanged="handlePageChange"
+    />
   </v-container>
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '../../components/ButtonComponent.vue';
+import PaginationComponent from '../../components/PaginationComponent.vue';
 import swal from 'sweetalert';
 
 export default {
   components: {
-    ButtonComponent
+    ButtonComponent,
+    PaginationComponent,
   },
   props: ['searchQuery'],
   data() {
     return {
       showUnanswered: false,
+      currentPage: 1,
+      pageSize: 5,
     };
   },
   computed: {
     ...mapState('question', ['loading']),
     ...mapGetters('question', [
-      'filteredQuestions',
       'paginatedUnansweredQuestions',
     ]),
     filteredQuestions() {
@@ -95,6 +106,17 @@ export default {
         const questionText = question.questionText.toLowerCase();
         return questionText.includes(query);
       });
+    },
+    unansweredQuestions() {
+      return this.filteredQuestions.filter(question => !question.answerText);
+    },
+    answeredQuestions() {
+      return this.filteredQuestions.filter(question => question.answerText);
+    },
+    paginatedQuestions() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.answeredQuestions.slice(start, end);
     },
   },
   created() {
@@ -183,10 +205,13 @@ export default {
         }
       });
     },
+    handlePageChange(page) {
+      this.currentPage = page;
+    },
+   
   },
 };
 </script>
-
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
  

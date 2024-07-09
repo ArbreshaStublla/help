@@ -147,37 +147,44 @@ export default {
       this.resetForm();
     },
     async handleAddOrUpdateVideo() {
-      try {
-        if (this.editMode) {
-          if (!this.form.id) {
-            console.error('Video ID is undefined or invalid');
-            return;
-          }
-          if (!this.isValidForm(this.form)) {
-            console.error('Form data is incomplete or invalid');
-            return;
-          }
-          await this.updateVideo({ id: this.form.id, updatedVideo: this.form });
-        } else {
-          if (!this.isValidForm(this.form)) {
-            console.error('Form data is incomplete or invalid');
-            return;
-          }
-          await this.addVideo(this.form);
-          swal({
-            title: 'Sukses!',
-            text: 'Video u shtua me sukses!',
-            icon: 'success',
-            timer: 3000,
-            buttons: false,
-          });
-        }
-        this.resetForm();
-        this.showModal = false;
-      } catch (error) {
-        console.error('Error adding/updating video:', error);
+  try {
+    if (this.editMode) {
+      if (!this.form.id) {
+        console.error('Video ID is undefined or invalid');
+        return;
       }
-    },
+      if (!this.isValidForm(this.form)) {
+        console.error('Form data is incomplete or invalid');
+        return;
+      }
+      await this.updateVideo({ id: this.form.id, updatedVideo: this.form });
+      swal({
+        title: 'Sukses!',
+        text: 'Ndryshimi është kryer me sukses.',
+        icon: 'success',
+        timer: 3000,
+        buttons: false,
+      });
+    } else {
+      if (!this.isValidForm(this.form)) {
+        console.error('Form data is incomplete or invalid');
+        return;
+      }
+      await this.addVideo(this.form);
+      swal({
+        title: 'Sukses!',
+        text: 'Video u shtua me sukses!',
+        icon: 'success',
+        timer: 3000,
+        buttons: false,
+      });
+    }
+    this.resetForm();
+    this.showModal = false;
+  } catch (error) {
+    console.error('Error adding/updating video:', error);
+  }
+},
     resetForm() {
       this.form.id = null;
       this.form.title = '';
