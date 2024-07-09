@@ -50,7 +50,7 @@ export default {
       return `http://192.168.44.239:3000/${photoPath}`;
     },
     navigateToArticleDetails(articleId) {
-      this.$router.push({ name: 'articleDetails', params: { id: articleId } });
+      this.$router.push({ name: 'articleDetail', params: { id: articleId } });
     }
   }
 };

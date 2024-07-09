@@ -4,8 +4,10 @@ import AdministratorView from "@/views/Admin/AdministratorView.vue";
 import AdminView from "@/views/Admin/AdminPage.vue";
 import NotFound from "../components/ErrorPage.vue";
 import HomeViewAdmin from "@/views/Admin/HomeViewAdmin.vue";
-import ArticleDetails from "../views/Admin/ArticleDetails.vue"; 
+import ArticleDetails from "../views/Admin/ArticleDetails.vue";
+import ArticleDetail from "../views/User/ArticleDetail.vue" 
 import EditArticle from "../components/EditArticle.vue"
+
 
 const routes = [
   {
@@ -34,7 +36,17 @@ const routes = [
     path: '/article/:id', 
     name: 'articleDetails',
     component: ArticleDetails,
-    props: true 
+    props: true,
+    meta: { requiresAuth: true }
+    
+  },
+  {
+    path: '/article/:id', 
+    name: 'articleDetail',
+    component: ArticleDetail,
+    props: true,
+  
+    
   },
   {
     path: '/edit/:id', 

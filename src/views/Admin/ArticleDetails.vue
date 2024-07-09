@@ -14,18 +14,14 @@
         <div v-if="index > 0 && article.photos[index]" :class="{'article-photo-container': index === 1}">
           <img :src="getPhotoUrl(article.photos[index].photoUrl)" alt="Article Photo" class="article-photo">
         </div>
-        <p :class="{'article-content': index === 1}">{{ content.content }}</p>
+        <p :class="{'article-content': index === 1}" v-html="formatContent(content.content)"></p>
       </div>
-     
     </div>
   </v-container>
 </template>
-
 <script>
 import axios from 'axios';
 import ButtonComponent from '../../components/ButtonComponent.vue'; 
-
-
 
 export default {
   components: {
@@ -54,10 +50,14 @@ export default {
     },
     editArticle() {
       this.$router.push(`/edit/${this.id}`);
+    },
+    formatContent(content) {
+      return content.replace(/\n/g, '<br>');
     }
   }
 };
 </script>
+
 
 <style scoped>
 .article-details {
@@ -109,6 +109,7 @@ export default {
 
 .article-photo {
   width: 100%;
+  max-height: 90vh;
   border-radius: 4px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
