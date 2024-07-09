@@ -25,14 +25,9 @@
             <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
             <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
           </div>
-          <PaginationComponent
-            :items="unansweredQuestions"
-            :pageSize="pageSizeUnanswered"
-            @pageChanged="handleUnansweredPageChange"
-          />
         </div>
         <div v-else>
-          <div v-for="question in paginatedAnsweredQuestions" :key="question.questionId">
+          <div v-for="question in filteredQuestions" :key="question.questionId">
             <div v-if="question.answerText" class="question">
               <h2 class="question-text">{{ question.questionText }}</h2>
               <div class="answers">
@@ -65,11 +60,6 @@
               </div>
             </div>
           </div>
-          <PaginationComponent
-            :items="filteredQuestions.filter(q => q.answerText)"
-            :pageSize="pageSize"
-            @pageChanged="handlePageChange"
-          />
         </div>
       </div>
     </div>
@@ -79,13 +69,11 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '../../components/ButtonComponent.vue';
-import PaginationComponent from '../../components/PaginationComponent.vue';
 import swal from 'sweetalert';
 
 export default {
   components: {
-    ButtonComponent,
-    PaginationComponent
+    ButtonComponent
   },
   data() {
     return {
@@ -93,13 +81,10 @@ export default {
     };
   },
   computed: {
-    ...mapState('question', ['loading', 'pageSize', 'pageSizeUnanswered']),
+    ...mapState('question', ['loading']),
     ...mapGetters('question', [
       'filteredQuestions',
-      'paginatedQuestions',
       'paginatedUnansweredQuestions',
-      'paginatedAnsweredQuestions',
-      'unansweredQuestions',
     ]),
   },
   created() {
@@ -111,8 +96,6 @@ export default {
       'answerQuestion',
       'editAnswer',
       'deleteQuestion',
-      'handlePageChange',
-      'handleUnansweredPageChange',
     ]),
     async submitAnswer(question) {
       try {
@@ -168,9 +151,6 @@ export default {
     },
     toggleUnansweredQuestions() {
       this.showUnanswered = !this.showUnanswered;
-    },
-    handleUnansweredPageChange(page) {
-      this.handleUnansweredPageChange(page);
     },
     confirmDelete(questionId) {
       swal({
@@ -313,4 +293,4 @@ form {
 .edit-button:hover {
   color: #0056b3;
 }
-</style>
+</style> 
