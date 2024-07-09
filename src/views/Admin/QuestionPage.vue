@@ -28,7 +28,7 @@
         </div>
         <div v-else>
           <div v-for="question in filteredQuestions" :key="question.questionId">
-            <div v-if="question.answerText" class="question">
+            <div v-if="question.answerText" class="question-inner">
               <h2 class="question-text">{{ question.questionText }}</h2>
               <div class="answers">
                 <div class="question-header">
@@ -75,6 +75,7 @@ export default {
   components: {
     ButtonComponent
   },
+  props: ['searchQuery'],
   data() {
     return {
       showUnanswered: false,
@@ -86,6 +87,15 @@ export default {
       'filteredQuestions',
       'paginatedUnansweredQuestions',
     ]),
+    filteredQuestions() {
+      const query = this.searchQuery.toLowerCase().trim();
+      if (!query) return this.$store.state.question.questions;
+
+      return this.$store.state.question.questions.filter(question => {
+        const questionText = question.questionText.toLowerCase();
+        return questionText.includes(query);
+      });
+    },
   },
   created() {
     this.fetchQuestions();
@@ -179,7 +189,7 @@ export default {
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
-
+ 
 form {
   margin-bottom: 70px;
 }
@@ -190,16 +200,25 @@ form {
   margin-top: 60px;
 }
 .question {
-  border: 1px solid #ccc;
   padding: 15px;
   margin-bottom: 20px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  position: relative; 
+  position: relative;
 }
 .question-text {
   font-size: 18px;
   margin-bottom: 10px;
 }
+
+.question-inner{
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  position: relative;
+}
+
 .question-header {
   display: flex;
   justify-content: space-between;
@@ -227,9 +246,6 @@ form {
 }
 .form-group {
   margin-bottom: 15px;
-}
-.form-group button {
-  margin-right: 910px;
 }
 .label {
   display: block;
@@ -276,8 +292,8 @@ form {
   cursor: pointer;
   font-size: 20px;
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 20px;
+  right: 13px;
 }
 .delete-button:hover {
   color: #cc0000;
@@ -293,4 +309,4 @@ form {
 .edit-button:hover {
   color: #0056b3;
 }
-</style> 
+</style>
