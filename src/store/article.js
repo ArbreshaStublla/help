@@ -1,49 +1,38 @@
+// src/store/modules/article.js
+import ArticleService from '../services/articleService';
 
+const state = {
+  articles: [],
+  loading: false
+};
 
-import articleService from '../services/articleService';
+const getters = {
+  allArticles: state => state.articles,
+  isLoading: state => state.loading
+};
 
 const actions = {
   async fetchArticles({ commit }) {
-    commit('SET_LOADING', true);
+    commit('setLoading', true);
     try {
-      const articles = await articleService.getAllArticles();
-      commit('SET_ARTICLES', articles);
+      const response = await ArticleService.getArticles();
+      commit('setArticles', response);
     } catch (error) {
-      commit('SET_ERROR', error);
+      console.error('Error fetching articles:', error);
     } finally {
-      commit('SET_LOADING', false);
-    }
-  },
-  async createArticle({ commit }, articleData) {
-    try {
-      const newArticle = await articleService.createArticle(articleData);
-      commit('ADD_ARTICLE', newArticle);
-    } catch (error) {
-      commit('SET_ERROR', error);
-    }
-  },
-  async updateArticle({ commit }, { articleId, articleData }) {
-    try {
-      const updatedArticle = await articleService.updateArticle(articleId, articleData);
-      commit('UPDATE_ARTICLE', updatedArticle);
-    } catch (error) {
-      commit('SET_ERROR', error);
-    }
-  },
-  async deleteArticle({ commit }, articleId) {
-    try {
-      await articleService.deleteArticle(articleId);
-      commit('DELETE_ARTICLE', articleId);
-    } catch (error) {
-      commit('SET_ERROR', error);
+      commit('setLoading', false);
     }
   }
 };
 
+const mutations = {
+  setArticles: (state, articles) => (state.articles = articles),
+  setLoading: (state, loading) => (state.loading = loading)
+};
+
 export default {
-  namespaced: true,
   state,
-  mutations,
+  getters,
   actions,
-  getters
+  mutations
 };

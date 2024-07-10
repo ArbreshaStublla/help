@@ -1,6 +1,6 @@
 <template>
   <div class="article-manager">
-    <div v-if="articles.length" class="articles-grid">
+    <div v-if="articles && articles.length" class="articles-grid">
       <div v-for="article in articles" :key="article.articleId" class="article">
         <div class="article-image">
           <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Article Photo" class="article-preview-image">
@@ -18,34 +18,31 @@
         </div>
       </div>
     </div>
+    <div v-else>
+      <p>No articles found.</p>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import ButtonComponent from '../../components/ButtonComponent.vue'; 
+import { mapGetters, mapActions } from 'vuex';
+import ButtonComponent from '../../components/ButtonComponent.vue';
 
 export default {
   components: {
     ButtonComponent
   },
-  data() {
-    return {
-      articles: []
-    };
+  computed: {
+    ...mapGetters({
+      articles: 'allArticles',
+      loading: 'isLoading'
+    })
   },
   mounted() {
     this.fetchArticles();
   },
   methods: {
-    async fetchArticles() {
-      try {
-        const response = await axios.get('http://192.168.44.239:3000/article');
-        this.articles = response.data;
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      }
-    },
+    ...mapActions(['fetchArticles']),
     getPhotoUrl(photoPath) {
       return `http://192.168.44.239:3000/${photoPath}`;
     },
@@ -56,15 +53,14 @@ export default {
 };
 </script>
 
-
 <style scoped>
-.modal-header{
+.modal-header {
   margin-left: -10px;
 }
-.mbyll{
+.mbyll {
   margin-top: 60px;
 }
-.kontenti{
+.kontenti {
   margin-top: 120px;
 }
 .articleee {
@@ -83,7 +79,7 @@ export default {
 }
 
 .form-groupp input:not([type="file"]),
-.form-groupp textarea{
+.form-groupp textarea {
   padding: 8px;
   border-radius: 4px;
   border: 1px solid #ddd;
@@ -96,8 +92,6 @@ export default {
 .form-groupp label {
   margin-bottom: 5px;
 }
-
-
 
 .butoni {
   margin-top: -75px !important;
@@ -123,7 +117,7 @@ export default {
 .form-group textarea {
   padding: 8px;
   border-radius: 4px;
-  border: 1px solid #ddd; 
+  border: 1px solid #ddd;
 }
 
 .add-content-btn {
@@ -142,7 +136,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
   gap: 80px;
-  align-items: start; 
+  align-items: start;
 }
 
 .article {
@@ -157,26 +151,26 @@ export default {
 }
 
 .article-preview-image {
-  width: 100%; 
-  height: 300px; 
-  object-fit: cover; 
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
   border-radius: 4px;
 }
 
 .article-details {
   position: absolute;
-  bottom: -200px; 
-  left: 50%; 
+  bottom: -200px;
+  left: 50%;
   transform: translateX(-50%);
-  width: 70%; 
+  width: 70%;
   height: 250px;
   padding: 10px;
   background-color: #ffffff;
-  text-align: center; 
+  text-align: center;
   color: #333;
   display: flex;
   flex-direction: column;
-  justify-content: center; 
+  justify-content: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -185,13 +179,13 @@ export default {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
-  text-align: center; 
+  text-align: center;
 }
 
 .article-header h3 {
   margin: 0;
   flex: 1;
-  text-align: center; 
+  text-align: center;
 }
 
 .article-actions {
@@ -209,17 +203,17 @@ export default {
 }
 
 .delete-btn {
-  background-color: transparent; 
-  border: none; 
+  background-color: transparent;
+  border: none;
   cursor: pointer;
 }
 
 .delete-btn i {
-  color: #dc3545; 
+  color: #dc3545;
 }
 
 .delete-btn:hover i {
-  color: #c82333; 
+  color: #c82333;
 }
 
 .photo-previews {
