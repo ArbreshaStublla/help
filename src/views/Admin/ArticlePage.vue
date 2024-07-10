@@ -1,3 +1,4 @@
+
 <template>
   <div class="article-manager">
     <div class="butoni">
@@ -48,8 +49,8 @@
       </template>
     </ModalComponent>
 
-    <div v-if="articles.length" class="articles-grid">
-      <div v-for="article in articles" :key="article.articleId" class="article">
+    <div v-if="filteredArticles && filteredArticles.length" class="articles-grid">
+      <div v-for="article in filteredArticles" :key="article.articleId" class="article">
         <div class="article-image" v-if="article.photos && article.photos.length > 0">
           <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Article Photo" class="article-preview-image">
           <div class="articleee">
@@ -89,12 +90,13 @@
   </div>
 </template>
 
+
 <script>
-import axios from 'axios';
-import swal from 'sweetalert';
+import { mapGetters, mapActions ,mapState} from 'vuex';
 import ModalComponent from '../../components/ModalComponents.vue';
 import CustomButton from '../../components/ButtonComponent.vue';
 import ButtonComponent from '../../components/ButtonComponent.vue';
+import swal from 'sweetalert';
 
 export default {
   components: {
@@ -112,24 +114,30 @@ export default {
         photos: []
       },
       photoPreviews: [],
-      articles: [],
       editMode: false,
       editArticleId: null,
       showModal: false
     };
   },
+  computed: {
+    ...mapState({
+      searchQuery: state => state.article.searchQuery
+    }),
+    ...mapGetters({
+      filteredArticles: 'filteredArticles',
+      loading: 'isLoading'
+    })
+  },
   mounted() {
     this.fetchArticles();
   },
   methods: {
-    async fetchArticles() {
-      try {
-        const response = await axios.get('http://192.168.44.239:3000/article');
-        this.articles = response.data;
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      }
-    },
+    ...mapActions({
+      fetchArticles: 'fetchArticles',
+      deleteArticleAction: 'deleteArticle',
+      addArticleAction: 'addArticle' ,
+      setSearchQuery:'setSearchQuery'
+    }),
     handleFileUpload(event) {
       const files = Array.from(event.target.files);
       this.form.photos = this.form.photos.concat(files);
@@ -155,17 +163,9 @@ export default {
 
       try {
         if (this.editMode) {
-          await axios.put(`http://192.168.44.239:3000/article/${this.editArticleId}`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
+          await this.updateArticle(formData); 
         } else {
-          await axios.post('http://192.168.44.239:3000/article', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
+          await this.addArticleAction(formData); 
         }
         this.resetForm();
         this.fetchArticles();
@@ -174,7 +174,18 @@ export default {
         console.error('Error submitting article:', error);
       }
     },
-    async confirmDelete(articleId) {
+    async updateArticle(formData) {
+      try {
+        await this.$store.dispatch('updateArticle', {
+          articleId: this.editArticleId,
+          formData: formData
+        });
+      } catch (error) {
+        console.error('Error updating article:', error);
+        throw error;
+      }
+    },
+    confirmDelete(articleId) {
       swal({
         title: 'A jeni i sigurt?',
         text: 'Kjo veprim do të fshijë përgjithmonë artikullin!',
@@ -183,25 +194,22 @@ export default {
         dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
-          await this.deleteArticle(articleId);
-          this.fetchArticles();
-          swal({
-            title: 'Fshirë!',
-            text: 'Artikulli është fshirë.',
-            icon: 'success',
-            timer: 3000,
-            buttons: false,
-          });
+          try {
+            await this.deleteArticleAction(articleId);
+            swal({
+              title: 'Fshirë!',
+              text: 'Artikulli është fshirë me sukses.',
+              icon: 'success',
+              timer: 3000,
+              buttons: false,
+            });
+          } catch (error) {
+            console.error('Error deleting article:', error);
+          } finally {
+            this.fetchArticles();
+          }
         }
       });
-    },
-    async deleteArticle(articleId) {
-      try {
-        await axios.delete(`http://192.168.44.239:3000/article/${articleId}`);
-        this.fetchArticles();
-      } catch (error) {
-        console.error('Error deleting article:', error);
-      }
     },
     editArticle(article) {
       this.editMode = true;
@@ -210,6 +218,16 @@ export default {
       this.form.category = article.category;
       this.form.contents = article.contents.map(content => content.content);
       this.showModal = true;
+    },
+    getPhotoUrl(photoPath) {
+  return `${process.env.VUE_APP_API_URL}${photoPath}`;
+},
+
+    navigateToArticleDetails(articleId) {
+      this.$router.push({ name: 'articleDetails', params: { id: articleId } });
+    },
+    updateSearchQuery(event) {
+      this.setSearchQuery(event.target.value);
     },
     resetForm() {
       this.form = {
@@ -226,16 +244,13 @@ export default {
     removePhoto(index) {
       this.photoPreviews.splice(index, 1);
       this.form.photos.splice(index, 1);
-    },
-    getPhotoUrl(photoPath) {
-      return `http://192.168.44.239:3000/${photoPath}`;
-    },
-    navigateToArticleDetails(articleId) {
-      this.$router.push({ name: 'articleDetails', params: { id: articleId } });
     }
   }
 };
 </script>
+
+
+
 
 <style scoped>
 .modal-header {

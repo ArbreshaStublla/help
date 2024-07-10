@@ -46,8 +46,9 @@ export default {
       }
     },
     getPhotoUrl(photoPath) {
-      return `http://192.168.44.239:3000/${photoPath}`;
-    },
+  return `${process.env.VUE_APP_API_URL}${photoPath}`;
+},
+
     editArticle() {
       this.$router.push(`/edit/${this.id}`);
     },

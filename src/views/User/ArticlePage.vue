@@ -1,7 +1,11 @@
 <template>
   <div class="article-manager">
-    <div v-if="articles && articles.length" class="articles-grid">
-      <div v-for="article in articles" :key="article.articleId" class="article">
+    <input type="text"  @input="updateSearchQuery" />
+
+    <div v-if="loading">Loading...</div>
+
+    <div v-if="filteredArticles && filteredArticles.length" class="articles-grid">
+      <div v-for="article in filteredArticles" :key="article.articleId" class="article">
         <div class="article-image">
           <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Article Photo" class="article-preview-image">
           <div class="articleee">
@@ -25,7 +29,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 import ButtonComponent from '../../components/ButtonComponent.vue';
 
 export default {
@@ -33,8 +37,11 @@ export default {
     ButtonComponent
   },
   computed: {
+    ...mapState({
+      searchQuery: state => state.article.searchQuery
+    }),
     ...mapGetters({
-      articles: 'allArticles',
+      filteredArticles: 'filteredArticles',
       loading: 'isLoading'
     })
   },
@@ -42,16 +49,22 @@ export default {
     this.fetchArticles();
   },
   methods: {
-    ...mapActions(['fetchArticles']),
+    ...mapActions(['fetchArticles', 'setSearchQuery']),
     getPhotoUrl(photoPath) {
       return `http://192.168.44.239:3000/${photoPath}`;
     },
     navigateToArticleDetails(articleId) {
       this.$router.push({ name: 'articleDetail', params: { id: articleId } });
+    },
+    updateSearchQuery(event) {
+      this.setSearchQuery(event.target.value);
     }
   }
 };
 </script>
+
+
+
 
 <style scoped>
 .modal-header {

@@ -16,7 +16,7 @@
           </div>
           <p :class="{'article-content': index === 1}" v-html="formatContent(content.content)"></p>
         </div>
-       
+
       </div>
     </v-container>
   </template>
@@ -28,7 +28,7 @@
   
   
   export default {
- 
+
     props: ['id'],
     data() {
       return {
@@ -48,8 +48,9 @@
         }
       },
       getPhotoUrl(photoPath) {
-        return `http://192.168.44.239:3000/${photoPath}`;
-      },
+  return `${process.env.VUE_APP_API_URL}${photoPath}`;
+},
+
       formatContent(content) {
       return content.replace(/\n/g, '<br>');
     }
