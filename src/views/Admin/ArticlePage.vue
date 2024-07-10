@@ -1,4 +1,3 @@
-
 <template>
   <div class="article-manager">
     <div class="butoni">
@@ -50,7 +49,7 @@
     </ModalComponent>
 
     <div v-if="filteredArticles && filteredArticles.length" class="articles-grid">
-      <div v-for="article in filteredArticles" :key="article.articleId" class="article">
+      <div v-for="article in paginatedArticles" :key="article.articleId" class="article">
         <div class="article-image" v-if="article.photos && article.photos.length > 0">
           <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Article Photo" class="article-preview-image">
           <div class="articleee">
@@ -87,22 +86,33 @@
         </div>
       </div>
     </div>
+    <div v-else>
+      <p>Nuk u gjet asnjë postim.</p>
+    </div>
+    <PaginationComponent
+      v-if="filteredArticles.length > 0"
+      :items="filteredArticles"
+      :pageSize="pageSize"
+      :currentPage="currentPage"
+      @pageChanged="handlePageChange"
+    />
   </div>
 </template>
 
-
 <script>
-import { mapGetters, mapActions ,mapState} from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 import ModalComponent from '../../components/ModalComponents.vue';
 import CustomButton from '../../components/ButtonComponent.vue';
 import ButtonComponent from '../../components/ButtonComponent.vue';
+import PaginationComponent from '../../components/PaginationComponent.vue';
 import swal from 'sweetalert';
 
 export default {
   components: {
     ModalComponent,
     CustomButton,
-    ButtonComponent
+    ButtonComponent,
+    PaginationComponent
   },
   data() {
     return {
@@ -116,7 +126,9 @@ export default {
       photoPreviews: [],
       editMode: false,
       editArticleId: null,
-      showModal: false
+      showModal: false,
+      currentPage: 1,
+      pageSize: 5,
     };
   },
   computed: {
@@ -126,7 +138,12 @@ export default {
     ...mapGetters({
       filteredArticles: 'filteredArticles',
       loading: 'isLoading'
-    })
+    }),
+    paginatedArticles() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredArticles.slice(start, end);
+    }
   },
   mounted() {
     this.fetchArticles();
@@ -135,8 +152,8 @@ export default {
     ...mapActions({
       fetchArticles: 'fetchArticles',
       deleteArticleAction: 'deleteArticle',
-      addArticleAction: 'addArticle' ,
-      setSearchQuery:'setSearchQuery'
+      addArticleAction: 'addArticle',
+      setSearchQuery: 'setSearchQuery'
     }),
     handleFileUpload(event) {
       const files = Array.from(event.target.files);
@@ -163,9 +180,9 @@ export default {
 
       try {
         if (this.editMode) {
-          await this.updateArticle(formData); 
+          await this.updateArticle(formData);
         } else {
-          await this.addArticleAction(formData); 
+          await this.addArticleAction(formData);
         }
         this.resetForm();
         this.fetchArticles();
@@ -220,14 +237,16 @@ export default {
       this.showModal = true;
     },
     getPhotoUrl(photoPath) {
-  return `${process.env.VUE_APP_API_URL}${photoPath}`;
-},
-
+      return `${process.env.VUE_APP_API_URL}${photoPath}`;
+    },
     navigateToArticleDetails(articleId) {
       this.$router.push({ name: 'articleDetails', params: { id: articleId } });
     },
     updateSearchQuery(event) {
       this.setSearchQuery(event.target.value);
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
     },
     resetForm() {
       this.form = {
@@ -242,15 +261,12 @@ export default {
       this.editArticleId = null;
     },
     removePhoto(index) {
-      this.photoPreviews.splice(index, 1);
       this.form.photos.splice(index, 1);
+      this.photoPreviews.splice(index, 1);
     }
   }
 };
 </script>
-
-
-
 
 <style scoped>
 .modal-header {

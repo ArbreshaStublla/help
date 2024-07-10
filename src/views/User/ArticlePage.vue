@@ -1,11 +1,11 @@
 <template>
   <div class="article-manager">
-    <input type="text"  @input="updateSearchQuery" />
+    <input type="text" @input="updateSearchQuery" />
 
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading">Duke u ngarkuar...</div>
 
-    <div v-if="filteredArticles && filteredArticles.length" class="articles-grid">
-      <div v-for="article in filteredArticles" :key="article.articleId" class="article">
+    <div v-if="paginatedArticles && paginatedArticles.length" class="articles-grid">
+      <div v-for="article in paginatedArticles" :key="article.articleId" class="article">
         <div class="article-image">
           <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Article Photo" class="article-preview-image">
           <div class="articleee">
@@ -23,18 +23,33 @@
       </div>
     </div>
     <div v-else>
-      <p>No articles found.</p>
+      <p>Nuk u gjet asnjë postim.</p>
     </div>
+    <PaginationComponent
+      v-if="filteredArticles.length > 0"
+      :items="filteredArticles"
+      :pageSize="pageSize"
+      :currentPage="currentPage"
+      @pageChanged="handlePageChange"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
 import ButtonComponent from '../../components/ButtonComponent.vue';
+import PaginationComponent from '@/components/PaginationComponent.vue';
 
 export default {
   components: {
-    ButtonComponent
+    ButtonComponent,
+    PaginationComponent
+  },
+  data() {
+    return {
+      currentPage: 1,
+      pageSize: 5,
+    };
   },
   computed: {
     ...mapState({
@@ -43,7 +58,12 @@ export default {
     ...mapGetters({
       filteredArticles: 'filteredArticles',
       loading: 'isLoading'
-    })
+    }),
+    paginatedArticles() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredArticles.slice(start, end);
+    }
   },
   mounted() {
     this.fetchArticles();
@@ -58,13 +78,13 @@ export default {
     },
     updateSearchQuery(event) {
       this.setSearchQuery(event.target.value);
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
     }
   }
 };
 </script>
-
-
-
 
 <style scoped>
 .modal-header {

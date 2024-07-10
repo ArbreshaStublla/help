@@ -9,7 +9,6 @@
           <p>{{ article.category }}</p>
         </div>
       </div>
-
       <div v-for="(content, index) in article.contents" :key="index" :class="{'content-section': true, 'two-columns': index === 1}">
         <div v-if="index > 0 && article.photos[index]" :class="{'article-photo-container': index === 1}">
           <img :src="getPhotoUrl(article.photos[index].photoUrl)" alt="Article Photo" class="article-photo">
