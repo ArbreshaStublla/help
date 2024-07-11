@@ -128,7 +128,7 @@ export default {
       editArticleId: null,
       showModal: false,
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 6,
     };
   },
   computed: {
@@ -310,7 +310,7 @@ export default {
 
 .butoni {
   margin-top: -75px !important;
-  margin-bottom: 70px;
+  margin-bottom: 80px;
 }
 
 .form {
