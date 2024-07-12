@@ -51,8 +51,22 @@
   return `${process.env.VUE_APP_API_URL}${photoPath}`;
 },
 
-      formatContent(content) {
-      return content.replace(/\n/g, '<br>');
+formatContent(content) {
+    
+      const lines = content.split('\n');
+
+      
+      for (let i = 0; i < lines.length; i++) {
+      
+        if (i === 0) {
+          lines[i] = `<b><span style="font-size: larger">${lines[i]}</span></b>`;
+        }
+        
+        lines[i] = lines[i].replace(/\n/g, '<br>');
+      }
+
+    
+      return lines.join('<br>');
     }
     
     }

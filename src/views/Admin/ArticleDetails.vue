@@ -18,6 +18,7 @@
     </div>
   </v-container>
 </template>
+
 <script>
 import axios from 'axios';
 import ButtonComponent from '../../components/ButtonComponent.vue'; 
@@ -45,19 +46,31 @@ export default {
       }
     },
     getPhotoUrl(photoPath) {
-  return `${process.env.VUE_APP_API_URL}${photoPath}`;
-},
-
+      return `${process.env.VUE_APP_API_URL}${photoPath}`;
+    },
     editArticle() {
       this.$router.push(`/edit/${this.id}`);
     },
     formatContent(content) {
-      return content.replace(/\n/g, '<br>');
+      
+      const lines = content.split('\n');
+
+      
+      for (let i = 0; i < lines.length; i++) {
+      
+        if (i === 0) {
+          lines[i] = `<b><span style="font-size: larger">${lines[i]}</span></b>`;
+        }
+      
+        lines[i] = lines[i].replace(/\n/g, '<br>');
+      }
+
+  
+      return lines.join('<br>');
     }
   }
 };
 </script>
-
 
 <style scoped>
 .article-details {
