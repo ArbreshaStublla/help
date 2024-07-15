@@ -13,7 +13,7 @@
               <div class="article-header">
                 <h3>{{ article.title }}</h3>
               </div>
-              <p>Category: {{ article.category }}</p>
+              <p>Kategoria: {{ article.category }}</p>
               <div class="article-actions">
                 <ButtonComponent buttonText="Shfaq më shumë" @click="navigateToArticleDetails(article.articleId)" />
               </div>

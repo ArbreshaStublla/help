@@ -41,7 +41,8 @@
     methods: {
       async fetchArticleDetails() {
         try {
-          const response = await axios.get(`http://192.168.44.239:3000/article/${this.id}`);
+          const response = await axios.get(`${process.env.VUE_APP_API_URL}article/${this.id}`);
+
           this.article = response.data;
         } catch (error) {
           console.error('Error fetching article details:', error);

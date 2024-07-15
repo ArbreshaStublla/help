@@ -76,7 +76,7 @@ export default {
         
         swal('Sukses!', 'Posti është ndryshuar me sukses', 'success');
 
-        this.$router.push(`/article/${this.id}`);
+        this.$router.push(`/homeadmin`);
       } catch (error) {
         console.error('Error updating article:', error);
         swal('Error', 'Posti nuk është ndryshuar ', 'error');
