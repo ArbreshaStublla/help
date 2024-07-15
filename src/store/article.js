@@ -1,10 +1,10 @@
-// src/store/modules/article.js
+
 import ArticleService from '../services/articleService';
 
 const state = {
   articles: [],
   loading: false,
-  searchQuery: ''  // Add searchQuery to state
+  searchQuery: ''  
 };
 
 const getters = {
@@ -18,7 +18,7 @@ const getters = {
     );
   },
   isLoading: state => state.loading,
-  searchQuery: state => state.searchQuery  // Add searchQuery getter
+  searchQuery: state => state.searchQuery  
 };
 
 const actions = {
@@ -68,7 +68,7 @@ const mutations = {
     state.articles = state.articles.filter(article => article.articleId !== articleId);
   },
   clearArticles: state => (state.articles = []),
-  setSearchQuery: (state, query) => (state.searchQuery = query)  // Add setSearchQuery mutation
+  setSearchQuery: (state, query) => (state.searchQuery = query) 
 };
 
 export default {

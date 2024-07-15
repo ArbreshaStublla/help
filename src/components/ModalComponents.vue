@@ -53,9 +53,4 @@ export default {
   text-align: right;
 }
 
-/* .v-dialog:not(.v-dialog--fullscreen) {
-  max-width: 800px !important;
-} */
-
-
 </style>
