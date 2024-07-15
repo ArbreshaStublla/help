@@ -203,7 +203,7 @@ export const question = {
       }
     },
 
-    // Mutation to edit answer for a question
+    // Mutation 
     EDIT_ANSWER(state, { questionId, answerText }) {
       const question = state.questions.find(q => q.questionId === questionId);
       if (question) {

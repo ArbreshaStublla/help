@@ -9,15 +9,17 @@
         <div v-if="showUnanswered">
           <div v-for="question in unansweredQuestions" :key="question.questionId" class="question">
             <h2 class="question-text">{{ question.questionText }}</h2>
+           
             <form @submit.prevent="submitAnswer(question)">
               <div class="form-group">
+                <p>Email-i: {{ question.email }}</p>
                 <label for="answerText" class="label">Përgjigja juaj:</label>
                 <textarea v-model="question.newAnswerText" required rows="3" class="input"></textarea>
               </div>
               <div class="form-group">
                 <label for="userId" class="label">ID-ja juaj:</label>
                 <input type="text" v-model="question.userId" required class="input" />
-              </div>
+              </div> 
               <div class="form-group">
                 <ButtonComponent buttonText="Dorëzo Përgjigjen" @click="submitAnswer(question)" />
               </div>
@@ -29,9 +31,15 @@
         <div v-else>
           <div v-for="question in paginatedQuestions" :key="question.questionId">
             <div v-if="question.answerText" class="question-inner">
+              
+              
+              
               <h2 class="question-text">{{ question.questionText }}</h2>
+              
               <div class="answers">
+                
                 <div class="question-header">
+                 
                   <button class="delete-button" @click="confirmDelete(question.questionId)">
                     <i class="fas fa-trash"></i>
                   </button>
@@ -42,7 +50,9 @@
                     {{ question.showAnswer ? '-' : '+' }}
                   </span>
                 </div>
-                <p v-if="question.showAnswer" class="answer">{{ question.answerText }}</p>
+                <p v-if="question.showAnswer" class="answer" v-html="formattedAnswer(question.answerText)"></p>
+                
+             
                 <button v-if="question.showAnswer" @click="toggleEditAnswer(question)" class="edit-button">
                   {{ question.editingAnswer ? 'Anulo' : 'Ndrysho përgjigjen' }}
                 </button>
@@ -54,6 +64,7 @@
                   <div class="form-group">
                     <ButtonComponent buttonText="Ruaj Ndryshimet" @click="submitEditedAnswer(question)" />
                   </div>
+                  
                 </form>
                 <p v-if="question.errorMessage" class="error">{{ question.errorMessage }}</p>
                 <p v-if="question.successMessage" class="success">{{ question.successMessage }}</p>
@@ -91,6 +102,7 @@ export default {
       showUnanswered: false,
       currentPage: 1,
       pageSize: 5,
+      
     };
   },
   computed: {
@@ -99,8 +111,8 @@ export default {
       'paginatedUnansweredQuestions',
     ]),
     filteredQuestions() {
-      const query = this.searchQuery.toLowerCase().trim();
-      if (!query) return this.$store.state.question.questions;
+      const query = this.searchQuery?.toLowerCase().trim() || ''; // Safeguard against undefined
+      if (!query) return this.$store.state.question.questions || []; // Ensure it's an array
 
       return this.$store.state.question.questions.filter(question => {
         const questionText = question.questionText.toLowerCase();
@@ -135,6 +147,8 @@ export default {
           questionId: question.questionId,
           answerText: question.newAnswerText,
           userId: question.userId,
+          emailId: question.emailId,
+       
         });
         question.successMessage = 'Përgjigja u shtua me sukses!';
         question.newAnswerText = '';
@@ -187,7 +201,7 @@ export default {
     confirmDelete(questionId) {
       swal({
         title: 'A jeni i sigurt?',
-        text: 'Kjo veprim do të fshijë përgjithmonë pyetjen dhe përgjigjet e saj!',
+        text: 'Ky veprim do të fshijë përgjithmonë pyetjen!',
         icon: 'warning',
         buttons: ['Anulo', 'Fshij'],
         dangerMode: true,
@@ -197,7 +211,7 @@ export default {
           this.fetchQuestions();
           swal({
             title: 'Fshirë!',
-            text: 'Pyetja dhe përgjigjet e saj janë fshirë.',
+            text: 'Pyetja është fshirë.',
             icon: 'success',
             timer: 3000,
             buttons: false,
@@ -208,10 +222,21 @@ export default {
     handlePageChange(page) {
       this.currentPage = page;
     },
-   
+    formattedAnswer(text) {
+      if (text) {
+        return text
+          .split('\n').join('<br>')
+          .split('  ').join('&nbsp;&nbsp;'); 
+      }
+      return '';
+    },
   },
 };
 </script>
+
+
+
+
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
  

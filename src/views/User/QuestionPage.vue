@@ -8,8 +8,8 @@
           <textarea v-model="questionText" required rows="3" class="input"></textarea>
         </div>
         <div class="form-group">
-          <label for="userEmail" class="label">Email-i juaj:</label>
-          <input v-model="userEmail" type="email" @input="validateEmail" required class="input">
+          <label for="email" class="label">Email-i juaj:</label>
+          <input v-model="email" type="email" @input="validateEmail" required class="input">
           <p v-if="emailErrorMessage" class="error">{{ emailErrorMessage }}</p>
         </div>
         <div class="dorezo">
@@ -24,15 +24,19 @@
         <div v-for="question in paginatedQuestions" :key="question.questionId" class="question">
           <div class="question-header" @click="toggleAnswer(question)">
             <h2 class="question-text">{{ question.questionText }}</h2>
+            
             <span class="accordion-icon" :class="{ 'open': question.showAnswer }" @click.stop="toggleAnswer(question)">+</span>
           </div>
 
           <div v-if="question.showAnswer" class="answers">
-            <p class="answer" v-if="question.answerText">{{ question.answerText }}</p>
-            <div v-else class="no-answers">
-              <p>Ende pa përgjigje.</p>
-            </div>
-          </div>
+  <div v-if="question.answerText" class="answer">
+    <p v-html="formattedAnswer(question.answerText)"></p>
+  </div>
+  <div v-else class="no-answers">
+    <p>Ende pa përgjigje.</p>
+  </div>
+</div>
+
         </div>
       </div>
 
@@ -67,7 +71,7 @@ export default {
       currentPage: 1,
       pageSize: 5,
       questionText: '',
-      userEmail: '',
+      email: '',
       isSubmitting: false,
       emailErrorMessage: '',
     };
@@ -92,7 +96,7 @@ export default {
     },
     isEmailValid() {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailPattern.test(this.userEmail);
+      return emailPattern.test(this.email);
     },
   },
   created() {
@@ -122,10 +126,10 @@ export default {
         await this.addQuestion({
           questionText: this.questionText,
           userId: 1,
-          userEmail: this.userEmail,
+          email: this.email,
         });
         this.questionText = '';
-        this.userEmail = '';
+        this.email = '';
         swal({
           title: "Sukses",
           text: "Pyetja është shtuar me sukses.",
@@ -148,6 +152,14 @@ export default {
     },
     toggleAnswerState(question) {
       question.showAnswer = !question.showAnswer;
+    },
+     formattedAnswer(text) {
+      if (text) {
+        return text
+          .split('\n').join('<br>')
+          .split('  ').join('&nbsp;&nbsp;'); 
+      }
+      return '';
     },
   },
 };
