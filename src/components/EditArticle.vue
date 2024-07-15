@@ -48,44 +48,43 @@ export default {
     await this.fetchArticleDetails();
   },
   methods: {
-    async fetchArticleDetails() {
-      try {
-        const response = await axios.get(`http://192.168.44.239:3000/article/${this.id}`);
-        this.article = response.data;
-      } catch (error) {
-        console.error('Error fetching article details:', error);
-      }
-    },
-    async submitForm() {
-      try {
-        const updatedContents = this.article.contents.map(content => ({
-          contentId: content.contentId,
-          articleId: content.articleId,
-          content: content.content
-        }));
-
-        const payload = {
-          category: this.article.category,
-          title: this.article.title,
-          contents: updatedContents,
-          photos: this.article.photos
-        };
-
-        await axios.put(`http://192.168.44.239:3000/article/${this.id}`, payload);
-
-        
-        swal('Sukses!', 'Posti është ndryshuar me sukses', 'success');
-
-        this.$router.push(`/homeadmin`);
-      } catch (error) {
-        console.error('Error updating article:', error);
-        swal('Error', 'Posti nuk është ndryshuar ', 'error');
-      }
-    },
-    getPhotoUrl(photoPath) {
-      return `http://192.168.44.239:3000/${photoPath}`;
+  async fetchArticleDetails() {
+    try {
+      const response = await axios.get(`${process.env.VUE_APP_API_URL}/article/${this.id}`);
+      this.article = response.data;
+    } catch (error) {
+      console.error('Error fetching article details:', error);
     }
-  }
+  },
+  async submitForm() {
+    try {
+      const updatedContents = this.article.contents.map(content => ({
+        contentId: content.contentId,
+        articleId: content.articleId,
+        content: content.content
+      }));
+
+      const payload = {
+        category: this.article.category,
+        title: this.article.title,
+        contents: updatedContents,
+        photos: this.article.photos
+      };
+      await axios.put(`${process.env.VUE_APP_API_URL}/article/${this.id}`, payload);
+
+      swal('Sukses!', 'Posti është ndryshuar me sukses', 'success');
+
+      this.$router.push(`/homeadmin`);
+    } catch (error) {
+      console.error('Error updating article:', error);
+      swal('Error', 'Posti nuk është ndryshuar ', 'error');
+    }
+  },
+  getPhotoUrl(photoPath) {
+    return `${process.env.VUE_APP_API_URL}${photoPath}`;
+  },
+}
+
 };
 </script>
 
