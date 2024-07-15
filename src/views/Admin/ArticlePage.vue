@@ -53,7 +53,14 @@
         <div class="article-image" v-if="article.photos && article.photos.length > 0">
           <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Article Photo" class="article-preview-image">
           <div class="articleee">
+            <div class="delete">
+              <button class="btn delete-btn" @click="confirmDelete(article.articleId)">
+                  <i class="fas fa-trash"></i>
+                </button>
+            </div>
+           
             <div class="article-details">
+              
               <div class="article-header">
                
                 <h3>{{ article.title }}</h3>
@@ -65,9 +72,7 @@
             </div>
           </div>
         </div>
-        <button class="btn delete-btn" @click="confirmDelete(article.articleId)">
-                  <i class="fas fa-trash"></i>
-                </button>
+       
       </div>
       
     </div>
@@ -359,27 +364,25 @@ export default {
 
 .article-details {
   position: absolute;
-  bottom: -180px;
+  bottom: -140px;
   left: 50%;
   transform: translateX(-50%);
   width: 70%;
-  height: 300px;
-  padding: 10px;
+  height: 280px;
+  padding: 30px;
   background-color: #ffffff;
-  text-align: center;
   color: #333;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+ justify-content: flex-start;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   opacity: 0.85;
 }
-
 .article-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+
   text-align: center;
 }
 .article-header p{
@@ -408,6 +411,15 @@ opacity: 1;
   background-color: #138496;
 }
 
+.delete{
+  z-index: 9999 !important;
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  background-color: #fff;
+  text-align: center;
+  border-radius: 50%;
+}
 .delete-btn {
   background-color: transparent;
   border: none;
@@ -416,7 +428,7 @@ opacity: 1;
 
 .delete-btn i {
   color: #dc3545;
-  padding-left: 15px;
+  padding: 13px;
 }
 
 .delete-btn:hover i {

@@ -192,18 +192,17 @@ export default {
 
 .article-details {
   position: absolute;
-  bottom: -180px;
+  bottom: -140px;
   left: 50%;
   transform: translateX(-50%);
   width: 70%;
-  height: 300px;
-  padding: 10px;
+  height: 280px;
+  padding: 30px;
   background-color: #ffffff;
-  text-align: center;
   color: #333;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+ justify-content: flex-start;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   opacity: 0.85;
 }
@@ -212,7 +211,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+ 
   text-align: center;
 }
 
