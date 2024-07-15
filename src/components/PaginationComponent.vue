@@ -86,7 +86,6 @@ button:disabled {
   opacity: 0.5;
 }
 
-/* Custom styles for Vuetify pagination arrows */
 .v-pagination__prev .v-btn,
 .v-pagination__next .v-btn {
   background: none !important;

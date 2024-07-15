@@ -56,7 +56,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '@/components/ButtonComponent.vue';
-import PaginationComponent from '@/components/PaginationComponent.vue'; // Import your PaginationComponent
+import PaginationComponent from '@/components/PaginationComponent.vue'; 
 import { debounce } from 'lodash';
 import swal from 'sweetalert';
 

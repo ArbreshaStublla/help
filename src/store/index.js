@@ -1,4 +1,4 @@
-// store/index.js
+
 
 import { createStore } from 'vuex';
 import { video } from '../store/video'; 

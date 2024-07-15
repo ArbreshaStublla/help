@@ -111,8 +111,8 @@ export default {
       'paginatedUnansweredQuestions',
     ]),
     filteredQuestions() {
-      const query = this.searchQuery?.toLowerCase().trim() || ''; // Safeguard against undefined
-      if (!query) return this.$store.state.question.questions || []; // Ensure it's an array
+      const query = this.searchQuery?.toLowerCase().trim() || '';
+      if (!query) return this.$store.state.question.questions || []; 
 
       return this.$store.state.question.questions.filter(question => {
         const questionText = question.questionText.toLowerCase();
