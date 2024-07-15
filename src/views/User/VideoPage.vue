@@ -7,7 +7,7 @@
       </div>
       <div v-else-if="filteredVideos && filteredVideos.length > 0">
         <div v-for="video in paginatedVideos" :key="video.videoId" class="video-card">
-          <h4 class="video-title">{{ video.title }}</h4>
+       
           <div class="video-content">
             <div class="video-thumbnail-container">
               <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail">
@@ -16,6 +16,7 @@
               </div>
             </div>
             <div class="video-description">
+              <h3 class="video-title">{{ video.title }}</h3>
               <p>{{ video.description }}</p>
             </div>
           </div>

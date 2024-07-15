@@ -4,7 +4,7 @@
       <div class="container">
         <h1 class="title">Si mund të ju ndihmojmë?</h1>
         <SearchComponent @search="handleSearch" />
-        <ButtonComponent buttonText="Administrator" @click="handleCustomButtonClick" />
+       
       </div>
       <div class="hero">
         <v-container>
@@ -79,7 +79,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 70vh;
+  height: 55vh;
   padding: 50px;
   background-image: url(../../assets/background.jpg); 
   background-size: cover; 

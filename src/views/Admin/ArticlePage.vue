@@ -55,9 +55,7 @@
           <div class="articleee">
             <div class="article-details">
               <div class="article-header">
-                <button class="btn delete-btn" @click="confirmDelete(article.articleId)">
-                  <i class="fas fa-trash"></i>
-                </button>
+               
                 <h3>{{ article.title }}</h3>
               </div>
               <p>Kategoria: {{ article.category }}</p>
@@ -67,24 +65,11 @@
             </div>
           </div>
         </div>
-        <div class="article-image" v-else>
-          <img src="placeholder.jpg" alt="Placeholder Image" class="article-preview-image">
-          <div class="articleee">
-            <div class="article-details">
-              <div class="article-header">
-                <button class="btn delete-btn" @click="confirmDelete(article.articleId)">
+        <button class="btn delete-btn" @click="confirmDelete(article.articleId)">
                   <i class="fas fa-trash"></i>
                 </button>
-                <h3>{{ article.title }}</h3>
-              </div>
-              <p>Kategoria: {{ article.category }}</p>
-              <div class="article-actions">
-                <ButtonComponent buttonText="Shfaq më shumë" @click="navigateToArticleDetails(article.articleId)" />
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
+      
     </div>
     <div v-else>
       <p>Nuk u gjet asnjë postim.</p>
@@ -349,8 +334,8 @@ export default {
 
 .articles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
-  gap: 80px;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 40px;
   align-items: start;
 }
 
@@ -374,11 +359,11 @@ export default {
 
 .article-details {
   position: absolute;
-  bottom: -200px;
+  bottom: -180px;
   left: 50%;
   transform: translateX(-50%);
   width: 70%;
-  height: 250px;
+  height: 300px;
   padding: 10px;
   background-color: #ffffff;
   text-align: center;
@@ -387,6 +372,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0.85;
 }
 
 .article-header {
@@ -396,11 +382,16 @@ export default {
   margin-bottom: 10px;
   text-align: center;
 }
+.article-header p{
+
+opacity: 1;
+}
 
 .article-header h3 {
   margin: 0;
   flex: 1;
   text-align: center;
+  opacity:1;
 }
 
 .article-actions {
@@ -425,6 +416,7 @@ export default {
 
 .delete-btn i {
   color: #dc3545;
+  padding-left: 15px;
 }
 
 .delete-btn:hover i {

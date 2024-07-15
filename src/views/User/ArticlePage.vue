@@ -102,7 +102,7 @@ export default {
 
 .article-manager {
   margin: 0 auto;
-  padding: 80px 20px 0px 20px;
+  padding: 20px 20px 0px 20px;
 }
 
 .form-groupp {
@@ -167,8 +167,8 @@ export default {
 
 .articles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
-  gap: 80px;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 40px;
   align-items: start;
 }
 
@@ -192,11 +192,11 @@ export default {
 
 .article-details {
   position: absolute;
-  bottom: -200px;
+  bottom: -180px;
   left: 50%;
   transform: translateX(-50%);
   width: 70%;
-  height: 250px;
+  height: 300px;
   padding: 10px;
   background-color: #ffffff;
   text-align: center;
@@ -205,6 +205,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0.85;
 }
 
 .article-header {

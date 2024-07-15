@@ -89,7 +89,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 70vh;
+  height: 55vh;
   padding: 50px;
   background-image: url(../../assets/background.jpg);
   background-size: cover;
