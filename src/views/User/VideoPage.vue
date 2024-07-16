@@ -7,7 +7,6 @@
       </div>
       <div v-else-if="filteredVideos && filteredVideos.length > 0">
         <div v-for="video in paginatedVideos" :key="video.videoId" class="video-card">
-       
           <div class="video-content">
             <div class="video-thumbnail-container">
               <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail">
@@ -56,12 +55,12 @@ export default {
     }),
     filteredVideos() {
       if (!this.searchQuery) {
-        return this.videos;
+        return this.videos.slice().reverse(); // Reverse order to show newest first
       } else {
         const query = this.searchQuery.toLowerCase().trim(); 
         return this.videos.filter(video =>
           video.title.toLowerCase().includes(query)
-        );
+        ).slice().reverse(); // Reverse order to show newest first
       }
     },
     paginatedVideos() {

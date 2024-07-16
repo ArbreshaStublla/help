@@ -114,12 +114,12 @@ export default {
     }),
     filteredVideos() {
       if (!this.searchQuery) {
-        return this.videos;
+        return this.videos.slice().reverse(); // Reverse order to show newest first
       } else {
         const query = this.searchQuery.toLowerCase().trim();
         return this.videos.filter((video) =>
           video.title.toLowerCase().includes(query)
-        );
+        ).slice().reverse(); // Reverse order to show newest first
       }
     },
     paginatedVideos() {
@@ -148,44 +148,44 @@ export default {
       this.resetForm();
     },
     async handleAddOrUpdateVideo() {
-  try {
-    if (this.editMode) {
-      if (!this.form.id) {
-        console.error('Video ID is undefined or invalid');
-        return;
+      try {
+        if (this.editMode) {
+          if (!this.form.id) {
+            console.error('Video ID is undefined or invalid');
+            return;
+          }
+          if (!this.isValidForm(this.form)) {
+            console.error('Form data is incomplete or invalid');
+            return;
+          }
+          await this.updateVideo({ id: this.form.id, updatedVideo: this.form });
+          swal({
+            title: 'Sukses!',
+            text: 'Ndryshimi është kryer me sukses.',
+            icon: 'success',
+            timer: 3000,
+            buttons: false,
+          });
+        } else {
+          if (!this.isValidForm(this.form)) {
+            console.error('Form data is incomplete or invalid');
+            return;
+          }
+          await this.addVideo(this.form);
+          swal({
+            title: 'Sukses!',
+            text: 'Video u shtua me sukses!',
+            icon: 'success',
+            timer: 3000,
+            buttons: false,
+          });
+        }
+        this.resetForm();
+        this.showModal = false;
+      } catch (error) {
+        console.error('Error adding/updating video:', error);
       }
-      if (!this.isValidForm(this.form)) {
-        console.error('Form data is incomplete or invalid');
-        return;
-      }
-      await this.updateVideo({ id: this.form.id, updatedVideo: this.form });
-      swal({
-        title: 'Sukses!',
-        text: 'Ndryshimi është kryer me sukses.',
-        icon: 'success',
-        timer: 3000,
-        buttons: false,
-      });
-    } else {
-      if (!this.isValidForm(this.form)) {
-        console.error('Form data is incomplete or invalid');
-        return;
-      }
-      await this.addVideo(this.form);
-      swal({
-        title: 'Sukses!',
-        text: 'Video u shtua me sukses!',
-        icon: 'success',
-        timer: 3000,
-        buttons: false,
-      });
-    }
-    this.resetForm();
-    this.showModal = false;
-  } catch (error) {
-    console.error('Error adding/updating video:', error);
-  }
-},
+    },
     resetForm() {
       this.form.id = null;
       this.form.title = '';
@@ -227,6 +227,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');

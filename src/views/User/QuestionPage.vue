@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <!-- Add Question Form -->
     <div class="add-question">
       <h3 class="answer-title">Shto Pyetje:</h3>
       <form @submit.prevent="submitQuestion">
@@ -18,31 +19,31 @@
       </form>
     </div>
 
+    <!-- Display Questions -->
     <div class="question-answer">
-      <div v-if="filteredQuestions.length === 0 && searchQuery === ''" class="no-questions">Nuk ka pyetje në dispozicion.</div>
+      <div v-if="filteredQuestions.length === 0 && !loading" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
         <div v-for="question in paginatedQuestions" :key="question.questionId" class="question">
           <div class="question-header" @click="toggleAnswer(question)">
             <h2 class="question-text">{{ question.questionText }}</h2>
-            
             <span class="accordion-icon" :class="{ 'open': question.showAnswer }" @click.stop="toggleAnswer(question)">+</span>
           </div>
 
           <div v-if="question.showAnswer" class="answers">
-  <div v-if="question.answerText" class="answer">
-    <p v-html="formattedAnswer(question.answerText)"></p>
-  </div>
-  <div v-else class="no-answers">
-    <p>Ende pa përgjigje.</p>
-  </div>
-</div>
-
+            <div v-if="question.answerText" class="answer">
+              <p v-html="formattedAnswer(question.answerText)"></p>
+            </div>
+            <div v-else class="no-answers">
+              <p>Ende pa përgjigje.</p>
+            </div>
+          </div>
         </div>
       </div>
 
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </div>
 
+    <!-- Pagination Component -->
     <PaginationComponent
       v-if="filteredQuestions.length > 0"
       :items="filteredQuestions"
@@ -56,8 +57,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '@/components/ButtonComponent.vue';
-import PaginationComponent from '@/components/PaginationComponent.vue'; 
-import { debounce } from 'lodash';
+import PaginationComponent from '@/components/PaginationComponent.vue';
 import swal from 'sweetalert';
 
 export default {
@@ -80,14 +80,15 @@ export default {
     ...mapState('question', ['errorMessage']),
     ...mapGetters('question', ['questions']),
 
+    // Get filtered and sorted questions based on your search query
     filteredQuestions() {
       const query = this.searchQuery.toLowerCase().trim();
-      if (!query) return this.$store.state.question.questions;
+      if (!query) return this.$store.state.question.questions.slice().reverse(); // Reverse to show newest first
 
       return this.$store.state.question.questions.filter(question => {
         const questionText = question.questionText.toLowerCase();
         return questionText.includes(query);
-      });
+      }).slice().reverse(); // Reverse to show newest first
     },
     paginatedQuestions() {
       const start = (this.currentPage - 1) * this.pageSize;
@@ -113,7 +114,7 @@ export default {
       }
     },
 
-    submitQuestion: debounce(async function() {
+    submitQuestion: async function() {
       this.isSubmitting = true;
 
       if (!this.isEmailValid) {
@@ -137,12 +138,16 @@ export default {
           buttons: false,
           timer: 3000,
         });
+        // Fetch questions again to update the list
+        await this.fetchQuestions();
+        // Reset pagination to show the first page
+        this.currentPage = 1;
       } catch (error) {
         this.errorMessage = 'Ka ndodhur një problem gjatë dërgimit të pyetjes.';
       } finally {
         this.isSubmitting = false;
       }
-    }, 500),
+    },
 
     handlePageChange(page) {
       this.currentPage = page;
@@ -153,7 +158,7 @@ export default {
     toggleAnswerState(question) {
       question.showAnswer = !question.showAnswer;
     },
-     formattedAnswer(text) {
+    formattedAnswer(text) {
       if (text) {
         return text
           .split('\n').join('<br>')

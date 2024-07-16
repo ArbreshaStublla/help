@@ -102,7 +102,6 @@ export default {
       showUnanswered: false,
       currentPage: 1,
       pageSize: 5,
-      
     };
   },
   computed: {
@@ -120,10 +119,10 @@ export default {
       });
     },
     unansweredQuestions() {
-      return this.filteredQuestions.filter(question => !question.answerText);
+      return this.filteredQuestions.filter(question => !question.answerText).reverse(); // Reverse to show new questions first
     },
     answeredQuestions() {
-      return this.filteredQuestions.filter(question => question.answerText);
+      return this.filteredQuestions.filter(question => question.answerText).reverse(); // Reverse to show new questions first
     },
     paginatedQuestions() {
       const start = (this.currentPage - 1) * this.pageSize;
@@ -148,7 +147,6 @@ export default {
           answerText: question.newAnswerText,
           userId: question.userId,
           emailId: question.emailId,
-       
         });
         question.successMessage = 'Përgjigja u shtua me sukses!';
         question.newAnswerText = '';
