@@ -2,7 +2,7 @@
   <div class="article-page">
     <div class="articles-container articles-grid">
       <div class="articles-list">
-        <div v-for="article in articles" :key="article.articleId" class="article-item">
+        <div v-for="article in filteredArticles" :key="article.articleId" class="article-item">
           <div class="article-image">
             <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-preview-image">
             <div class="article-details">
@@ -29,6 +29,12 @@ export default {
   components: {
     CustomButton,
   },
+  props: {
+    searchQuery: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       articles: [],
@@ -36,6 +42,17 @@ export default {
   },
   mounted() {
     this.fetchArticles();
+  },
+  computed: {
+    filteredArticles() {
+      if (!this.searchQuery) {
+        return this.articles;
+      }
+      const query = this.searchQuery.toLowerCase();
+      return this.articles.filter(article => 
+        article.title.toLowerCase().includes(query)
+      );
+    }
   },
   methods: {
     fetchArticles() {
@@ -132,6 +149,6 @@ export default {
 
 .custom-article-button {
   margin-top: 10px;
-  /* Additional custom styling for the button within articles */
+
 }
 </style>
