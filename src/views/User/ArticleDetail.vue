@@ -1,148 +1,105 @@
 <template>
-    <v-container>
-      <div class="article-details">
-    
-        <div class="header-section" v-if="article.photos && article.photos.length > 0">
-          <img :src="getPhotoUrl(article.photos[0].photoUrl)" alt="Header Photo" class="header-photo">
-          <div class="overlay">
-            <h1>{{ article.title }}</h1>
-            <p>{{ article.category }}</p>
+  <div class="article-page">
+    <div class="articles-container">
+      <div v-if="article" class="article-item">
+        <div class="article-header">
+          <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-image">
+          <div class="article-title-overlay">
+            <h3>{{ article.title }}</h3>
           </div>
         </div>
-  
-        <div v-for="(content, index) in article.contents" :key="index" :class="{'content-section': true, 'two-columns': index === 1}">
-          <div v-if="index > 0 && article.photos[index]" :class="{'article-photo-container': index === 1}">
-            <img :src="getPhotoUrl(article.photos[index].photoUrl)" alt="Article Photo" class="article-photo">
+        <v-container>
+          <div class="article-content">
+            <div v-html="article.content"></div>
           </div>
-          <p :class="{'article-content': index === 1}" v-html="formatContent(content.content)"></p>
-        </div>
-
+        </v-container>
       </div>
-    </v-container>
-  </template>
-  
-  <script>
-  import axios from 'axios';
+      <div v-else>
+        <p>Loading...</p>
+      </div>
+    </div>
+  </div>
+</template>
 
-  
-  
-  
-  export default {
+<script>
+import axios from 'axios';
 
-    props: ['id'],
-    data() {
-      return {
-        article: {}
-      };
-    },
-    async created() {
-      await this.fetchArticleDetails();
-    },
-    methods: {
-      async fetchArticleDetails() {
-        try {
-          const response = await axios.get(`${process.env.VUE_APP_API_URL}article/${this.id}`);
-
+export default {
+  data() {
+    return {
+      article: null, // Store the fetched article
+    };
+  },
+  mounted() {
+    // Fetch article based on route parameter
+    const articleId = this.$route.params.id; // Fetches ID from route parameter
+    this.fetchArticle(articleId);
+  },
+  methods: {
+    fetchArticle(articleId) {
+      axios.get(`http://192.168.44.239:3000/article/${articleId}`)
+        .then(response => {
           this.article = response.data;
-        } catch (error) {
-          console.error('Error fetching article details:', error);
-        }
-      },
-      getPhotoUrl(photoPath) {
-  return `${process.env.VUE_APP_API_URL}${photoPath}`;
-},
+        })
+        .catch(error => {
+          console.error('Error fetching article:', error);
+          // Handle error - show error message to user
+        });
+    },
+    getImageUrl(relativePath) {
+      return `http://192.168.44.239:3000${relativePath}`;
+    },
+  },
+};
 
-formatContent(content) {
-    
-      const lines = content.split('\n');
 
-      
-      for (let i = 0; i < lines.length; i++) {
-      
-        if (i === 0) {
-          lines[i] = `<b><span style="font-size: larger">${lines[i]}</span></b>`;
-        }
-        
-        lines[i] = lines[i].replace(/\n/g, '<br>');
-      }
+</script>
 
-    
-      return lines.join('<br>');
-    }
-    
-    }
-  };
-  </script>
-  
-  <style scoped>
-  .article-details {
-    margin:  auto;
-    padding: 20px;
+<style scoped>
+.articles-container {
+  margin:  auto;
+ 
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .header-section {
-    position: relative;
-   
-  }
-  
-  .header-photo {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    filter: brightness(90%);
-  }
-  
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    text-align: center;
-  }
-  
-  .overlay h1 {
-    font-size: 36px;
-    margin: 0;
-  }
-  
-  .overlay p {
-    font-size: 18px;
-    margin: 10px 0 0;
-  }
-  
-  .content-section {
-    margin-top: 20px;
-  }
-  
-  .article-photo {
-    width: 100%;
-    max-height: 90vh;
-    border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
-  }
-  
-  .two-columns {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  
-  .article-photo-container {
-    flex: 1;
-    margin-right: 20px;
-  }
-  
-  .article-content {
-    flex: 1;
-  }
-  </style>
-  
+ 
+}
+
+
+.article-header {
+  position: relative;
+  overflow: hidden; 
+  border-radius: 5px; 
+}
+
+.article-image {
+  width: 100%;
+  height: 400px;
+  border-radius: 5px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(50%);
+}
+
+
+.article-title-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 24px;
+
+}
+
+
+
+.article-content {
+  padding: 10px;
+  margin-top: 20px; /* Increased margin for content below header */
+
+  border-top: none; /* Remove top border to separate from header */
+  border-radius: 0 0 5px 5px; /* Rounded corners at bottom */
+}
+</style>

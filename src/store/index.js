@@ -3,7 +3,7 @@
 import { createStore } from 'vuex';
 import { video } from '../store/video'; 
 import {question} from "../store/question"
-import article from "../store/article"
+
 
 export default createStore({
   state: {
@@ -20,6 +20,6 @@ export default createStore({
   modules: {
     video, 
     question,
-    article
+   
   }
 });

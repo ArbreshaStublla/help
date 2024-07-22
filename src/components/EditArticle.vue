@@ -1,124 +1,110 @@
 <template>
-  <v-container>
-    <div class="edit-article">
-      <v-form @submit.prevent="submitForm">
-        <div class="first">
-          <v-text-field v-model="article.title" label="Title" required></v-text-field>
-          <v-text-field v-model="article.category" label="Category" required></v-text-field>
-          
-          <div v-for="(content, index) in article.contents" :key="index" class="content-section">
-            <v-textarea v-model="content.content" label="Content" required></v-textarea>
-          </div>
-          
-          <div v-for="(photo, index) in article.photos" :key="index" class="photo-section">
-            <img :src="getPhotoUrl(photo.photoUrl)" alt="Article Photo" class="article-photo">
-          </div>
-        </div>
+  <div class="edit-article-page">
+    <v-container>
+      <div class="form-container">
+        <h2>Ndrysho Postimin</h2>
+        <form @submit.prevent="updateArticle">
+          <v-text-field
+            v-model="article.title"
+            label="Title"
+            required
+          ></v-text-field>
 
-        <div class="butoni">
-          <ButtonComponent :buttonText="'Ruaj ndryshimet'" @clicked="submitForm"></ButtonComponent>
-        </div>
-        
-      </v-form>
-    </div>
-  </v-container>
+          <v-textarea
+            v-model="article.content"
+            label="Content"
+            required
+          ></v-textarea>
+
+          <v-file-input
+            v-model="file"
+            label="Upload Image"
+            accept="image/*"
+          ></v-file-input>
+
+          <v-btn type="submit" color="primary">Update Article</v-btn>
+          <v-btn @click="cancelEdit" color="secondary">Cancel</v-btn>
+        </form>
+      </div>
+    </v-container>
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
-import swal from 'sweetalert';
-import ButtonComponent from './ButtonComponent.vue';
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
-  components: {
-    ButtonComponent
-  },
-  props: ['id'],
-  data() {
-    return {
-      article: {
-        title: '',
-        category: '',
-        contents: [],
-        photos: []
-      },
-    };
-  },
-  async created() {
-    await this.fetchArticleDetails();
-  },
-  methods: {
-    async fetchArticleDetails() {
+  setup() {
+    const route = useRoute();
+    const router = useRouter();
+    const article = ref({
+      title: '',
+      content: '',
+      imageUrl: '',
+    });
+    const file = ref(null);
+
+    const fetchArticle = async () => {
       try {
-        const response = await axios.get(`${process.env.VUE_APP_API_URL}article/${this.id}`);
-        this.article = response.data;
+        const response = await axios.get(`http://192.168.44.239:3000/article/${route.params.id}`);
+        article.value = response.data;
       } catch (error) {
-        console.error('Error fetching article details:', error);
+        console.error('Error fetching article:', error);
       }
-    },
-    async submitForm() {
+    };
+
+    const updateArticle = async () => {
+      const formData = new FormData();
+      formData.append('title', article.value.title);
+      formData.append('content', article.value.content);
+      if (file.value) {
+        formData.append('image', file.value);
+      }
+
       try {
-        const updatedContents = this.article.contents.map(content => ({
-          contentId: content.contentId,
-          articleId: content.articleId,
-          content: content.content
-        }));
-
-        const payload = {
-          category: this.article.category,
-          title: this.article.title,
-          contents: updatedContents,
-          photos: this.article.photos
-        };
-        await axios.put(`${process.env.VUE_APP_API_URL}article/${this.id}`, payload);
-        
-
-        
-        swal('Sukses!', 'Posti është ndryshuar me sukses', 'success');
-
-        this.$router.push(`/homeadmin`);
+        await axios.put(`http://192.168.44.239:3000/article/${route.params.id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        router.push({ name: 'articlePage', params: { id: route.params.id } });
       } catch (error) {
         console.error('Error updating article:', error);
-        swal('Error', 'Posti nuk është ndryshuar ', 'error');
       }
-    },
-    getPhotoUrl(photoPath) {
-  return `${process.env.VUE_APP_API_URL}${photoPath}`;
-},
-  }
+    };
+
+    const cancelEdit = () => {
+      router.push({ name: 'articlePage', params: { id: route.params.id } });
+    };
+
+    fetchArticle();
+
+    return {
+      article,
+      file,
+      updateArticle,
+      cancelEdit,
+    };
+  },
 };
 </script>
 
 <style scoped>
-.first {
-  position: relative;
-}
-
-.butoni {
-  position: absolute;
-  top: 25px;
-}
-
-.edit-article {
-  margin: 20px auto;
+.form-container {
+  max-width: 600px;
+  margin: auto;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.content-section {
-  margin-top: 20px;
+.v-text-field,
+.v-textarea,
+.v-file-input {
+  margin-bottom: 20px;
 }
 
-.photo-section {
-  margin-top: 20px;
-}
-
-.article-photo {
-  height: 300px;
-  object-fit: cover;
-  border-radius: 4px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
+.v-btn {
+  margin-right: 10px;
 }
 </style>

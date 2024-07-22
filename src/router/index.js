@@ -7,6 +7,7 @@ import HomeViewAdmin from "@/views/Admin/HomeViewAdmin.vue";
 import ArticleDetails from "../views/Admin/ArticleDetails.vue";
 import ArticleDetail from "../views/User/ArticleDetail.vue" 
 import EditArticle from "../components/EditArticle.vue"
+import PostArticle from "../views/Admin/ArticlePost.vue"
 
 
 const routes = [
@@ -52,6 +53,13 @@ const routes = [
     path: '/edit/:id', 
     name: 'editArticle',
     component: EditArticle,
+    props: true ,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/post', 
+    name: 'post',
+    component: PostArticle,
     props: true ,
     meta: { requiresAuth: true }
   },
