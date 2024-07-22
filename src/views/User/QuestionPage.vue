@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <!-- Add Question Form -->
     <div class="add-question">
       <h3 class="answer-title">Shto Pyetje:</h3>
       <form @submit.prevent="submitQuestion">
@@ -18,8 +17,6 @@
         </div>
       </form>
     </div>
-
-    <!-- Display Questions -->
     <div class="question-answer">
       <div v-if="filteredQuestions.length === 0 && !loading" class="no-questions">Nuk ka pyetje në dispozicion.</div>
       <div v-else>
@@ -42,8 +39,6 @@
 
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </div>
-
-    <!-- Pagination Component -->
     <PaginationComponent
       v-if="filteredQuestions.length > 0"
       :items="filteredQuestions"
@@ -80,15 +75,14 @@ export default {
     ...mapState('question', ['errorMessage']),
     ...mapGetters('question', ['questions']),
 
-    // Get filtered and sorted questions based on your search query
     filteredQuestions() {
       const query = this.searchQuery.toLowerCase().trim();
-      if (!query) return this.$store.state.question.questions.slice().reverse(); // Reverse to show newest first
+      if (!query) return this.$store.state.question.questions.slice().reverse(); 
 
       return this.$store.state.question.questions.filter(question => {
         const questionText = question.questionText.toLowerCase();
         return questionText.includes(query);
-      }).slice().reverse(); // Reverse to show newest first
+      }).slice().reverse(); 
     },
     paginatedQuestions() {
       const start = (this.currentPage - 1) * this.pageSize;
@@ -138,9 +132,9 @@ export default {
           buttons: false,
           timer: 3000,
         });
-        // Fetch questions again to update the list
+        
         await this.fetchQuestions();
-        // Reset pagination to show the first page
+        
         this.currentPage = 1;
       } catch (error) {
         this.errorMessage = 'Ka ndodhur një problem gjatë dërgimit të pyetjes.';

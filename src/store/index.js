@@ -1,5 +1,3 @@
-
-
 import { createStore } from 'vuex';
 import { video } from '../store/video'; 
 import {question} from "../store/question"

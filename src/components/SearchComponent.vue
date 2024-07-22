@@ -1,7 +1,6 @@
-
 <template>
   <div class="search-container">
-    <span class="search-icon">&#128269;</span>
+    <span class="search-icon reversed">&#x1F50E;&#xFE0E;</span>
     <input type="text" placeholder="Kërkoni këtu" class="search-input" v-model="searchQuery" @input="updateSearch">
   </div>
 </template>
@@ -20,7 +19,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .search-container {
@@ -47,5 +45,10 @@ export default {
   font-size: 24px;
   color: #1B4D3E;
   margin-right: 10px;
+  transform: scaleX(-1); 
+}
+
+.search-icon.reversed {
+  transform: scaleX(-1);
 }
 </style>
