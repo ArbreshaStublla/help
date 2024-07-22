@@ -1,6 +1,6 @@
 <template>
   <div class="form-container">
-    <input type="text" v-model="title" placeholder="Enter article title" class="title-input">
+    <input type="text" v-model="title" placeholder="Titulli i postimit" class="title-input">
     <RichTextEditor v-model="content" class="rich-text-editor" />
     <input type="file" ref="fileInput" @change="handleFileChange" class="file-input">
     <div class="buton-container">
