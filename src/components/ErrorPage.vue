@@ -222,9 +222,4 @@
         clip: rect(30px, 9999px, 147px, 0);
     }
 }
-
-
-
-
-
  </style>

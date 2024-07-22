@@ -119,10 +119,10 @@ export default {
       });
     },
     unansweredQuestions() {
-      return this.filteredQuestions.filter(question => !question.answerText).reverse(); // Reverse to show new questions first
+      return this.filteredQuestions.filter(question => !question.answerText).reverse(); 
     },
     answeredQuestions() {
-      return this.filteredQuestions.filter(question => question.answerText).reverse(); // Reverse to show new questions first
+      return this.filteredQuestions.filter(question => question.answerText).reverse(); 
     },
     paginatedQuestions() {
       const start = (this.currentPage - 1) * this.pageSize;

@@ -25,11 +25,10 @@
           </div>
           <div v-else>
             <div v-for="video in paginatedVideos" :key="video.videoId" class="video-card">
-              
               <div class="video-content">
                 <div class="video-thumbnail-container">
-                  <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail">
-                  <div class="play-icon" @click="goToVideo(video.url)">
+                  <img :src="video.thumbnail" alt="Video Thumbnail" class="video-thumbnail" @click="openVideoModal(video)">
+                  <div class="play-icon" @click="openVideoModal(video)">
                     ▶️
                   </div>
                 </div>
@@ -74,6 +73,12 @@
         </template>
       </ModalComponent>
     </div>
+    <div v-if="showVideoModal" class="video-modal">
+      <div class="video-modal-content">
+        <span class="close-icon" @click="closeVideoModal">&times;</span>
+        <iframe width="560" height="315" :src="modalVideoUrl" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -95,6 +100,8 @@ export default {
     return {
       showForm: false,
       showModal: false,
+      showVideoModal: false,
+      modalVideoUrl: '',
       editMode: false,
       form: {
         id: null,
@@ -114,12 +121,12 @@ export default {
     }),
     filteredVideos() {
       if (!this.searchQuery) {
-        return this.videos.slice().reverse(); // Reverse order to show newest first
+        return this.videos.slice().reverse(); 
       } else {
         const query = this.searchQuery.toLowerCase().trim();
         return this.videos.filter((video) =>
           video.title.toLowerCase().includes(query)
-        ).slice().reverse(); // Reverse order to show newest first
+        ).slice().reverse(); 
       }
     },
     paginatedVideos() {
@@ -195,8 +202,23 @@ export default {
     isValidForm(form) {
       return !!form.title && !!form.url && !!form.description;
     },
-    goToVideo(url) {
-      window.open(url, '_blank');
+    openVideoModal(video) {
+      this.selectedVideo = video;
+      this.showVideoModal = true;
+      this.modalVideoUrl = this.getVideoEmbedUrl(video.url);
+    },
+    closeVideoModal() {
+      this.showVideoModal = false;
+      this.modalVideoUrl = '';
+      this.selectedVideo = null;
+    },
+    getVideoEmbedUrl(url) {
+      if (url.includes('youtube.com')) {
+        const videoId = url.split('v=')[1];
+        return `https://www.youtube.com/embed/${videoId}`;
+      } else {
+        return url;
+      }
     },
     async confirmDelete(videoId) {
       const willDelete = await swal({
@@ -227,7 +249,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
@@ -321,5 +342,33 @@ form button {
 }
 .delete-button {
   color: #cc0000;
+}
+.video-modal {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.video-modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  width: 80%;
+  max-width: 610px;
+  max-height: 80%;
+  overflow: hidden;
+  position: relative;
+}
+.close-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 </style>
