@@ -130,7 +130,7 @@ export default {
           icon: "success",
           button: "OK",
         }).then(() => {
-          router.push({ name: 'admin', params: { id: route.params.id } });
+          router.push({ name: 'homeadmin', params: { id: route.params.id } });
         });
       } catch (error) {
         console.error('Error updating article:', error);
