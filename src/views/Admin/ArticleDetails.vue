@@ -1,6 +1,7 @@
 <template>
   <div class="article-page">
-    <div class="articles-container">
+    <v-container>
+      <div class="articles-container">
       <div v-if="article" class="article-item">
         <div class="article-header">
           <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-image">
@@ -23,6 +24,8 @@
         <p>Loading...</p>
       </div>
     </div>
+    </v-container>
+
   </div>
 </template>
 
