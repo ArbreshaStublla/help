@@ -14,11 +14,14 @@
             <ButtonComponent buttonText="Ndrysho postimin" @click="editArticle"></ButtonComponent>
           </v-container>
         </div>
-        <v-container>
+        <div class="content">
+          <v-container>
           <div class="article-content">
             <div v-html="article.content"></div>
           </div>
         </v-container>
+        </div>
+       
       </div>
       <div v-else>
         <p>Loading...</p>
@@ -110,5 +113,12 @@ export default {
 
 .button {
   padding: 10px 0;
+}
+
+.content{
+  border:1px solid #ccc;
+  margin-top:25px;
+  height: 100%;
+  overflow-y: scroll;
 }
 </style>

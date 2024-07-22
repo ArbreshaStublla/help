@@ -1,6 +1,7 @@
 <template>
   <div class="article-page">
-    <div class="articles-container">
+    <v-container>
+      <div class="articles-container">
       <div v-if="article" class="article-item">
         <div class="article-header">
           <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-image">
@@ -8,16 +9,21 @@
             <h3>{{ article.title }}</h3>
           </div>
         </div>
-        <v-container>
+        <div class="content">
+          <v-container>
           <div class="article-content">
             <div v-html="article.content"></div>
           </div>
         </v-container>
+        </div>
+      
       </div>
       <div v-else>
         <p>Loading...</p>
       </div>
     </div>
+    </v-container>
+
   </div>
 </template>
 
@@ -27,12 +33,12 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      article: null, // Store the fetched article
+      article: null, 
     };
   },
   mounted() {
-    // Fetch article based on route parameter
-    const articleId = this.$route.params.id; // Fetches ID from route parameter
+    
+    const articleId = this.$route.params.id; 
     this.fetchArticle(articleId);
   },
   methods: {
@@ -43,7 +49,7 @@ export default {
         })
         .catch(error => {
           console.error('Error fetching article:', error);
-          // Handle error - show error message to user
+          
         });
     },
     getImageUrl(relativePath) {
@@ -92,14 +98,16 @@ export default {
   font-size: 24px;
 
 }
-
-
-
 .article-content {
   padding: 10px;
-  margin-top: 20px; /* Increased margin for content below header */
-
-  border-top: none; /* Remove top border to separate from header */
-  border-radius: 0 0 5px 5px; /* Rounded corners at bottom */
+  margin-top: 20px; 
+  border-top: none;
+  border-radius: 0 0 5px 5px; 
+}
+.content{
+  border:1px solid #ccc;
+  margin-top:25px;
+  height: 100%;
+  overflow-y: scroll;
 }
 </style>
