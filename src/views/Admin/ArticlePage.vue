@@ -2,7 +2,10 @@
   <div class="article-page">
     <div class="articles-container articles-grid">
       <div class="articles-list">
-        <div v-for="article in filteredArticles" :key="article.articleId" class="article-item">
+        <div v-if="filteredArticles.length === 0">
+          <p>Nuk është gjetur asnjë postim.</p>
+        </div>
+        <div v-for="article in paginatedArticles" :key="article.articleId" class="article-item">
           <div class="article-image">
             <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-preview-image">
             <div class="article-details">
@@ -20,6 +23,14 @@
         </div>
       </div>
     </div>
+    <div class="page"> <PaginationComponent
+      v-if="filteredArticles.length > pageSize"
+      :items="filteredArticles"
+      :pageSize="pageSize"
+      :currentPage="currentPage"
+      :class="page"
+      @pageChanged="handlePageChange"
+    /></div>
     <CustomButton :buttonText="'Shto një postim'" class="custom-add-postim-button" @click="addNewPostim"/>
   </div>
 </template>
@@ -27,12 +38,14 @@
 <script>
 import axios from 'axios';
 import CustomButton from '@/components/ButtonComponent.vue';
+import PaginationComponent from '@/components/PaginationComponent.vue';
 import swal from 'sweetalert';
 
 export default {
   name: 'ArticlePage',
   components: {
     CustomButton,
+    PaginationComponent,
   },
   props: {
     searchQuery: String,
@@ -40,6 +53,8 @@ export default {
   data() {
     return {
       articles: [],
+      currentPage: 1,
+      pageSize: 9,
     };
   },
   computed: {
@@ -50,6 +65,11 @@ export default {
       return this.articles.filter(article => 
         article.title.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
+    },
+    paginatedArticles() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredArticles.slice(start, end);
     },
   },
   mounted() {
@@ -99,13 +119,18 @@ export default {
         }
       });
     },
+    handlePageChange(page) {
+      this.currentPage = page;
+    },
   },
 };
 </script>
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
-
+.page{
+  margin-top: 70px;
+}
 .article-page {
   margin: 0 auto;
   padding: 20px;
