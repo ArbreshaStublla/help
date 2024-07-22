@@ -1,13 +1,19 @@
 <template>
   <div class="article-page">
     <div class="articles-container articles-grid">
-
       <div class="articles-list">
         <div v-for="article in articles" :key="article.articleId" class="article-item">
-          <h3>{{ article.title }}</h3>
-          <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-image">
-     
-          <CustomButton :buttonText="'Shfaq më shumë'" class="custom-article-button" @click="navigateToArticleDetails(article.articleId)"/>
+          <div class="article-image">
+            <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-preview-image">
+            <div class="article-details">
+              <div class="article-header">
+                <h3>{{ article.title }}</h3>
+              </div>
+              <div class="article-actions">
+                <CustomButton :buttonText="'Shfaq më shumë'" class="custom-article-button" @click="navigateToArticleDetails(article.articleId)" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -16,7 +22,7 @@
 
 <script>
 import axios from 'axios';
-import CustomButton from '@/components/ButtonComponent.vue'; 
+import CustomButton from '@/components/ButtonComponent.vue';
 
 export default {
   name: 'ArticlePage',
@@ -25,7 +31,7 @@ export default {
   },
   data() {
     return {
-      articles: [], 
+      articles: [],
     };
   },
   mounted() {
@@ -39,7 +45,6 @@ export default {
         })
         .catch(error => {
           console.error('Error fetching articles:', error);
-         
         });
     },
     getImageUrl(relativePath) {
@@ -52,11 +57,8 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
 .article-page {
-  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
@@ -66,27 +68,66 @@ export default {
   margin-top: 20px;
 }
 
-.articles-grid {
+.articles-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjusted min-width for responsiveness */
-  gap: 40px;
+  gap: 90px;
   align-items: start;
 }
 
 .article-item {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #fff;
-}
-
-.article-item h3 {
-  margin-bottom: 10px;
+  margin-bottom: 50px;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #eee !important;
 }
 
 .article-image {
-  max-width: 100%;
-  height: auto;
+  position: relative;
+  text-align: center;
+}
+
+.article-preview-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.article-details {
+  position: absolute;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 180px;
+  padding: 30px;
+  background-color: #ffffff;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0.85;
+}
+
+.article-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.article-header h3 {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.article-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
 .custom-article-button {

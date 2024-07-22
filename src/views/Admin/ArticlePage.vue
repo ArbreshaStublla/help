@@ -3,15 +3,23 @@
     <div class="articles-container articles-grid">
       <div class="articles-list">
         <div v-for="article in articles" :key="article.articleId" class="article-item">
-          <h3>{{ article.title }}</h3>
-          <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-image">
-          <CustomButton :buttonText="'Shfaq më shumë'" class="custom-article-button" @click="navigateToArticleDetails(article.articleId)"/>
-          <button @click="deleteArticle(article.articleId)" class="delete-button">Fshij</button>
+          <div class="article-image">
+            <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-preview-image">
+            <div class="article-details">
+              <div class="article-header">
+                <h3>{{ article.title }}</h3>
+                <button class="delete-button" @click="confirmDelete(article.articleId)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+              <div class="article-actions">
+                <CustomButton :buttonText="'Shfaq më shumë'" class="custom-article-button" @click="navigateToArticleDetails(article.articleId)" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-  
     <CustomButton :buttonText="'Shto një postim'" class="custom-add-postim-button" @click="addNewPostim"/>
   </div>
 </template>
@@ -19,6 +27,7 @@
 <script>
 import axios from 'axios';
 import CustomButton from '@/components/ButtonComponent.vue';
+import swal from 'sweetalert';
 
 export default {
   name: 'ArticlePage',
@@ -27,7 +36,7 @@ export default {
   },
   data() {
     return {
-      articles: [], 
+      articles: [],
     };
   },
   mounted() {
@@ -52,24 +61,39 @@ export default {
     addNewPostim() {
       this.$router.push('/post');
     },
-    deleteArticle(articleId) {
-      if (confirm('Are you sure you want to delete this article?')) {
-        axios.delete(`http://192.168.44.239:3000/article/${articleId}`)
-          .then(() => {
+    confirmDelete(articleId) {
+      swal({
+        title: 'A jeni i sigurt?',
+        text: 'Ky veprim do të fshijë përgjithmonë artikullin!',
+        icon: 'warning',
+        buttons: ['Anulo', 'Fshij'],
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          try {
+            await axios.delete(`http://192.168.44.239:3000/article/${articleId}`);
             this.articles = this.articles.filter(article => article.articleId !== articleId);
-          })
-          .catch(error => {
+            swal({
+              title: 'Fshirë!',
+              text: 'Artikulli është fshirë.',
+              icon: 'success',
+              timer: 3000,
+              buttons: false,
+            });
+          } catch (error) {
             console.error('Error deleting article:', error);
-          });
-      }
+          }
+        }
+      });
     },
   },
 };
 </script>
 
 <style scoped>
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
 .article-page {
-  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
@@ -79,54 +103,91 @@ export default {
   margin-top: 20px;
 }
 
-.articles-grid {
+.articles-list {
   display: grid;
+  margin-top: 70px;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjusted min-width for responsiveness */
-  gap: 40px;
+  gap: 90px;
   align-items: start;
 }
 
 .article-item {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #fff;
+  margin-bottom: 50px;
   position: relative;
-}
-
-.article-item h3 {
-  margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #eee !important;
 }
 
 .article-image {
-  max-width: 100%;
-  height: auto;
+  position: relative;
+  text-align: center;
+}
+
+.article-preview-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.article-details {
+  position: absolute;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 180px;
+  padding: 30px;
+  background-color: #ffffff;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0.85;
+}
+
+.article-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  position: relative;
+}
+
+.article-header h3 {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  color: #ff0000;
+  cursor: pointer;
+  font-size: 20px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.delete-button:hover {
+  color: #cc0000;
+}
+
+.article-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
 .custom-article-button {
   margin-top: 10px;
- 
-}
-
-.delete-button {
-  margin-top: 10px;
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-}
-
-.delete-button:hover {
-  background-color: #ff0000;
+  /* Additional custom styling for the button within articles */
 }
 
 .custom-add-postim-button {
   margin-top: 20px;
- 
 }
 </style>
