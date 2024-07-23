@@ -43,7 +43,7 @@ export default {
 
 .search-icon {
   font-size: 24px;
-  color: #1B4D3E;
+  color: #9AA0A6;
   margin-right: 10px;
   transform: scaleX(-1); 
 }
