@@ -148,7 +148,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
-  height: 180px;
+  height: 210px;
   padding: 30px;
   background-color: #ffffff;
   color: #333;
