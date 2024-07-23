@@ -175,5 +175,6 @@ export default {
 
 .custom-article-button {
   margin-top: 10px;
+  margin-right: 18px;
 }
 </style>

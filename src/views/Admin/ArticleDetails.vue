@@ -90,7 +90,7 @@ export default {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: brightness(50%);
+  filter: brightness(35%);
 }
 
 .article-title-overlay {
@@ -102,6 +102,7 @@ export default {
   padding: 10px;
   border-radius: 5px;
   font-size: 24px;
+  color: #fff;
 }
 
 .article-content {
