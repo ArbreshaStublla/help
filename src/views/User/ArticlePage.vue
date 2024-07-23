@@ -78,9 +78,9 @@ export default {
   },
   methods: {
     fetchArticles() {
-      axios.get('http://192.168.44.239:3000/article')
+      axios.get(`${process.env.VUE_APP_API_URL}article`)
         .then(response => {
-          this.articles = response.data.reverse(); // Reverse to make the latest articles appear first
+          this.articles = response.data.reverse(); 
         })
         .catch(error => {
           console.error('Error fetching articles:', error);
@@ -96,7 +96,7 @@ export default {
       this.currentPage = page;
     },
     addNewPostim(article) {
-      this.articles.unshift(article); // Add the new post at the beginning of the list
+      this.articles.unshift(article); 
     }
   },
 };
