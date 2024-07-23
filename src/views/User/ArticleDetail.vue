@@ -19,7 +19,7 @@
       
       </div>
       <div v-else>
-        <p>Loading...</p>
+        <p>Duke u ngarkuar...</p>
       </div>
     </div>
     </v-container>
