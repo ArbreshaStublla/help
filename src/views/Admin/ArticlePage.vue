@@ -80,8 +80,8 @@ export default {
   methods: {
     async fetchArticles() {
       try {
-        const response = await axios.get('http://192.168.44.239:3000/article');
-        this.articles = response.data.reverse(); // Reverse to make the latest articles appear first
+        const response = await  axios.get(`${process.env.VUE_APP_API_URL}article`)
+        this.articles = response.data.reverse(); 
       } catch (error) {
         console.error('Error fetching articles:', error);
       }
