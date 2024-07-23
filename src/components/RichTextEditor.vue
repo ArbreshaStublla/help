@@ -12,6 +12,7 @@ import 'quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize';
 import axios from 'axios';
 
+// Register the imageResize module
 Quill.register('modules/imageResize', ImageResize);
 
 export default {
@@ -24,13 +25,15 @@ export default {
   setup(props, { emit }) {
     const editor = ref(null);
 
-    
+    // Handle file input change event
     const handleFileChange = async (event) => {
       const file = event.target.files[0];
-      handleFileUpload(file);
+      if (file) {
+        await handleFileUpload(file);
+      }
     };
 
-    
+    // Handle file upload to the server
     async function handleFileUpload(file) {
       try {
         const formData = new FormData();
@@ -43,14 +46,19 @@ export default {
         });
 
         const imageUrl = response.data.imageUrl;
-        const quill = editor.value.__quill;
-        const range = quill.getSelection();
-        quill.clipboard.dangerouslyPasteHTML(range.index, `<img src="${imageUrl}">`);
+        if (imageUrl) {
+          const quill = editor.value.__quill;
+          const range = quill.getSelection();
+          quill.clipboard.dangerouslyPasteHTML(range.index, `<img src="${imageUrl}">`);
+        } else {
+          console.error('Image URL not returned from server.');
+        }
       } catch (error) {
         console.error('Error uploading image:', error);
       }
     }
 
+    // Initialize Quill editor
     onMounted(() => {
       const quillEditor = new Quill(editor.value, {
         theme: 'snow',
@@ -62,27 +70,29 @@ export default {
             ['bold', 'italic', 'underline', 'strike'],
             [{ color: [] }, { background: [] }],
             [{ script: 'sub' }, { script: 'super' }],
-            [{ list: 'ordered' }, { list: 'bullet' }],
+            [{ list: 'ordered' }, { list: 'bullet' }],  // Ensure both list types are included
             [{ indent: '-1' }, { indent: '+1' }],
             [{ direction: 'rtl' }],
             [{ align: [] }],
             ['link', 'image', 'video', 'blockquote', 'code-block'],
-            [{ 'text-box': 'Textbox' }], 
+            [{ 'text-box': 'Textbox' }],
             ['clean']
           ],
           imageResize: {},
         },
       });
 
+      // Emit modelValue change on text change
       quillEditor.on('text-change', () => {
         emit('update:modelValue', quillEditor.root.innerHTML);
       });
 
+      // Set initial content if provided
       if (props.modelValue) {
         quillEditor.root.innerHTML = props.modelValue;
       }
 
-      
+      // Add textbox button functionality
       const textboxButton = quillEditor.getModule('toolbar').container.querySelector('.ql-text-box');
       if (textboxButton) {
         textboxButton.addEventListener('click', () => {
@@ -90,6 +100,7 @@ export default {
         });
       }
 
+      // Function to insert a textbox
       function insertTextbox(quill) {
         const range = quill.getSelection();
         const position = quill.getBounds(range.index);
@@ -107,7 +118,7 @@ export default {
         quill.clipboard.dangerouslyPasteHTML(range.index, textbox.outerHTML);
       }
 
-      
+      // Handle image drop events
       const editorElement = quillEditor.root.parentElement;
       editorElement.addEventListener('drop', handleImageDrop);
 
@@ -119,7 +130,7 @@ export default {
         }
       }
 
-      
+      // Handle dragover events
       editorElement.addEventListener('dragover', (event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'copy';
