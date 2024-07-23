@@ -20,14 +20,16 @@
         </div>
       </div>
     </div>
-    <div class="page"> <PaginationComponent
-      v-if="filteredArticles.length > pageSize"
-      :items="filteredArticles"
-      :pageSize="pageSize"
-      :currentPage="currentPage"
-      :class="page"
-      @pageChanged="handlePageChange"
-    /></div>
+    <div class="page">
+      <PaginationComponent
+        v-if="filteredArticles.length > pageSize"
+        :items="filteredArticles"
+        :pageSize="pageSize"
+        :currentPage="currentPage"
+        :class="page"
+        @pageChanged="handlePageChange"
+      />
+    </div>
   </div>
 </template>
 
@@ -78,7 +80,7 @@ export default {
     fetchArticles() {
       axios.get('http://192.168.44.239:3000/article')
         .then(response => {
-          this.articles = response.data;
+          this.articles = response.data.reverse(); // Reverse to make the latest articles appear first
         })
         .catch(error => {
           console.error('Error fetching articles:', error);
@@ -93,6 +95,9 @@ export default {
     handlePageChange(page) {
       this.currentPage = page;
     },
+    addNewPostim(article) {
+      this.articles.unshift(article); // Add the new post at the beginning of the list
+    }
   },
 };
 </script>

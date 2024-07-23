@@ -23,14 +23,16 @@
         </div>
       </div>
     </div>
-    <div class="page"> <PaginationComponent
-      v-if="filteredArticles.length > pageSize"
-      :items="filteredArticles"
-      :pageSize="pageSize"
-      :currentPage="currentPage"
-      :class="page"
-      @pageChanged="handlePageChange"
-    /></div>
+    <div class="page"> 
+      <PaginationComponent
+        v-if="filteredArticles.length > pageSize"
+        :items="filteredArticles"
+        :pageSize="pageSize"
+        :currentPage="currentPage"
+        :class="page"
+        @pageChanged="handlePageChange"
+      />
+    </div>
     <CustomButton :buttonText="'Shto një postim'" class="custom-add-postim-button" @click="addNewPostim"/>
   </div>
 </template>
@@ -76,14 +78,13 @@ export default {
     this.fetchArticles();
   },
   methods: {
-    fetchArticles() {
-      axios.get('http://192.168.44.239:3000/article')
-        .then(response => {
-          this.articles = response.data;
-        })
-        .catch(error => {
-          console.error('Error fetching articles:', error);
-        });
+    async fetchArticles() {
+      try {
+        const response = await axios.get('http://192.168.44.239:3000/article');
+        this.articles = response.data.reverse(); // Reverse to make the latest articles appear first
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      }
     },
     getImageUrl(relativePath) {
       return `http://192.168.44.239:3000${relativePath}`;
@@ -94,30 +95,29 @@ export default {
     addNewPostim() {
       this.$router.push('/post');
     },
-    confirmDelete(articleId) {
-      swal({
+    async confirmDelete(articleId) {
+      const willDelete = await swal({
         title: 'A jeni i sigurt?',
         text: 'Ky veprim do të fshijë përgjithmonë artikullin!',
         icon: 'warning',
         buttons: ['Anulo', 'Fshij'],
         dangerMode: true,
-      }).then(async (willDelete) => {
-        if (willDelete) {
-          try {
-            await axios.delete(`http://192.168.44.239:3000/article/${articleId}`);
-            this.articles = this.articles.filter(article => article.articleId !== articleId);
-            swal({
-              title: 'Fshirë!',
-              text: 'Artikulli është fshirë.',
-              icon: 'success',
-              timer: 3000,
-              buttons: false,
-            });
-          } catch (error) {
-            console.error('Error deleting article:', error);
-          }
-        }
       });
+      if (willDelete) {
+        try {
+          await axios.delete(`http://192.168.44.239:3000/article/${articleId}`);
+          this.articles = this.articles.filter(article => article.articleId !== articleId);
+          swal({
+            title: 'Fshirë!',
+            text: 'Artikulli është fshirë.',
+            icon: 'success',
+            timer: 3000,
+            buttons: false,
+          });
+        } catch (error) {
+          console.error('Error deleting article:', error);
+        }
+      }
     },
     handlePageChange(page) {
       this.currentPage = page;
