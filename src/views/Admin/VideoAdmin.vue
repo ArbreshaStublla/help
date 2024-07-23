@@ -279,6 +279,7 @@ export default {
 }
 .video-title {
   padding-bottom: 10px;
+  width: 90%;
 }
 .play-icon {
   position: absolute;
