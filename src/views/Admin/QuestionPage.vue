@@ -16,10 +16,7 @@
                 <label for="answerText" class="label">Përgjigja juaj:</label>
                 <textarea v-model="question.newAnswerText" required rows="3" class="input"></textarea>
               </div>
-              <div class="form-group">
-                <label for="userId" class="label">ID-ja juaj:</label>
-                <input type="text" v-model="question.userId" required class="input" />
-              </div> 
+            
               <div class="form-group">
                 <ButtonComponent buttonText="Dorëzo Përgjigjen" @click="submitAnswer(question)" />
               </div>
