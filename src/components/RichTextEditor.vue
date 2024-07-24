@@ -49,7 +49,7 @@ export default {
         if (imageUrl) {
           const quill = editor.value.__quill;
           const range = quill.getSelection();
-          quill.clipboard.dangerouslyPasteHTML(range.index, `<img src="${imageUrl}">`);
+          quill.clipboard.dangerouslyPasteHTML(range.index, `<img src="${imageUrl}" class="editor-image">`);
         } else {
           console.error('Image URL not returned from server.');
         }
@@ -70,7 +70,7 @@ export default {
             ['bold', 'italic', 'underline', 'strike'],
             [{ color: [] }, { background: [] }],
             [{ script: 'sub' }, { script: 'super' }],
-            [{ list: 'ordered' }, { list: 'bullet' }],  // Ensure both list types are included
+            [{ list: 'ordered' }, { list: 'bullet' }],
             [{ indent: '-1' }, { indent: '+1' }],
             [{ direction: 'rtl' }],
             [{ align: [] }],
@@ -147,6 +147,17 @@ export default {
 
 <style>
 @import "~quill/dist/quill.snow.css";
+
+.ql-editor {
+  white-space: pre-wrap; /* Preserve whitespace and line breaks */
+}
+
+.editor-image {
+  display: inline-block;
+  margin: 0 10px; /* Space between images */
+  max-width: 45%; /* Adjust based on layout needs */
+  vertical-align: middle; /* Align images vertically in the middle */
+}
 
 .textbox {
   position: absolute;

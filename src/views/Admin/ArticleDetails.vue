@@ -58,8 +58,12 @@ export default {
         });
     },
    
-getImageUrl(relativePath) {
-  return `http://192.168.44.239:3000${relativePath}`;
+ 
+    getImageUrl(relativePath) {
+  const apiUrl = new URL(process.env.VUE_APP_API_URL);
+  const imageUrl = new URL(relativePath, apiUrl);
+  console.log(`Image URL: ${imageUrl}`);
+  return imageUrl.href;
 },
 
     editArticle() {
@@ -108,6 +112,8 @@ getImageUrl(relativePath) {
   margin-top: 20px;
   border-top: none;
   border-radius: 0 0 5px 5px;
+  white-space: pre-wrap; 
+  overflow: auto;
 }
 
 .button {

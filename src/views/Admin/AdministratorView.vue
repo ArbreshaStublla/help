@@ -135,6 +135,7 @@ export default {
     if (!response.ok) {
       throw new Error('Failed to register user');
     }
+    
     const { token } = await response.json();
 
 localStorage.setItem('token', token);

@@ -86,10 +86,13 @@ export default {
         console.error('Error fetching articles:', error);
       }
     },
+ 
     getImageUrl(relativePath) {
-   
-      return `http://192.168.44.239:3000${relativePath}`;
-    },
+  const apiUrl = new URL(process.env.VUE_APP_API_URL);
+  const imageUrl = new URL(relativePath, apiUrl);
+  console.log(`Image URL: ${imageUrl}`);
+  return imageUrl.href;
+},
     navigateToArticleDetails(articleId) {
       this.$router.push({ name: 'articleDetails', params: { id: articleId } });
     },

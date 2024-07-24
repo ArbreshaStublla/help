@@ -49,14 +49,21 @@ export default {
           console.error('Error fetching article:', error);
         });
     },
+  
+  
+ 
     getImageUrl(relativePath) {
-      return `http://192.168.44.239:3000${relativePath}`;
-    },
+  const apiUrl = new URL(process.env.VUE_APP_API_URL);
+  const imageUrl = new URL(relativePath, apiUrl);
+  console.log(`Image URL: ${imageUrl}`);
+  return imageUrl.href;
+}
   },
 };
 </script>
 
 <style scoped>
+
 .articles-container {
   margin: auto;
   border-radius: 8px;
@@ -95,7 +102,11 @@ export default {
   margin-top: 20px;
   border-top: none;
   border-radius: 0 0 5px 5px;
+  white-space: pre-wrap; 
+  overflow: auto;
 }
+
+
 
 .content {
   border: 1px solid #ccc;

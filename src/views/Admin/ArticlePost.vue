@@ -1,11 +1,13 @@
 <template>
   <div class="form-container">
+    <v-container>
     <input type="text" v-model="title" placeholder="Titulli i postimit" class="title-input">
     <RichTextEditor v-model="content" class="rich-text-editor" />
     <input type="file" ref="fileInput" @change="handleFileChange" class="file-input">
     <div class="buton-container">
       <ButtonComponent :buttonText="'Shto postimin'" @click="saveArticle"></ButtonComponent>
     </div>
+  </v-container>
   </div>
 </template>
 
