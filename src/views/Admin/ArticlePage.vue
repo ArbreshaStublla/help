@@ -144,7 +144,7 @@ export default {
 .articles-list {
   display: grid;
   margin-top: 70px;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjusted min-width for responsiveness */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
   gap: 90px;
   align-items: start;
 }
@@ -174,7 +174,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
-  height: 210px;
+  height: 230px;
   padding: 30px;
   background-color: #ffffff;
   color: #333;
