@@ -176,7 +176,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
-  height: 210px;
+  height: 230px;
   padding: 30px;
   background-color: #ffffff;
   color: #333;
