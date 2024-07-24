@@ -87,6 +87,7 @@ export default {
       }
     },
     getImageUrl(relativePath) {
+   
       return `http://192.168.44.239:3000${relativePath}`;
     },
     navigateToArticleDetails(articleId) {
@@ -105,7 +106,8 @@ export default {
       });
       if (willDelete) {
         try {
-          await axios.delete(`http://192.168.44.239:3000/article/${articleId}`);
+          
+          await axios.delete(`${process.env.VUE_APP_API_URL}article/${articleId}`)
           this.articles = this.articles.filter(article => article.articleId !== articleId);
           swal({
             title: 'Fshirë!',
@@ -144,7 +146,7 @@ export default {
 .articles-list {
   display: grid;
   margin-top: 70px;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjusted min-width for responsiveness */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
   gap: 90px;
   align-items: start;
 }

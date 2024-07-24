@@ -38,18 +38,15 @@ export default {
         formData.append('image', this.selectedFile); 
       }
 
-      axios.post('http://192.168.44.239:3000/article/add', formData, {
+      axios.post(`${process.env.VUE_APP_API_URL}article/add`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
       .then(response => {
         console.log('Article saved:', response.data);
-
         swal("Sukses!", "Postimi u shtua me sukses!", "success");
-        
         this.$router.push({ name: 'homeadmin' });
-       
       })
       .catch(error => {
         console.error('Error saving article:', error);

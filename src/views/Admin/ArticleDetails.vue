@@ -2,33 +2,31 @@
   <div class="article-page">
     <v-container>
       <div class="articles-container">
-      <div v-if="article" class="article-item">
-        <div class="article-header">
-          <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-image">
-          <div class="article-title-overlay">
-            <h3>{{ article.title }}</h3>
+        <div v-if="article" class="article-item">
+          <div class="article-header">
+            <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="Article Image" class="article-image">
+            <div class="article-title-overlay">
+              <h3>{{ article.title }}</h3>
+            </div>
+          </div>
+          <div class="button">
+            <v-container>
+              <ButtonComponent buttonText="Ndrysho postimin" @click="editArticle"></ButtonComponent>
+            </v-container>
+          </div>
+          <div class="content">
+            <v-container>
+              <div class="article-content">
+                <div v-html="article.content"></div>
+              </div>
+            </v-container>
           </div>
         </div>
-        <div class="button">
-          <v-container>
-            <ButtonComponent buttonText="Ndrysho postimin" @click="editArticle"></ButtonComponent>
-          </v-container>
+        <div v-else>
+          <p>Duke u ngarkuar...</p>
         </div>
-        <div class="content">
-          <v-container>
-          <div class="article-content">
-            <div v-html="article.content"></div>
-          </div>
-        </v-container>
-        </div>
-       
       </div>
-      <div v-else>
-        <p>Duke u ngarkuar...</p>
-      </div>
-    </div>
     </v-container>
-
   </div>
 </template>
 
@@ -51,7 +49,7 @@ export default {
   },
   methods: {
     fetchArticle(articleId) {
-      axios.get(`http://192.168.44.239:3000/article/${articleId}`)
+      axios.get(`${process.env.VUE_APP_API_URL}article/${articleId}`)
         .then(response => {
           this.article = response.data;
         })
@@ -59,11 +57,11 @@ export default {
           console.error('Error fetching article:', error);
         });
     },
-  
-    getImageUrl(relativePath) {
-      return `http://192.168.44.239:3000${relativePath}`;
-    },
-    
+   
+getImageUrl(relativePath) {
+  return `http://192.168.44.239:3000${relativePath}`;
+},
+
     editArticle() {
       this.$router.push({ name: 'editArticle', params: { id: this.$route.params.id } });
     }
@@ -116,9 +114,9 @@ export default {
   padding: 10px 0;
 }
 
-.content{
-  border:1px solid #ccc;
-  margin-top:25px;
+.content {
+  border: 1px solid #ccc;
+  margin-top: 25px;
   height: 100%;
   overflow-y: scroll;
 }
