@@ -34,7 +34,7 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/article/:id', 
+    path: '/admin/article/:id',
     name: 'articleDetails',
     component: ArticleDetails,
     props: true,
@@ -45,6 +45,7 @@ const routes = [
     path: '/article/:id', 
     name: 'articleDetail',
     component: ArticleDetail,
+    meta: { requiresAuth: false },
     props: true,
   
     

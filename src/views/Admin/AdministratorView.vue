@@ -135,20 +135,25 @@ export default {
     if (!response.ok) {
       throw new Error('Failed to register user');
     }
+    const { token } = await response.json();
 
+localStorage.setItem('token', token);
+
+setAuthentication(true);
+this.$router.push({ path: '/homeadmin' });
+}  catch (error) {
+    console.error('Error registering user:', error);
+    alert('Failed to register user. Please try again.');
+  }
     // Clear form data
     this.signupData.username = '';
     this.signupData.email = '';
     this.signupData.password = '';
     this.signupData.roleId = '1';
 
-    // Redirect to homeadmin
-   this.$router.push({ name: 'homeadmin' });
+ 
 
-  } catch (error) {
-    console.error('Error registering user:', error);
-    alert('Failed to register user. Please try again.');
-  }
+  
 }
 ,
     async checkEmailExists(email) {
