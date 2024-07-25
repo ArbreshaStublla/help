@@ -146,7 +146,7 @@ this.$router.push({ path: '/homeadmin' });
     console.error('Error registering user:', error);
     alert('Failed to register user. Please try again.');
   }
-    // Clear form data
+    
     this.signupData.username = '';
     this.signupData.email = '';
     this.signupData.password = '';

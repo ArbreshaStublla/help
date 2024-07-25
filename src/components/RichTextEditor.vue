@@ -36,11 +36,12 @@ export default {
         const formData = new FormData();
         formData.append('image', file);
 
-        const response = await axios.post('http://192.168.44.239:3000/article/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+        const response = await axios.post(`${process.env.VUE_APP_API_URL}article/upload`, formData, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
+
 
         const imageUrl = response.data.imageUrl;
         if (imageUrl) {

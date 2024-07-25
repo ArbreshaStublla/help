@@ -118,12 +118,11 @@ export default {
       }
 
       try {
-        await axios.put(`http://192.168.44.239:3000/article/${route.params.id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        
+  await axios.put(`${process.env.VUE_APP_API_URL}article/${route.params.id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
         swal({
           title: "Sukses!",
           text: "Postimi është përditësuar me sukses.",
