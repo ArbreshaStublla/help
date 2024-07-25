@@ -12,7 +12,6 @@ import 'quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize';
 import axios from 'axios';
 
-// Register the imageResize module
 Quill.register('modules/imageResize', ImageResize);
 
 export default {
@@ -25,7 +24,6 @@ export default {
   setup(props, { emit }) {
     const editor = ref(null);
 
-    // Handle file input change event
     const handleFileChange = async (event) => {
       const file = event.target.files[0];
       if (file) {
@@ -33,7 +31,6 @@ export default {
       }
     };
 
-    // Handle file upload to the server
     async function handleFileUpload(file) {
       try {
         const formData = new FormData();
@@ -58,7 +55,6 @@ export default {
       }
     }
 
-    // Initialize Quill editor
     onMounted(() => {
       const quillEditor = new Quill(editor.value, {
         theme: 'snow',
@@ -82,17 +78,17 @@ export default {
         },
       });
 
-      // Emit modelValue change on text change
+
       quillEditor.on('text-change', () => {
         emit('update:modelValue', quillEditor.root.innerHTML);
       });
 
-      // Set initial content if provided
+      
       if (props.modelValue) {
         quillEditor.root.innerHTML = props.modelValue;
       }
 
-      // Add textbox button functionality
+      
       const textboxButton = quillEditor.getModule('toolbar').container.querySelector('.ql-text-box');
       if (textboxButton) {
         textboxButton.addEventListener('click', () => {
@@ -100,7 +96,7 @@ export default {
         });
       }
 
-      // Function to insert a textbox
+      
       function insertTextbox(quill) {
         const range = quill.getSelection();
         const position = quill.getBounds(range.index);
@@ -117,8 +113,7 @@ export default {
 
         quill.clipboard.dangerouslyPasteHTML(range.index, textbox.outerHTML);
       }
-
-      // Handle image drop events
+    
       const editorElement = quillEditor.root.parentElement;
       editorElement.addEventListener('drop', handleImageDrop);
 
@@ -130,7 +125,7 @@ export default {
         }
       }
 
-      // Handle dragover events
+    
       editorElement.addEventListener('dragover', (event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'copy';
@@ -149,14 +144,14 @@ export default {
 @import "~quill/dist/quill.snow.css";
 
 .ql-editor {
-  white-space: pre-wrap; /* Preserve whitespace and line breaks */
+  white-space: pre-wrap; 
 }
 
 .editor-image {
   display: inline-block;
-  margin: 0 10px; /* Space between images */
-  max-width: 45%; /* Adjust based on layout needs */
-  vertical-align: middle; /* Align images vertically in the middle */
+  margin: 0 10px; 
+  max-width: 45%;
+  vertical-align: middle;
 }
 
 .textbox {
