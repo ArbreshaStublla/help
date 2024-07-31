@@ -16,7 +16,7 @@
             </div>
             <div class="video-description">
               <h3 class="video-title">{{ video.title }}</h3>
-              <p>{{ video.description }}</p>
+             <p>{{ video.description }}</p>
             </div>
           </div>
         </div>
@@ -100,16 +100,19 @@ export default {
       this.selectedVideo = null;
     },
     getVideoEmbedUrl(url) {
-      // Example function to convert YouTube URL to embed URL
-      // Adjust this based on your video URL format and embedding requirements
-      // Example conversion for YouTube:
-      // https://www.youtube.com/watch?v=VIDEO_ID => https://www.youtube.com/embed/VIDEO_ID
+      let videoId;
+
       if (url.includes('youtube.com')) {
-        const videoId = url.split('v=')[1];
+        const urlParams = new URLSearchParams(new URL(url).search);
+        videoId = urlParams.get('v');
+      } else if (url.includes('youtu.be')) {
+        videoId = url.split('youtu.be/')[1];
+      }
+
+      if (videoId) {
         return `https://www.youtube.com/embed/${videoId}`;
       } else {
-        // Handle other video platforms or direct video links here
-        return url; // Return as-is if direct link or another platform
+        return url; 
       }
     },
   },

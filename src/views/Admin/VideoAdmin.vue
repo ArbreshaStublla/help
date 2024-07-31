@@ -215,6 +215,10 @@ export default {
     getVideoEmbedUrl(url) {
       if (url.includes('youtube.com')) {
         const videoId = url.split('v=')[1];
+        const ampersandPosition = videoId.indexOf('&');
+        return `https://www.youtube.com/embed/${ampersandPosition !== -1 ? videoId.substring(0, ampersandPosition) : videoId}`;
+      } else if (url.includes('youtu.be')) {
+        const videoId = url.split('/').pop();
         return `https://www.youtube.com/embed/${videoId}`;
       } else {
         return url;
@@ -249,6 +253,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
